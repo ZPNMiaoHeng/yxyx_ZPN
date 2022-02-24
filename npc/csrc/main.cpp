@@ -7,11 +7,11 @@
 #include "Vtop.h"
 
 Vtop *top;
-int main(int argc, char** aegv){
-    verilated::commandArgs(argc, argv);
+int main(int argc, char** argv){
+ //   verilated::commandArgs(argc, argv);
 
     top = new Vtop;
-    while (!verilated::gotFinish()) {
+    while (/*!verilated::gotFinish()*/1) {
         int a = rand() & 1;
         int b = rand() & 1;
         top->a = a;
