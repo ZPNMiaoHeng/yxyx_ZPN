@@ -1,6 +1,25 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
 
-int main() {
-  printf("Hello, ysyx!\n");
-  return 0;
+#include <verilated.h>
+#include <iostream>
+#include "Vtop.h"
+
+Vtop *top;
+int main(int argc, char** aegv){
+    verilated::commandArgs(argc, argv);
+
+    top = new Vtop;
+    while (!verilated::gotFinish()) {
+        int a = rand() & 1;
+        int b = rand() & 1;
+        top->a = a;
+        top->b = b;
+        top->eval();
+        printf("a = %d, b = %d, f = %d\n", a, b, top->f);
+        assert(top->f == a ^ b);
+    }
+    top->final();
+    delete top;
 }
