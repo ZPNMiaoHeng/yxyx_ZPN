@@ -7,21 +7,17 @@
 #include "Vtop.h"
 
 #include "verilated_vcd_c.h"
-//static VerilatedVcdC* fp;      //to form *.vcd file
-
-//static Vtop *top;  //design under test of top
 
 int main(int argc, char** argv){
     VerilatedContext* contextp = new VerilatedContext;
     contextp->commandArgs(argc, argv);
     Vtop* top = new Vtop{contextp};
-//    top = new Vto;
-
     Verilated::traceEverOn(true);
     VerilatedVcdC* tfp = new VerilatedVcdC;
-    top->trace(tfp, 99); // Trace 99 levels of hierarchy
+    top->trace(tfp, 99); // Trace 99 levels of hierarchyi
+    tfp->open("obj_dir/Vtop.vcd");
     
-    while (!contextp->gotFinish()) {
+    while (/*contextp->time() < sim_time &&*/ !contextp->gotFinish()) {
         contextp->timeInc(1);
         int a = rand() & 1;
         int b = rand() & 1;
@@ -32,8 +28,7 @@ int main(int argc, char** argv){
         assert(top->f == a ^ b);
         tfp->dump(contextp->time());
     }
-    tfp->close();
-//    top->final();
+ //   tfp->close();
     delete top;
     delete contextp;
 }
