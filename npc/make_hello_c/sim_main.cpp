@@ -12,7 +12,7 @@
 #include "Vtop.h"
 
 // Include vcd 
-#include "verilated_vcd_c.h" 
+//#include "verilated_vcd_c.h" 
 
 int main(int argc, char** argv, char** env) {
     // See a similar example walkthrough in the verilator manpage.
@@ -26,24 +26,24 @@ int main(int argc, char** argv, char** env) {
 
     // Construct the Verilated model, from Vtop.h generated from Verilating "top.v"
     Vtop* top = new Vtop;
-
+/*
     Verilated::traceEverOn(true);
     VerilatedVcdC* tfp = new VerilatedVcdC;
     top->trace(tfp, 99); // Trace 99 levels of hierarchy
     tfp->open("obj_dir/Vtop.vcd");
-
+*/
     // Simulate until $finish
     while (!Verilated::gotFinish()) {
         
-        contextp->timeInc(1);
+//        contextp->timeInc(1);
         
         // Evaluate model
         top->eval();
 
-        tfp->dump(contextp->time());
+//        tfp->dump(contextp->time());
 
     }
-    tfp->close();
+ //   tfp->close();
     // Final model cleanup
     top->final();
 
