@@ -52,7 +52,7 @@ VERILATOR_FLAGS += --coverage
 
 # Input files for Verilator
 VERILATOR_INPUT = -f input.vc top.v sim_main.cpp
-
+# VERILATOR_INPUT = -f input.vc ./vsrc/top.v ./csrc/sim_main.cpp
 ######################################################################
 default: run
 
