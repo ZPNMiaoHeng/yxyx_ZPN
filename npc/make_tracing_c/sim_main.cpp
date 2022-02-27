@@ -14,6 +14,9 @@
 // Include model header, generated from Verilating "top.v"
 #include "Vtop.h"
 
+// Include model of vcd , MH
+#include "verilated_vcd_c.h"
+
 // Legacy function required only so linking works on Cygwin and MSVC++
 double sc_time_stamp() { return 0; }
 
@@ -64,6 +67,12 @@ int main(int argc, char** argv, char** env) {
     top->in_wide[1] = 0x22222222;
     top->in_wide[2] = 0x3;
 
+    // Set top of vcd, MH 
+    Verilated::traceEverOn(true);
+    VerilatedVcdC* tfp = new VerilatedVcdC;
+    top->trace(tfp, 99); // Trace 99 levels of hierarchy
+    tfp->open("obj_dir/Vtop.vcd");
+
     // Simulate until $finish
     while (!contextp->gotFinish()) {
         // Historical note, before Verilator 4.200 Verilated::gotFinish()
@@ -102,13 +111,19 @@ int main(int argc, char** argv, char** env) {
         // eval_end_step() on each. See the manual.)
         top->eval();
 
+        // vcd: MH
+        tfp->dump(contextp->time());
+
         // Read outputs
         VL_PRINTF("[%" VL_PRI64 "d] clk=%x rstl=%x iquad=%" VL_PRI64 "x"
                   " -> oquad=%" VL_PRI64 "x owide=%x_%08x_%08x\n",
                   contextp->time(), top->clk, top->reset_l, top->in_quad, top->out_quad,
                   top->out_wide[2], top->out_wide[1], top->out_wide[0]);
     }
-
+    
+    // close vcd
+    tfp->close();
+    
     // Final model cleanup
     top->final();
 
