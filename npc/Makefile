@@ -88,8 +88,8 @@ run:
 	@echo "-- DONE --------------------"
 	@echo "To see waveforms, open vlt_dump.vcd in a waveform viewer"
 	@echo
-
-
+	@echo "-- GTKwave   ---------------"
+	GTKwave ./logs/vlt_dump.vcd
 ######################################################################
 # Other targets
 
