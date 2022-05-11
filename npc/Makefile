@@ -2,14 +2,12 @@ _default:
 ######################################################################
 #
 # DESCRIPTION: Verilator Makefile :YSYX
-#	-- Vesion 3.1.1------------
+#------------ Vesion 3.1.2------------
 ######################################################################
 # Check for sanity to avoid later confusion
-
 ifneq ($(words $(CURDIR)),1)
  $(error Unsupported: GNU Make cannot build in directories containing spaces, build elsewhere: '$(CURDIR)')
 endif
-
 ######################################################################
 # Set up variables
 
@@ -24,7 +22,6 @@ export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 VERILATOR_COVERAGE = $(VERILATOR_ROOT)/bin/verilator_coverage
 endif
-
 #######################################################################
 #DIFINE
 #------IF shell could input VERILOG_NAME?------------------------------
@@ -37,6 +34,8 @@ NVBOARD_DIR = $(NVBOARD_HOME)/example
 VSRC_DIR = $(shell find ./build/ -name '*.v')
 CSRC_DIR = $(shell find $(NVBOARD_DIR)/csrc/$(VERILOG_NAME) -name '*.cpp')
 GTK_DIR = $(shell find $(NVBOARD_DIR)/sim/ -name '*.vcd')
+BUILD_DIR = ./build
+OBJ_DIR = ./obj_dir
 #######################################################################
 # Command
 MAKERUN = make run
@@ -58,64 +57,13 @@ VERILATOR_FLAGS += --coverage
 VERILATOR_FLAGS += --build
 #######################################################################
 # Table
-.PHONY : all run gtk nvboard_run nvboard_clean test
+.PHONY : run nvboard_run nvboard_clean test verilog help compile bsp reformat checkformat clean sim retest
+
 #######################################################################
-default: all
-all: clean run gtk
-#test: clean run
-
-# touch test cpp file ,but it must modify
-pre:
-	@echo
-	@echo "------------------- prepare -----------------"
-	@echo "--------------- touch test.cpp -----------------------"
-	@mkdir -p $(NVBOARD_DIR)/csrc/$(VERILOG_NAME)
-	@cp $(NVBOARD_DIR)/csrc/$(EX_NAME)/$(EX_NAME).cpp $(NVBOARD_DIR)/csrc/$(VERILOG_NAME)/$(VERILOG_NAME).cpp
-
-run:
-# Modify run 
-	@echo
-	@echo "-- VERILATE SIM----------------"
-	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
-
-	@echo
-	@echo "-- MAKE SIM ---------------------"
-	@rm -rf $(NVBOARD_DIR)/sim
-	@mkdir -p $(NVBOARD_DIR)/sim
-	obj_dir/V$(VERILOG_NAME) +trace
-
-gtk:
-	@echo "--Open GTKwave   ---------------"
-	gtkwave -f $(GTK_DIR)
-
-nvboard_run:
-	@echo "--connect nvboard------------------"
-	cd $(NVBOARD_DIR) && $(MAKERUN)
-
-nvboard_clean:
-	@echo "--clean nvboard------------------"
-	cd $(NVBOARD_DIR) && $(MAKRCLEAN)
-######################################################################
-# Other targets
-
-show-config:
-	$(VERILATOR) -V
-
-#maintainer-copy::
-#clean mostlyclean distclean maintainer-clean::
-#	-rm -rf obj_dir sim *.log *.dmp *.vpd coverage.dat core
-
-#.PHONY: _default
-
-
-
-
-
-
-
-
-BUILD_DIR = ./build
-
+default: retest
+# It is use to test include elaborate verilog , compile and open gtkwave
+retest: verilog run sim
+#######################################################################
 test:
 	mill -i __.test
 
@@ -140,12 +88,52 @@ checkformat:
 	mill -i __.checkFormat
 
 clean:
-	-rm -rf $(BUILD_DIR)
+	-rm -rf $(BUILD_DIR) $(OBJ_DIR)
 
 .PHONY: test verilog help compile bsp reformat checkformat clean
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "Write this Makefile by yourself."
+	@echo "-------------------------- Open GTKwave ------------------------"
+	gtkwave -f $(GTK_DIR)
+
+# touch test cpp file ,but it must modify
+pre:
+	@echo
+	@echo "------------------- prepare -----------------"
+	@echo "--------------- touch test.cpp -----------------------"
+	@mkdir -p $(NVBOARD_DIR)/csrc/$(VERILOG_NAME)
+	@cp $(NVBOARD_DIR)/csrc/$(EX_NAME)/$(EX_NAME).cpp $(NVBOARD_DIR)/csrc/$(VERILOG_NAME)/$(VERILOG_NAME).cpp
+
+run:
+# Modify run 
+	@echo
+	@echo "-- VERILATE SIM----------------"
+	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
+
+	@echo
+	@echo "-- MAKE SIM ---------------------"
+	@rm -rf $(NVBOARD_DIR)/sim
+	@mkdir -p $(NVBOARD_DIR)/sim
+	obj_dir/V$(VERILOG_NAME) +trace
+#####################################################################
+# ERROR
+#nvboard_run:
+#	@echo "--connect nvboard------------------"
+#	cd $(NVBOARD_DIR) && $(MAKERUN)
+#
+#nvboard_clean:
+#	@echo "--clean nvboard------------------"
+#	cd $(NVBOARD_DIR) && $(MAKRCLEAN)
+######################################################################
+# Other targets
+
+show-config:
+	$(VERILATOR) -V
+
+#maintainer-copy::
+#clean mostlyclean distclean maintainer-clean::
+#	-rm -rf obj_dir sim *.log *.dmp *.vpd coverage.dat core
 
 include ../Makefile
