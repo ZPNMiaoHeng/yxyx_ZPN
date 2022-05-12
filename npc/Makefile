@@ -25,15 +25,17 @@ endif
 #######################################################################
 #DIFINE
 #------IF shell could input VERILOG_NAME?------------------------------
-VERILOG_NAME = GCD
+VERILOG_NAME = IDU
 EX_NAME = example
-NVBOARD_DIR = $(NVBOARD_HOME)/example
+#NVBOARD_DIR = $(NVBOARD_HOME)/example
+PLAYGROUND_DIR = $(NPC_HOME)/playground
+CPP_DIR = $(PLAYGROUND_DIR)/cpp
 #######################################################################
 #File_DIR
 # Input files for Verilator
-VSRC_DIR = $(shell find ./build/ -name '*.v')
-CSRC_DIR = $(shell find $(NVBOARD_DIR)/csrc/$(VERILOG_NAME) -name '*.cpp')
-GTK_DIR = $(shell find $(NVBOARD_DIR)/sim/ -name '*.vcd')
+VSRC_DIR = $(shell find ./build/ -name $(VERILOG_NAME).v)
+CSRC_DIR = $(shell find $(CPP_DIR)/$(VERILOG_NAME).cpp)
+GTK_DIR  = $(PLAYGROUND_DIR)/sim/dump.vcd
 BUILD_DIR = ./build
 OBJ_DIR = ./obj_dir
 #######################################################################
@@ -94,7 +96,6 @@ clean:
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@echo "Write this Makefile by yourself."
 	@echo "-------------------------- Open GTKwave ------------------------"
 	gtkwave -f $(GTK_DIR)
 
@@ -103,19 +104,17 @@ pre:
 	@echo
 	@echo "------------------- prepare -----------------"
 	@echo "--------------- touch test.cpp -----------------------"
-	@mkdir -p $(NVBOARD_DIR)/csrc/$(VERILOG_NAME)
-	@cp $(NVBOARD_DIR)/csrc/$(EX_NAME)/$(EX_NAME).cpp $(NVBOARD_DIR)/csrc/$(VERILOG_NAME)/$(VERILOG_NAME).cpp
-
+	@cp $(CPP_DIR)/$(EX_NAME).cpp $(CPP_DIR)/$(VERILOG_NAME).cpp
 run:
 # Modify run 
 	@echo
-	@echo "-- VERILATE SIM----------------"
+	@echo "-- VERILATE COMPILE----------------"
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
 
 	@echo
 	@echo "-- MAKE SIM ---------------------"
-	@rm -rf $(NVBOARD_DIR)/sim
-	@mkdir -p $(NVBOARD_DIR)/sim
+	@rm -rf $(PLAYGROUND_DIR)/sim
+	@mkdir -p $(PLAYGROUND_DIR)/sim
 	obj_dir/V$(VERILOG_NAME) +trace
 #####################################################################
 # ERROR
