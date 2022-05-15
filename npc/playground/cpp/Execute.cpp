@@ -1,11 +1,11 @@
 #include "verilated.h"
 #include "verilated_vcd_c.h"
-#include "../obj_dir/VALU.h"
+#include "../obj_dir/VExecute.h"
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 
-static VALU  * top;
+static VExecute  * top;
 // Combinational logic Circuit 
 void step_and_dump_wave(){
     top->eval();
@@ -33,7 +33,7 @@ void reset(int n) {
 void sim_init(){
     contextp = new VerilatedContext;
     tfp = new VerilatedVcdC;
-    top = new VALU;
+    top = new VExecute;
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
     tfp->open("../npc/playground/sim/dump.vcd");
@@ -46,15 +46,17 @@ void sim_exit(){
     tfp->close();
 }
 int main() {
+    int pc = 0x80000000;
     sim_init();
-    reset(10);
+    reset(1);
     for (int i = 0;i<30;i++){
-        int src1 = rand() % 250;
-        int src2 = rand() % 250;
-        int func = rand() % 2; 
-        top-> io_src1 = src1 ;
-        top-> io_src2 = src2 ;
-        top-> io_func = func ;
+        int regA = rand() % 250;
+        int regB = rand() % 250;
+        int aluOp = rand() % 2; 
+        top->io_pcOut  = pc +4*i;
+        top-> io_regA = regA ;
+        top-> io_regB = regB ;
+        top-> io_aluOp = aluOp ;
 //        printf("A = %d, B = %d, Cin = %d, Carry = %d, Result = %d, Overflow = %d, Zero = %d\n", A, B, Cin, top->Carry, top->Result, top->Overflow, top->Zero);
 //        step_and_dump_wave();
         single_cycle();

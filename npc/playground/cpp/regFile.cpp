@@ -47,24 +47,24 @@ void sim_exit(){
 }
 int main() {
     sim_init();
-    reset(10);
-    for (int i = 0;i<30;i++){
+    reset(1);
+    for (int i = 0;i<100;i++){
         int R_Addr1  = rand() % 32;
-        top-> io_R_Addr1 = R_Addr1;
+        top-> io_RAddr1 = R_Addr1;
         int R_En1  = rand() % 2;
-        top-> io_R_En1 = R_En1;
+        top-> io_REn1 = R_En1;
 
         int R_Addr2  = rand() % 32;
-        top-> io_R_Addr2 = R_Addr2;
+        top-> io_RAddr2 = R_Addr2;
         int R_En2  = rand() % 2;
-        top-> io_R_En2 = R_En2;
+        top-> io_REn2 = R_En2;
 
         int W_EN  = rand() % 2;
-        top-> io_W_En = W_EN;
+        top-> io_WEn = W_EN;
         int W_Addr  = rand() % 32;
-        top-> io_W_Addr = W_Addr;
+        top-> io_WAddr = W_Addr;
         int W_Data  = rand() % 32;
-        top-> io_W_Data = W_Data;
+        top-> io_WData = W_Data;
 //        printf("A = %d, B = %d, Cin = %d, Carry = %d, Result = %d, Overflow = %d, Zero = %d\n", A, B, Cin, top->Carry, top->Result, top->Overflow, top->Zero);
 //        step_and_dump_wave();
         single_cycle();

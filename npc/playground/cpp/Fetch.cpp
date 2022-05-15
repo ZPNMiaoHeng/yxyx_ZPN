@@ -1,11 +1,11 @@
 #include "verilated.h"
 #include "verilated_vcd_c.h"
-#include "../obj_dir/VIDU.h"
+#include "../obj_dir/VFetch.h"
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 
-static VIDU  * top;
+static VFetch  * top;
 // Combinational logic Circuit 
 void step_and_dump_wave(){
     top->eval();
@@ -33,7 +33,7 @@ void reset(int n) {
 void sim_init(){
     contextp = new VerilatedContext;
     tfp = new VerilatedVcdC;
-    top = new VIDU;
+    top = new VFetch;
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
     tfp->open("../npc/playground/sim/dump.vcd");
@@ -44,18 +44,16 @@ void sim_exit(){
     tfp->close();
 }
 int main() {
+    int pc = 0x80000000;
     sim_init();
-    reset(1);
-//    top->io_instEn = 1;
-    top->io_inst = 0x00100093 ;
-    single_cycle();
-    top->io_inst = 0x00208113 ;
-    single_cycle();
-    top->io_inst = 0x00108093 ;
-    single_cycle();
-    for (int i = 0;i<3;i++){
-//        int  = rand() % ;
-//        top->io_inst = 0x3e800093;
+    reset(3);
+    for (int i = 0;i<50;i++){
+        int instEn = rand() % 2;
+        int instIn = rand() % 99999;
+        int pcIn   = pc + 4*i;
+        top->io_instEn = instEn ;
+        top->io_instIn = instIn ;
+        top->io_pcIn   = pcIn   ;
         single_cycle();
     }   
     sim_exit();

@@ -46,14 +46,18 @@ void sim_exit(){
     tfp->close();
 }
 int main() {
+    int inst[5] = {0x00100093, 0x00200113, 0x00108193 };
+    // addi x1,x0, 1; addi x2, x0, 2; addi x3, x1, 1  
+    int *p;
+
+    p = inst;
     sim_init();
-    reset(10);
-    for (int i = 0;i<30;i++){
-        int  = rand() % ;
-        top-> = ;
-//        printf("A = %d, B = %d, Cin = %d, Carry = %d, Result = %d, Overflow = %d, Zero = %d\n", A, B, Cin, top->Carry, top->Result, top->Overflow, top->Zero);
-//        step_and_dump_wave();
+    reset(1);
+    top->io_instEn = 1;
+    for (int i = 0;i<4;i++){
+        top->io_inst = *(p + i);
         single_cycle();
     }   
+    
     sim_exit();
 }

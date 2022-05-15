@@ -25,7 +25,12 @@ endif
 #######################################################################
 #DIFINE
 #------IF shell could input VERILOG_NAME?------------------------------
-VERILOG_NAME = IDU
+#VERILOG_NAME = Fetch
+#VERILOG_NAME = IDU
+VERILOG_NAME = riscv64Top
+#VERILOG_NAME = regFile
+#VERILOG_NAME =Decode
+#VERILOG_NAME = Execute
 EX_NAME = example
 #NVBOARD_DIR = $(NVBOARD_HOME)/example
 PLAYGROUND_DIR = $(NPC_HOME)/playground
@@ -56,7 +61,10 @@ VERILATOR_FLAGS += -Os -x-assign 0
 VERILATOR_FLAGS += --trace
 # Generate coverage analysis
 VERILATOR_FLAGS += --coverage
-VERILATOR_FLAGS += --build
+VERILATOR_FLAGS += --build 
+#-v
+#VERILATOR_FLAGS += -y IDU.v
+#VERILATOR_FLAGS += --top-module $(VERILOG_NAME).v
 #######################################################################
 # Table
 .PHONY : run nvboard_run nvboard_clean test verilog help compile bsp reformat checkformat clean sim retest
@@ -105,6 +113,7 @@ pre:
 	@echo "------------------- prepare -----------------"
 	@echo "--------------- touch test.cpp -----------------------"
 	@cp $(CPP_DIR)/$(EX_NAME).cpp $(CPP_DIR)/$(VERILOG_NAME).cpp
+
 run:
 # Modify run 
 	@echo

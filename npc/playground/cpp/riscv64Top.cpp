@@ -1,11 +1,11 @@
 #include "verilated.h"
 #include "verilated_vcd_c.h"
-#include "../obj_dir/VIDU.h"
+#include "../obj_dir/Vriscv64Top.h"
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 
-static VIDU  * top;
+static Vriscv64Top  * top;
 // Combinational logic Circuit 
 void step_and_dump_wave(){
     top->eval();
@@ -14,48 +14,56 @@ void step_and_dump_wave(){
 }
 
 // Sequential circuit 
-void single_cycle() {
-  top->clock = 0; top->eval();
-  contextp->timeInc(1);
-  tfp->dump(contextp->time());
 
-  top->clock = 1; top->eval();
-  contextp->timeInc(1);
-  tfp->dump(contextp->time());
+void p_cycle(){
+    top->clock = 0; top->eval();
+    contextp->timeInc(1);
+    tfp->dump(contextp->time());
+}
+
+void n_cycle(){
+    top->clock = 1; top->eval();
+    contextp->timeInc(1);
+    tfp->dump(contextp->time());
+}
+void single_cycle() {
+    p_cycle();
+    n_cycle();
 }
 
 void reset(int n) {
   top->reset = 1;
   while (n -- > 0) single_cycle();
   top->reset = 0;
+  top->io_instEn = 0;
 }
 
 void sim_init(){
     contextp = new VerilatedContext;
     tfp = new VerilatedVcdC;
-    top = new VIDU;
+    top = new Vriscv64Top;
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
     tfp->open("../npc/playground/sim/dump.vcd");
 }
+
 
 void sim_exit(){
     step_and_dump_wave();
     tfp->close();
 }
 int main() {
+
+    int inst[5] = {0x00100093, 0x00200113, 0x00108193 };
+    // addi x1,x0, 1; addi x2, x0, 2; addi x3, x1, 1  
+    int *p;
+
+    p = inst;
     sim_init();
     reset(1);
-//    top->io_instEn = 1;
-    top->io_inst = 0x00100093 ;
-    single_cycle();
-    top->io_inst = 0x00208113 ;
-    single_cycle();
-    top->io_inst = 0x00108093 ;
-    single_cycle();
-    for (int i = 0;i<3;i++){
-//        int  = rand() % ;
-//        top->io_inst = 0x3e800093;
+    top->io_instEn = 1;
+    for (int i = 0;i<4;i++){
+        top->io_inst = *(p + i);
         single_cycle();
     }   
     sim_exit();

@@ -1,11 +1,11 @@
 #include "verilated.h"
 #include "verilated_vcd_c.h"
-#include "../obj_dir/VPC.h"
+#include "../obj_dir/VDecode.h"
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 
-static VPC  * top;
+static VDecode  * top;
 // Combinational logic Circuit 
 void step_and_dump_wave(){
     top->eval();
@@ -33,12 +33,12 @@ void reset(int n) {
 void sim_init(){
     contextp = new VerilatedContext;
     tfp = new VerilatedVcdC;
-    top = new VPC;
+    top = new VDecode;
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
     tfp->open("../npc/playground/sim/dump.vcd");
 // initial signal
-//    top->io_PC_exchange  = 0b0 ; 
+//    top->      = 0b0 ; 
 }
 
 void sim_exit(){
@@ -47,12 +47,22 @@ void sim_exit(){
 }
 int main() {
     sim_init();
-    reset(10);
-    for (int i = 0;i<50;i++){
-//        int io_PC_exchange = rand() % 2;
-//        top->io_PC_exchange = io_PC_exchange ;
-//        printf("A = %d, B = %d, Cin = %d, Carry = %d, Result = %d, Overflow = %d, Zero = %d\n", A, B, Cin, top->Carry, top->Result, top->Overflow, top->Zero);
-//        step_and_dump_wave();
+    reset(1);
+
+    top->io_inst = 0x00100093 ;
+    top->io_WData = 0x1;
+    single_cycle();
+    top->io_inst = 0x00208113 ;
+    top->io_WData = 0x3;
+    single_cycle();
+    top->io_inst = 0x00310193 ;
+    top->io_WData = 0x6;
+    single_cycle();
+    for (int i = 0;i<5;i++){
+//        int inst  = rand() % ;
+//        top->io_inst = 0x00100093 ;
+//        top->io_pc = 0x80000000;
+//        top->io_WData = 0x1;
         single_cycle();
     }   
     sim_exit();
