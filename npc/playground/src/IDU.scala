@@ -23,19 +23,20 @@ class IDU extends Module {
         val instType   = Output(UInt(5.W))
     })
 
-    val addi_inst = RegInit("b000_00100".U(8.W) )
-    val instOF = io.inst(14,12) ## io.inst(6,2)
-    val inst_addi = Mux(addi_inst === instOF, true.B, false.B)  // make sure the instruction is addi
-//    val imm = RegInit(0.U(64.W))
+    val instAddi = RegInit("b000_00100".U(8.W) )
+    val instEbreak = RegInit("b000_11100".U(8.W))
 
-//    imm := Cat("h00000".U, io.inst(63,20))
+    val instOF = io.inst(14,12) ## io.inst(6,2)                          // fun3 + op[6:2]
+    val instAddiEn   = Mux(instAddi   === instOF, true.B, false.B)  // make sure the instruction is addi
+    val instEbreakEn = Mux(instEbreak === instOF, true.B, false.B)
+
     io.WAddr  := io.inst(11, 7 )   //Mux(inst_addi, io.inst(11,7) , 0.U)
-    io.WEn    := Mux(inst_addi, true.B, false.B)
+    io.WEn    := Mux(instAddiEn, true.B, false.B)
     io.RAddr1 := io.inst(19, 15)   //Mux(inst_addi, io.inst(19,15), 0.U)
-    io.REn1   := Mux(inst_addi, true.B, false.B)
+    io.REn1   := Mux(instAddiEn, true.B, false.B)
     
     io.RAddr2 := io.inst(24, 20)  //Mux(inst_addi, 0.U, io.inst(24,20))
-    io.REn2   := Mux(inst_addi, false.B, true.B)
+    io.REn2   := Mux(instAddiEn, false.B, true.B)
     io.imm    := io.inst(63,20)//imm              //Mux(inst_addi, imm    , 0.U)
-    io.instType   := Mux(inst_addi, "b00001".U, 0.U) 
+    io.instType   := Mux(instAddiEn, "b00001".U, Mux(instEbreakEn, "b00000".U, 0.U)) 
 }
