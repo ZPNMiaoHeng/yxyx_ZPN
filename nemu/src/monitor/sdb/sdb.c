@@ -8,6 +8,7 @@ static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
+word_t paddr_read(paddr_t addr, int len);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -28,16 +29,67 @@ static char* rl_gets() {
 }
 
 static int cmd_c(char *args) {
+//  printf("%d\n",nemu_state.state);
   cpu_exec(-1);
+//  printf("%d\n",nemu_state.state);
   return 0;
 }
 
 
 static int cmd_q(char *args) {
+//  printf("%d\n",nemu_state.state);
   return -1;
 }
 
 static int cmd_help(char *args);
+
+static int cmd_si(char *args){
+  char *arg = strtok(args," ");
+  if(arg == NULL){
+    cpu_exec(1);
+    return 0;
+  } else{
+    int num = atoi(arg);
+    cpu_exec(num);
+    return 0;
+  }
+}
+static int cmd_info(char *args){
+  char *arg = strtok(args," ");
+//  sscanf(args," %s",arg);
+//  printf("%s\n",arg);
+  if(strcmp(arg,"r") == 0){
+//    printf("1%s\n",arg);
+    isa_reg_display();
+  }else if(strcmp(arg,"w")==0){
+    printf("2%s\n",arg);    //*****
+  }else printf("Error\n");
+
+  return 0;
+}
+static int cmd_x(char *args){
+  int num,i;
+  long int addr;
+  long int read_addr;
+  sscanf(args,"%d %lx",&num,&addr);
+//  printf("%d\t%lx\n",num,addr);
+  for(i=0; i<num; i++){
+    read_addr = paddr_read(addr,8);
+    printf("%d\t%#lx\t0x%016lx\n",i,addr,read_addr);
+    addr = addr +4;
+  }
+  return 0;
+
+}
+static int cmd_p(char *args){
+  return 0;
+}
+static int cmd_w(char *args){
+  return 0;
+}
+static int cmd_d(char *args){
+  return 0;
+}
 
 static struct {
   const char *name;
@@ -47,9 +99,12 @@ static struct {
   { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-
-  /* TODO: Add more commands */
-
+  { "si", "Suspend execution after having the program step through N instructions,when N is not given, the default is 1", cmd_si },
+  { "info", "Print Register status(r) or the surveillance point information(w)", cmd_info },
+  { "x", "The value of the expression EXPR is evaluated, and the result is used as the starting memory address", cmd_x },
+  { "p", "Find the value of the expression EXPR", cmd_p },
+  { "w", "When the value of EXPR changes, program execution is paused", cmd_w },
+  { "d", "Deletes a monitor point with the serial number N", cmd_d },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
@@ -62,7 +117,7 @@ static int cmd_help(char *args) {
   if (arg == NULL) {
     /* no argument given */
     for (i = 0; i < NR_CMD; i ++) {
-      printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
+      printf("%s\t - %s\n", cmd_table[i].name, cmd_table[i].description);
     }
   }
   else {
