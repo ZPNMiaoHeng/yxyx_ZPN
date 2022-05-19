@@ -8,15 +8,18 @@ html:
 ## 1. Basic Setup and Checks
 
 ### Default to create a bare-metal kernel image
+# No set MAKECMDGOALS ,then set 
 ifeq ($(MAKECMDGOALS),)
   MAKECMDGOALS  = image
   .DEFAULT_GOAL = image
 endif
 
 ### Override checks when `make clean/clean-all/html`
+# (if image neq clean/clean-all/html, findstring->0) --> ifeq->ture
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
 ### Print build info message
+#NAME =am    ARCH=riscv64-npc,but where define it?  []=指定匹配的字符放在 "[]" 中 #=???
 $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
 ### Check: environment variable `$AM_HOME` looks sane
@@ -25,18 +28,19 @@ ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
 endif
 
 ### Check: environment variable `$ARCH` must be in the supported list
+# ARCHS == all .mk file name
 ARCHS = $(basename $(notdir $(shell ls $(AM_HOME)/scripts/*.mk)))
 ifeq ($(filter $(ARCHS), $(ARCH)), )
   $(error Expected $$ARCH in {$(ARCHS)}, Got "$(ARCH)")
 endif
 
 ### Extract instruction set architecture (`ISA`) and platform from `$ARCH`. Example: `ARCH=x86_64-qemu -> ISA=x86_64; PLATFORM=qemu`
-ARCH_SPLIT = $(subst -, ,$(ARCH))
-ISA        = $(word 1,$(ARCH_SPLIT))
-PLATFORM   = $(word 2,$(ARCH_SPLIT))
+ARCH_SPLIT = $(subst -, ,$(ARCH))                                                             # Example:riscv64-npc --> riscv64 npc
+ISA        = $(word 1,$(ARCH_SPLIT))                                                          # ISA:riscv64
+PLATFORM   = $(word 2,$(ARCH_SPLIT))                                                          # PLATFORM: npc
 
 ### Check if there is something to build
-ifeq ($(flavor SRCS), undefined)
+ifeq ($(flavor SRCS), undefined)                                                              # flavor : check SRCS defined
   $(error Nothing to build)
 endif
 
@@ -46,27 +50,28 @@ endif
 ## 2. General Compilation Targets
 
 ### Create the destination directory (`build/$ARCH`)
-WORK_DIR  = $(shell pwd)
-DST_DIR   = $(WORK_DIR)/build/$(ARCH)
+WORK_DIR  = $(shell pwd)                            #/home/zpn/ysyx-workbench/abstract-machine(this file)  if am/Makefile +am
+DST_DIR   = $(WORK_DIR)/build/$(ARCH)               # ./build/riscv64-npc
 $(shell mkdir -p $(DST_DIR))
 
 ### Compilation targets (a binary image or archive)
-IMAGE_REL = build/$(NAME)-$(ARCH)
-IMAGE     = $(abspath $(IMAGE_REL))
-ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a
+IMAGE_REL = build/$(NAME)-$(ARCH)                   # build am-riscv64-npc???????
+IMAGE     = $(abspath $(IMAGE_REL))                 # IMAGE : /home/zpn/ysyx-workbench/abstract-machine/build/am-riscv64-npc
+ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a		# ARCHIEVE: WORK_DIR/build/am-riscv64-npc.a
 
 ### Collect the files to be linked: object files (`.o`) and libraries (`.a`)
-OBJS      = $(addprefix $(DST_DIR)/, $(addsuffix .o, $(basename $(SRCS))))
-LIBS     := $(sort $(LIBS) am klib) # lazy evaluation ("=") causes infinite recursions
+OBJS      = $(addprefix $(DST_DIR)/, $(addsuffix .o, $(basename $(SRCS))))                       # SRCS all ' ./build/riscv64-npc'+ prefix+'.o'
+LIBS     := $(sort $(LIBS) am klib) # lazy evaluation ("=") causes infinite recursions ???
+#  $(AM_HOME)/$(LIBS)/build/every file + $(LIBS)+riscv64-npc.a
 LINKAGE   = $(OBJS) \
   $(addsuffix -$(ARCH).a, $(join \
-    $(addsuffix /build/, $(addprefix $(AM_HOME)/, $(LIBS))), \
+    $(addsuffix /build/, $(addprefix $(AM_HOME)/, $(LIBS))), \                                   
     $(LIBS) ))
 
 ## 3. General Compilation Flags
 
 ### (Cross) compilers, e.g., mips-linux-gnu-g++
-AS        = $(CROSS_COMPILE)gcc
+AS        = $(CROSS_COMPILE)gcc                       # CROSS_COMPILE := riscv64-linux-gnu-
 CC        = $(CROSS_COMPILE)gcc
 CXX       = $(CROSS_COMPILE)g++
 LD        = $(CROSS_COMPILE)ld
@@ -75,7 +80,7 @@ OBJCOPY   = $(CROSS_COMPILE)objcopy
 READELF   = $(CROSS_COMPILE)readelf
 
 ### Compilation flags
-INC_PATH += $(WORK_DIR)/include $(addsuffix /include/, $(addprefix $(AM_HOME)/, $(LIBS)))
+INC_PATH += $(WORK_DIR)/include $(addsuffix /include/, $(addprefix $(AM_HOME)/, $(LIBS)))  # $(AM_HOME)/$(LIBS)/include/???
 INCFLAGS += $(addprefix -I, $(INC_PATH))
 
 CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
@@ -96,13 +101,13 @@ ASFLAGS  += -MMD $(INCFLAGS)
 ### Fall back to native gcc/binutils if there is no cross compiler
 ifeq ($(wildcard $(shell which $(CC))),)
   $(info #  $(CC) not found; fall back to default gcc and binutils)
-  CROSS_COMPILE :=
+  CROSS_COMPILE :=															
 endif
 
 ## 5. Compilation Rules
 
 ### Rule (compile): a single `.c` -> `.o` (gcc)
-$(DST_DIR)/%.o: %.c
+$(DST_DIR)/%.o: %.c															# ./build/riscv64-npc
 	@mkdir -p $(dir $@) && echo + CC $<
 	@$(CC) -std=gnu11 $(CFLAGS) -c -o $@ $(realpath $<)
 
