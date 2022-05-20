@@ -8,6 +8,7 @@ endif
 
 Q            := @
 KCONFIG_PATH := $(NEMU_HOME)/tools/kconfig
+# fixdep is defined function
 FIXDEP_PATH  := $(NEMU_HOME)/tools/fixdep
 Kconfig      := $(NEMU_HOME)/Kconfig
 rm-distclean += include/generated include/config .config .config.old
@@ -25,8 +26,9 @@ $(MCONF):
 
 $(FIXDEP):
 	$(Q)$(MAKE) $(silent) -C $(FIXDEP_PATH)
-
+#First install conf mconf 
 menuconfig: $(MCONF) $(CONF) $(FIXDEP)
+# 
 	$(Q)$(MCONF) $(Kconfig)
 	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
 

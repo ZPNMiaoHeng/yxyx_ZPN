@@ -2,7 +2,7 @@
 #define __MEMORY_PADDR_H__
 
 #include <common.h>
-
+// RESET_VECTOR= 0x80000000_+0x0
 #define RESET_VECTOR (CONFIG_MBASE + CONFIG_PC_RESET_OFFSET)
 
 /* convert the guest physical address in the guest program to host virtual address in NEMU */

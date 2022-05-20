@@ -28,24 +28,25 @@ static char *log_file = NULL;
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static int difftest_port = 1234;
-
+// 返回image大小存入数组中，并返回数据流大小
 static long load_img() {
   if (img_file == NULL) {
     Log("No image is given. Use the default build-in image.");
     return 4096; // built-in image size
   }
 
-  FILE *fp = fopen(img_file, "rb");
+  FILE *fp = fopen(img_file, "rb");                                //以二进制文件只读方式打开文件img_file
   Assert(fp, "Can not open '%s'", img_file);
 
-  fseek(fp, 0, SEEK_END);
-  long size = ftell(fp);
+  fseek(fp, 0, SEEK_END);                                          // 设置fp指向文本最后一行
+  long size = ftell(fp);                                           // size为整个文件大小
 
   Log("The image is %s, size = %ld", img_file, size);
 
-  fseek(fp, 0, SEEK_SET);
-  int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
-  assert(ret == 1);
+  fseek(fp, 0, SEEK_SET);                                          // fp:指向文件开头
+  //将fp指定数据流-->存入指定的数组中
+  int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);       // 从返回的RESET_VECTOR= 0x80000000, ret：判断是否成功，成功size，；
+  assert(ret == 1);                                                // 如果没有写入数据流到数组中，ret==1,错误 assert
 
   fclose(fp);
   return size;
@@ -61,11 +62,11 @@ static int parse_args(int argc, char *argv[]) {
     {0          , 0                , NULL,  0 },
   };
   int o;
-  while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {
+  while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {   // 依次执行命令选项 ？？？
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
-      case 'p': sscanf(optarg, "%d", &difftest_port); break;
-      case 'l': log_file = optarg; break;
+      case 'p': sscanf(optarg, "%d", &difftest_port); break;     //optarg??将字符串optarg以整形输入到difftest_port
+      case 'l': log_file = optarg; break;                        // 指定log_file
       case 'd': diff_so_file = optarg; break;
       case 1: img_file = optarg; return 0;
       default:

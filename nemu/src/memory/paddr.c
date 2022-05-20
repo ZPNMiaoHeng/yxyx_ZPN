@@ -3,6 +3,7 @@
 #include <device/mmio.h>
 #include <isa.h>
 
+// pmem[0x800_0000] 以4096为一行
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
 #else // CONFIG_PMEM_GARRAY

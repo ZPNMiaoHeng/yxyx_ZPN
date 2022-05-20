@@ -1,6 +1,6 @@
 #include <common.h>
 
-void init_monitor(int, char *[]);
+void init_monitor(int, char *[]);               //将客户程序存入nemu
 void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
