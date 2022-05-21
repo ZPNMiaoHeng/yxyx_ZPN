@@ -26,9 +26,8 @@ $(MCONF):
 
 $(FIXDEP):
 	$(Q)$(MAKE) $(silent) -C $(FIXDEP_PATH)
-#First install conf mconf 
+#First install conf mconf
 menuconfig: $(MCONF) $(CONF) $(FIXDEP)
-# 
 	$(Q)$(MCONF) $(Kconfig)
 	$(Q)$(CONF) $(silent) --syncconfig $(Kconfig)
 

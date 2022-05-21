@@ -21,7 +21,7 @@ uint64_t get_time();
 
 // ----------- log -----------
 // "\33[1;30m"????
-#define ANSI_FG_BLACK   "\33[1;30m"            
+#define ANSI_FG_BLACK   "\33[1;30m"
 #define ANSI_FG_RED     "\33[1;31m"
 #define ANSI_FG_GREEN   "\33[1;32m"
 #define ANSI_FG_YELLOW  "\33[1;33m"
@@ -39,7 +39,7 @@ uint64_t get_time();
 #define ANSI_BG_WHITE   "\33[1;47m"
 #define ANSI_NONE       "\33[0m"
 // 将str以fmt颜色输出
-#define ANSI_FMT(str, fmt) fmt str ANSI_NONE               
+#define ANSI_FMT(str, fmt) fmt str ANSI_NONE
 
 #define log_write(...) IFDEF(CONFIG_TARGET_NATIVE_ELF, \
   do { \
