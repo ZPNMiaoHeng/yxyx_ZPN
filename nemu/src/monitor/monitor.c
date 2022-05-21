@@ -61,8 +61,8 @@ static int parse_args(int argc, char *argv[]) {
     {"help"     , no_argument      , NULL, 'h'},
     {0          , 0                , NULL,  0 },
   };
-  int o;
-  while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {   // 依次执行命令选项 ？？？
+  int o;                                                                     // 只要编译选项产生o=b，就会调用sdb_set_batch_mode();
+  while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {   // 依次执行命令选项 ？？？       -b  h l/d/p 可以指定参数  参数执行完后会返回-1
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;     //optarg??将字符串optarg以整形输入到difftest_port

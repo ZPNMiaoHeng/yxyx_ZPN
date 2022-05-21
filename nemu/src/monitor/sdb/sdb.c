@@ -35,7 +35,6 @@ static int cmd_c(char *args) {
   return 0;
 }
 
-
 static int cmd_q(char *args) {
 //  printf("%d\n",nemu_state.state);
   return -1;
