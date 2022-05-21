@@ -101,6 +101,7 @@ void init_monitor(int argc, char *argv[]) {
   IFDEF(CONFIG_DEVICE, init_device());
 
   /* Perform ISA dependent initialization. */
+  //将img加载host
   init_isa();
 
   /* Load the image to memory. This will overwrite the built-in image. */

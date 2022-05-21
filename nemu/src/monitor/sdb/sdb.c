@@ -3,7 +3,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
-
+//nemu中是否批处理
 static int is_batch_mode = false;
 
 void init_regex();
@@ -105,6 +105,7 @@ static struct {
   { "p", "Find the value of the expression EXPR", cmd_p },
   { "w", "When the value of EXPR changes, program execution is paused", cmd_w },
   { "d", "Deletes a monitor point with the serial number N", cmd_d },
+//  { "a","a",},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
