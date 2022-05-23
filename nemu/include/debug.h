@@ -8,7 +8,7 @@
 #define Log(format, ...) \
     _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "\n", \
         __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-
+// 功能：如果条件不满足，则会返回错误信息。（根据CONFIG_TARGET_AM,是否记录到缓冲区）
 // fflush(stdout)
 // fprintf ：将错误内容标红存入 stderr数据流中
 // assert_fail_msg：
