@@ -4,7 +4,7 @@
 #include <readline/history.h>
 #include "sdb.h"
 
-static int is_batch_mode = true;//false;
+static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
