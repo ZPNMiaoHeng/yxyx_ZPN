@@ -14,7 +14,7 @@ void putch(char ch) {
 }
 
 void halt(int code) {
-  const char *fmt = "Exit code = 40h\n";
+  const char *fmt = "Exit code = 40h\n";                           //指针指向的数据可读的，，fmt的值可以修改
   for (const char *p = fmt; *p; p++) {
     char ch = *p;
     if (ch == '0' || ch == '4') {
