@@ -19,14 +19,26 @@ int abs(int x) {
   return (x < 0 ? -x : x);
 }
 
-int atoi(const char* nptr) {
+int atoi(const char* nptr) {                 // s -> int 
   int x = 0;
-  while (*nptr == ' ') { nptr ++; }
-  while (*nptr >= '0' && *nptr <= '9') {
+  while (*nptr == ' ') { nptr ++; }          // 检测空格就,继续检测
+  while (*nptr >= '0' && *nptr <= '9') {     // 检测到字符串:字符串数字 -> 整形数字
     x = x * 10 + *nptr - '0';
     nptr ++;
   }
   return x;
+}
+
+void itoa(const int n, char* buf){
+  int i;
+  if(n < 10 ){
+    buf[0] = n + '0';
+    buf[1] = '\0';
+  } 
+  itoa(n/10, buf);
+  for (i=0; buf[i]!='\0'; i++);
+  buf[i] = (n%10) + '0';
+  buf[i+1] = '\0';
 }
 
 void *malloc(size_t size) {
@@ -40,7 +52,7 @@ void *malloc(size_t size) {
 }
 
 void free(void *ptr) {
-  
+
 }
 
 #endif
