@@ -13,15 +13,15 @@
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
-static bool g_print_step = false;
+static bool g_print_step = false;                                                   // ???
 
 void device_update();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
-  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
+  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }                            // 将本条指令中的logbuf输出到 log中
 #endif
-  if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
+  if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }                  // ???
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 }
 
@@ -33,31 +33,25 @@ static void exec_once(Decode *s, vaddr_t pc) {
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);                         //PC以128（小于128也就是全部）输出到nemu-log格式
-//  Log("p1 %s\n", s->logbuf);
   int ilen = s->snpc - s->pc;                                                       //一般为4,跳转指令（跳转到除了下一条指令之外）大于4
   int i;
   uint8_t *inst = (uint8_t *)&s->isa.inst.val;
   for (i = ilen - 1; i >= 0; i --) {
     p += snprintf(p, 4, " %02x", inst[i]);                                          //将当前指令以每两位写入logbuf中，并且p指针加写入字符串大小
   }
-//  Log("p2 %s\n", s->logbuf);
   int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);                                      // 4
   int space_len = ilen_max - ilen;                                                  // 0 或者小于0
   if (space_len < 0) space_len = 0;                                                 // 0
   space_len = space_len * 3 + 1;   
-//  Log("p4 %s\n", s->logbuf);                                                 // 1 
   memset(p, ' ', space_len);                                                        // 添加指令与汇编输出空格 ？？？为啥不是设置第一位i？？  因为他用的指针阿～hhhh
   p += space_len;                                                                   // p在跳转到位置
-//  Log("p3 %s\n", s->logbuf);
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);     // (p, 96, s->pc, inst , 4)：p保存汇编代码
 
-  Log("logbuf is %s\n", s->logbuf);
-  Log("p is %s\n", p);
 // size；计算为logbuf 减去上一条指令汇编。 因为logbuf是覆盖上一条logbuf信息，故减去上一条在logbuf中存留的汇编指令 
 // logbuf 已经存入当前指令的pc与inst，但p保存的是上一条汇编
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
-//  Log("size is %ld: %s\n", s->logbuf + sizeof(s->logbuf) - p, s->logbuf);
+//  Log("inst information : %s\n", s->logbuf);
 #endif
 }
 
@@ -67,6 +61,7 @@ static void execute(uint64_t n) {                   // CPU break only NO NEMU_RU
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
+    
     if (nemu_state.state != NEMU_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());
   }
