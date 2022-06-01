@@ -9,42 +9,59 @@
  * You can modify this value as you want.
  */
 #define MAX_INST_TO_PRINT 10
-
+/*
 #define BUFF_MAX_LEN 16*128
 #define VOS_OK 0
 #define VOS_ERR -1
 
-char *pHead = NULL;		   	//环形缓冲区首地址
+char *pHead = NULL;		   	//环形缓冲区首地址11111
 char *pValidRead = NULL;	//已使用环形缓冲区首地址
 char *pValidWrite = NULL;	//已使用环形缓冲区尾地址
 char *pTail = NULL;			  //环形缓冲区尾地址
 char readBuffer[1024];
-int i=0;
+int readLen=0;
 
-//memset(readBuffer, 0, sizeof(readBuffer));
-
+*/
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;                                                   // ???
 
+/*
 void device_update();
 void InitRingBuff();
 void FreeRingBuff();
 int WriteRingBuff(char *pBuff, int AddLen);
 int ReadRingBuff(char *pBuff, int len);
+*/
+/* 
+static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
+#ifdef CONFIG_ITRACE_COND
+  if (ITRACE_COND) {
+
+    Log("_this->logbuf is %s\n",_this->logbuf);
+    WriteRingBuff(_this->logbuf, 128);
+    
+    readLen += ReadRingBuff(readBuffer, 256);                 // 返回值为 打印的指令条数
+    Log("ReadRingBufflen:%d\n",readLen);
+
+    if(readLen ==3){
+      ReadRingBuff(readBuffer, 128);
+      for(int i = 0; i<readLen; i++)
+              log_write("%d-->%s\n", readLen, readBuffer);
+//      log_write("%ld\n", sizeof(_this->logbuf));
+//    log_write("%s\n", _this->logbuf);                                               // itrace
+    }
+  }                            // 将本条指令中的logbuf输出到 log中
+#endif
+  if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }                  // ???
+  IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+}*/
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) {
-    i++;
-    /*产生错误信号*/
-    if(/*nemu_state.state == NEMU_ABORT*/i==3){
-      ReadRingBuff(readBuffer,sizeof(_this->logbuf));
-      log_write("%d-->%s\n", i,readBuffer);
-//    log_write("%s\n", _this->logbuf);                                               // itrace
-    }
-
+        log_write("%s\n", _this->logbuf);                                               // itrace
   }                            // 将本条指令中的logbuf输出到 log中
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }                  // ???
@@ -111,10 +128,11 @@ void assert_fail_msg() {
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
 /*改进：兼容单步执行*/
+/*
 #ifdef CONFIG_ITRACE_COND
   InitRingBuff();
 #endif
-
+*/
   g_print_step = (n < MAX_INST_TO_PRINT);
   switch (nemu_state.state) {                                                 //before execute inst nemu_state 
     case NEMU_END: case NEMU_ABORT:
@@ -141,16 +159,18 @@ void cpu_exec(uint64_t n) {
           nemu_state.halt_pc);
       // fall through
     case NEMU_QUIT: statistic();
+    /*
 #ifdef CONFIG_ITRACE_COND
   FreeRingBuff();
-#endif
+#endif*/
+
   }
 }
-
+/*
 void InitRingBuff(){
   Log("--InitRingBuff--");
 	if(NULL == pHead){
-		pHead = (char *)malloc(BUFF_MAX_LEN * 128/*sizeof(char)*/);                   //sizeof(char) = 1 分配16大小空间
+		pHead = (char *)malloc(BUFF_MAX_LEN * 128);                   //sizeof(char) = 1 分配16大小空间
 	}
 
 	memset(pHead, 0 , sizeof(BUFF_MAX_LEN)*128);                   //sizeof(16) = 4
@@ -170,6 +190,8 @@ void FreeRingBuff(){
 
 //向缓冲区写数据
 int WriteRingBuff(char *pBuff, int AddLen){
+  Log("pHead is %s\n", pHead);
+  Log("写入数据：pBuff is %s\n", pBuff);
 	if(NULL == pHead){
 		printf("WriteRingBuff:RingBuff is not Init!\n");
 		return VOS_ERR;
@@ -180,7 +202,7 @@ int WriteRingBuff(char *pBuff, int AddLen){
 		return VOS_ERR;
 	}
 
-	//若新增的数据长度大于写指针和尾指针之间的长度
+  //若新增的数据长度大于写指针和尾指针之间的长度
 	if(pValidWrite + AddLen > pTail){
 		int PreLen = pTail - pValidWrite;
 		int LastLen = AddLen - PreLen;
@@ -190,10 +212,13 @@ int WriteRingBuff(char *pBuff, int AddLen){
 		pValidWrite = pHead + LastLen;	//新环形缓冲区尾地址
 	}
 	else{
+    printf("-----------------依次写数据--------------------------\n");
 		memcpy(pValidWrite, pBuff, AddLen);	//将新数据内容添加到缓冲区
-		pValidWrite += AddLen;	//新的有效数据尾地址
+		pValidWrite += 49;	//新的有效数据尾地址
+
 	}
-//  Log("WriteRingBuff BUFF is %s\n", pHead);
+
+//  Log("写入数据之后：RingBuff BUFF is %s\n", pHead);
 	return VOS_OK;
 }
 
@@ -220,8 +245,10 @@ int ReadRingBuff(char *pBuff, int len){
 	}
 	else{
 		memcpy(pBuff, pValidRead, len);
+    printf("pBuff is %s\n", pBuff);
 		pValidRead += len;
 	}
 
-	return len;
+	return 1;
 }
+*/
