@@ -8,7 +8,48 @@ static uint8_t *pmem = NULL;
 #else // CONFIG_PMEM_GARRAY
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 #endif
+/*
+static struct mtrace{
+  paddr_t mPC;  
+  char mType[10];
+  //  char mitrace[128];
+} mtrace[16];
 
+enum{
+  READ, WRITE
+};
+
+void mTrace(paddr_t addr, int type){
+  static char error_flag[10] = "-->";
+  static char zero_flag [10] = "   ";
+  static int i = 0;
+//  strcpy(mtrace[i].mitrace, logbuf);
+//  strcpy(Mtrace[i].mitrace, logbuf[128]);
+  mtrace[i].mPC = addr;
+  
+//  if(type == IFETCH)
+//    strcpy(mtrace[i].mType, "iftech");
+//  else
+  if(type == READ)
+    strcpy(mtrace[i].mType, "read" );
+  else if(type == WRITE)
+    strcpy(mtrace[i].mType, "write");
+
+  if(i == 15) i=0;
+    else i++;
+
+if(!((addr >= CONFIG_MBASE) && (addr - CONFIG_MSIZE < (paddr_t)CONFIG_MBASE))) {
+  printf("-------------------- Mtarce Start --------------------\n");
+  for(int k=0; k<16; k++){
+    if(k != i-1)
+      printf("%d\t%s\t0x%08x\t%s\n", k, zero_flag ,mtrace[k].mPC ,mtrace->mType);
+    else 
+      printf("%d\t%s\t0x%08x\t%s\n", k, error_flag ,mtrace[k].mPC ,mtrace->mType);
+    }
+  printf("-------------------- Mtarce End ----------------------\n");
+  }
+}
+*/
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
 
@@ -43,6 +84,7 @@ void init_mem() {
 }
 
 word_t paddr_read(paddr_t addr, int len) {
+//  mTrace(addr, READ);
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
@@ -50,7 +92,10 @@ word_t paddr_read(paddr_t addr, int len) {
 }
 
 void paddr_write(paddr_t addr, int len, word_t data) {
+//  mTrace(addr, WRITE);
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
 }
+
+
