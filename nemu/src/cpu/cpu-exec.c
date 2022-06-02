@@ -62,7 +62,9 @@ static void exec_once(Decode *s, vaddr_t pc) {
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
 //  Log("inst information : %s\n", s->logbuf);
 //  Log("%s\n", s->logbuf);
+#ifdef CONFIG_IRINGBUF_COND
   iRingBuf( s->logbuf);
+#endif
 #endif
 }
 

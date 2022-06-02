@@ -4,11 +4,10 @@
 static struct mtrace{
   paddr_t mPC;  
   char mType[20];
-//  char mitrace[128];
 } mtrace[16];
 
 enum{
-  ERROR,IFETCH, READ, WRITE
+  ERROR, IFETCH, READ, WRITE
 };
 
 int mType = ERROR;
@@ -17,10 +16,7 @@ void mTrace(paddr_t maddr, int mTypet){
   static char error_flag[10] = "-->";
   static char zero_flag [10] = "   ";
   static int i = 0;
-//  strcpy(mtrace[i].mitrace, s->logbuf);
-//  strcpy(Mtrace[i].mitrace, logbuf[128]);
   mtrace[i].mPC = maddr;
-//  mtrace[i].mType = mTypet;
 
   if(mTypet == IFETCH)
     strcpy(mtrace[i].mType, "iftech");
@@ -30,9 +26,6 @@ void mTrace(paddr_t maddr, int mTypet){
     strcpy(mtrace[i].mType, "Store" );
   else 
     strcpy(mtrace[i].mType, "Error");
-    
-//  else if(type == WRITE)
-//    strcpy(mtrace[i].mType, "write");
 
   if(i == 15) i=0;
     else i++;
@@ -50,22 +43,28 @@ if(!((maddr >= CONFIG_MBASE) && (maddr - CONFIG_MSIZE < (paddr_t)CONFIG_MBASE)))
 }
 
 word_t vaddr_ifetch(vaddr_t addr, int len) {
+#ifdef CONFIG_MTRACE_COND
   mType = IFETCH;
+#endif
   mTrace(addr, mType);
-  printf("vaddr_ifetch\tPC:%08lx\tifetch\n", addr);
+//  printf("vaddr_ifetch\tPC:%08lx\tifetch\n", addr);
   return paddr_read(addr, len);
 }
 
 word_t vaddr_read(vaddr_t addr, int len) {
+#ifdef CONFIG_MTRACE_COND
   mType = READ;
+#endif
   mTrace(addr, mType);
-  printf("vaddr_read\tPC:%08lx\tread\n",addr);
+//  printf("vaddr_read\tPC:%08lx\tread\n",addr);
   return paddr_read(addr, len);
 }
 
 void vaddr_write(vaddr_t addr, int len, word_t data) {
+#ifdef CONFIG_MTRACE_COND
   mType = WRITE;
+#endif
   mTrace(addr, mType);
-  printf("vaddr_write\tPC:%08lx\twrite\t%d\n",addr,mType);
+//  printf("vaddr_write\tPC:%08lx\twrite\t%d\n",addr,mType);
   paddr_write(addr, len, data);
 }
