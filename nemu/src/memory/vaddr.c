@@ -1,6 +1,7 @@
 #include <isa.h>
 #include <memory/paddr.h>
 
+#ifdef CONFIG_MTRACE
 static struct mtrace{
   paddr_t mPC;  
   char mType[20];
@@ -41,33 +42,25 @@ if(!((maddr >= CONFIG_MBASE) && (maddr - CONFIG_MSIZE < (paddr_t)CONFIG_MBASE)))
   printf("-------------------- Mtarce End ----------------------\n");
   }
 }
+#endif
 
 word_t vaddr_ifetch(vaddr_t addr, int len) {
-  mType = IFETCH;
-//  IFDEF(CONFIG_MTRACE_COND,mTrace(addr, mType));
-#ifdef CONFIG_MTRACE_COND
-  mTrace(addr, mType);
-#endif
+  IFDEF(CONFIG_MTRACE ,mType = IFETCH);
+  IFDEF(CONFIG_MTRACE ,mTrace(addr, mType));
 //  printf("vaddr_ifetch\tPC:%08lx\tifetch\n", addr);
   return paddr_read(addr, len);
 }
 
 word_t vaddr_read(vaddr_t addr, int len) {
-  mType = READ;
-//  IFDEF(CONFIG_MTRACE_COND,mTrace(addr, mType));
-#ifdef CONFIG_MTRACE_COND
-  mTrace(addr, mType);
-#endif
+  IFDEF(CONFIG_MTRACE ,mType = READ);
+  IFDEF(CONFIG_MTRACE,mTrace(addr, mType));
 //  printf("vaddr_read\tPC:%08lx\tread\n",addr);
   return paddr_read(addr, len);
 }
 
 void vaddr_write(vaddr_t addr, int len, word_t data) {
-  mType = WRITE;
-//  IFDEF(CONFIG_MTRACE_COND, mTrace(addr, mType));
-#ifdef CONFIG_MTRACE_COND
-  mTrace(addr, mType);
-#endif
+  IFDEF(CONFIG_MTRACE ,mType = WRITE);
+  IFDEF(CONFIG_MTRACE, mTrace(addr, mType));
 //  printf("vaddr_write\tPC:%08lx\twrite\t%d\n",addr,mType);
   paddr_write(addr, len, data);
 }

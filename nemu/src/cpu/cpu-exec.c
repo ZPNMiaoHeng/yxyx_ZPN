@@ -19,7 +19,23 @@ static struct iringbuf{
   char iringp[128];
 } iringbuf[16];
 
-static void iRingBuf(char irp[128]);
+static void iRingBuf( char irp[128]){
+  static int i =0;
+  strcpy(iringbuf[i].iringp, irp);
+  if(i == 15) i = 0;
+    else i++;
+  
+  if(nemu_state.state == NEMU_ABORT || nemu_state.halt_ret ==1 ){
+    char error_flag[10] = "-->";
+    char zero_flag [10] = "   ";
+    for(int k =0; k<16; k++){
+      if(k != i-1)
+        Log("%s\t%s\n", zero_flag ,iringbuf[k].iringp);
+      else 
+        Log("%s\t%s\n", error_flag ,iringbuf[k].iringp);
+    }
+  }
+}
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -29,6 +45,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }                  // ???
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+  iRingBuf(_this->logbuf);
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
@@ -60,7 +77,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
 //  Log("inst information : %s\n", s->logbuf);
 //  Log("%s\n", s->logbuf);
-  iRingBuf( s->logbuf);
+//  iRingBuf( s->logbuf);
 #endif
 }
 
@@ -119,23 +136,5 @@ void cpu_exec(uint64_t n) {
           nemu_state.halt_pc);
       // fall through
     case NEMU_QUIT: statistic();
-  }
-}
-
-static void iRingBuf( char irp[128]){
-  static int i =0;
-  strcpy(iringbuf[i].iringp, irp);
-  if(i == 15) i = 0;
-    else i++;
-  
-  if(nemu_state.state == NEMU_ABORT || nemu_state.halt_ret ==1 ){
-    char error_flag[10] = "-->";
-    char zero_flag [10] = "   ";
-    for(int k =0; k<16; k++){
-      if(k != i-1)
-        Log("%s\t%s\n", zero_flag ,iringbuf[k].iringp);
-      else 
-        Log("%s\t%s\n", error_flag ,iringbuf[k].iringp);
-    }
   }
 }
