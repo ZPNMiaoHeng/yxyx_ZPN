@@ -43,28 +43,31 @@ if(!((maddr >= CONFIG_MBASE) && (maddr - CONFIG_MSIZE < (paddr_t)CONFIG_MBASE)))
 }
 
 word_t vaddr_ifetch(vaddr_t addr, int len) {
-#ifdef CONFIG_MTRACE_COND
   mType = IFETCH;
-#endif
+//  IFDEF(CONFIG_MTRACE_COND,mTrace(addr, mType));
+#ifdef CONFIG_MTRACE_COND
   mTrace(addr, mType);
+#endif
 //  printf("vaddr_ifetch\tPC:%08lx\tifetch\n", addr);
   return paddr_read(addr, len);
 }
 
 word_t vaddr_read(vaddr_t addr, int len) {
-#ifdef CONFIG_MTRACE_COND
   mType = READ;
-#endif
+//  IFDEF(CONFIG_MTRACE_COND,mTrace(addr, mType));
+#ifdef CONFIG_MTRACE_COND
   mTrace(addr, mType);
+#endif
 //  printf("vaddr_read\tPC:%08lx\tread\n",addr);
   return paddr_read(addr, len);
 }
 
 void vaddr_write(vaddr_t addr, int len, word_t data) {
-#ifdef CONFIG_MTRACE_COND
   mType = WRITE;
-#endif
+//  IFDEF(CONFIG_MTRACE_COND, mTrace(addr, mType));
+#ifdef CONFIG_MTRACE_COND
   mTrace(addr, mType);
+#endif
 //  printf("vaddr_write\tPC:%08lx\twrite\t%d\n",addr,mType);
   paddr_write(addr, len, data);
 }
