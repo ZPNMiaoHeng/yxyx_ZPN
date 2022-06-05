@@ -19,7 +19,8 @@ endif
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
 ### Print build info message
-#NAME =am    ARCH=riscv64-npc,but where define it?  []=指定匹配的字符放在 "[]" 中 #=???
+#NAME =am    ARCH=riscv64-nemu,命令行输入  []=指定匹配的字符放在 "[]" 中 #=???
+# 显示信息： # Building am-image riscv64-nemu
 $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
 ### Check: environment variable `$AM_HOME` looks sane
@@ -37,11 +38,11 @@ ifeq ($(filter $(ARCHS), $(ARCH)), )
 endif
 
 ### Extract instruction set architecture (`ISA`) and platform from `$ARCH`. Example: `ARCH=x86_64-qemu -> ISA=x86_64; PLATFORM=qemu`
-# Example:riscv64-npc --> riscv64 npc
+# Example:riscv64-nemu --> riscv64 nemu
 ARCH_SPLIT = $(subst -, ,$(ARCH))
 # ISA:riscv64
 ISA        = $(word 1,$(ARCH_SPLIT))
-# PLATFORM: npc
+# PLATFORM: nemu
 PLATFORM   = $(word 2,$(ARCH_SPLIT))
 
 ### Check if there is something to build
@@ -58,16 +59,18 @@ endif
 ### Create the destination directory (`build/$ARCH`)
 #/home/zpn/ysyx-workbench/abstract-machine(this file)  if am/Makefile +am
 WORK_DIR  = $(shell pwd)
-# ./build/riscv64-npc
+# ./build/riscv64-nemu
 DST_DIR   = $(WORK_DIR)/build/$(ARCH)
 $(shell mkdir -p $(DST_DIR))
 
 ### Compilation targets (a binary image or archive)
-# build am-riscv64-npc???????
+# build am-riscv64-nemu
 IMAGE_REL = build/$(NAME)-$(ARCH)
-# IMAGE : /home/zpn/ysyx-workbench/abstract-machine/build/am-riscv64-npc
+# IMAGE : /home/zpn/ysyx-workbench/abstract-machine/build/am-riscv64-nemu
 IMAGE     = $(abspath $(IMAGE_REL))
-# ARCHIEVE: WORK_DIR/build/am-riscv64-npc.a  ARCH:就是选择输入的架构
+# ARCHIEVE: WORK_DIR/build/am-riscv64-nemu.a  ARCH:就是选择输入的架构
+IMAGE_ELF   = $(WORK_DIR)/build/$(NAME)-$(ARCH).elf
+
 ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a
 
 ### Collect the files to be linked: object files (`.o`) and libraries (`.a`)
@@ -97,7 +100,6 @@ READELF   = $(CROSS_COMPILE)readelf
 # $(AM_HOME)/$(LIBS)/include/???
 INC_PATH += $(WORK_DIR)/include $(addsuffix /include/, $(addprefix $(AM_HOME)/, $(LIBS)))
 INCFLAGS += $(addprefix -I, $(INC_PATH))
-#INCFLAGS += $(addprefix -b, $(INC_PATH))
 
 CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
             -D__ISA__=\"$(ISA)\" -D__ISA_$(shell echo $(ISA) | tr a-z A-Z)__ \

@@ -19,6 +19,15 @@ static struct iringbuf{
   char iringp[128];
 } iringbuf[16];
 
+extern struct funt{
+    uint64_t value;
+    int ffnum;
+    int fsize;
+    char name[20];
+}func[20];
+
+void ftrace_main(word_t ftpc,uint64_t inst,word_t fdnpc);
+
 static void iRingBuf( char irp[128]){
   static int i =0;
   strcpy(iringbuf[i].iringp, irp);
@@ -78,6 +87,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
 //  Log("inst information : %s\n", s->logbuf);
 //  Log("%s\n", s->logbuf);
 //  iRingBuf( s->logbuf);
+//  IFDEF(CONFIG_FTRACE,ftrace_main(s->pc,s->isa.inst.val,s->dnpc));
+  ftrace_main(s->pc,s->isa.inst.val,s->dnpc);
 #endif
 }
 
@@ -138,3 +149,37 @@ void cpu_exec(uint64_t n) {
     case NEMU_QUIT: statistic();
   }
 }
+
+void ftrace_main(word_t ftpc,uint64_t inst,word_t fdnpc){
+  //printf("pc:%#08lx,inst:%x\n",ftpc,inst);
+  static int space_len=0;
+  if(((inst&0x0000007f)==0b1101111)||((inst&0x0000007f)==0b1100111)){
+    //printf("catch jal/jalr dnpc=%ld\n",fdnpc);
+    for(int i=0;i<func[1].ffnum;i++){
+      if(fdnpc==func[i].value){
+        //strcat(space1,"  ");
+        printf("%#08lx:",ftpc);
+        for(int j=0;j<=space_len;j++)
+          putchar(' ');
+        printf("call [%s@%lx]\n",func[i].name,func[i].value);
+        space_len = space_len + 4;
+      }
+    }
+    if(inst==0x00008067){
+      for(int i=0;i<func[1].ffnum;i++){
+        if(ftpc-func[i].value<=func[i].fsize){
+          if(space_len>=4)
+            space_len= space_len-4;
+        printf("%#08lx:",ftpc);
+        for(int j=0;j<=space_len;j++)
+          putchar(' ');
+        printf("ret [%s]\n",func[i].name);
+        }
+      }
+    }
+  }
+  //for(int ii=0;ii<func[1].ffnum;ii++)
+  //  printf("cpu:::==ffnum=%d fnum[%d]:%ld name:%s\n",func[1].ffnum,ii,func[ii].value,func[ii].name);
+}
+////////////////////////////////
+

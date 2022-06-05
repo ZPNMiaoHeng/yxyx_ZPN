@@ -3,6 +3,7 @@
 
 void init_rand();
 void init_log(const char *log_file);
+void init_ftrace(const char *ftrace_file);
 void init_mem();
 void init_difftest(char *ref_so_file, long img_size, int port);
 void init_device();
@@ -68,8 +69,10 @@ static int parse_args(int argc, char *argv[]) {
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
-      case 'l': Log("-----------log_file-------------\n");log_file = optarg; break;
-      case 'f': Log("-----------ftrace_file-------------\n");ftrace_file = optarg; break;
+      case 'l': printf("-----------log_file-------------\n");
+        log_file = optarg; break;
+      case 'f': printf("-----------ftrace_file-------------\n");
+        ftrace_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
       case 1: img_file = optarg; return 0;
       default:
@@ -98,6 +101,8 @@ void init_monitor(int argc, char *argv[]) {
   /* Open the log file. */
   init_log(log_file);
 
+  /* Lead the ELF file */
+  init_ftrace(ftrace_file);
   /* Initialize memory. */
   init_mem();
 
