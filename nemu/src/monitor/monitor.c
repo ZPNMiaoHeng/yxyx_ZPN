@@ -103,6 +103,7 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Lead the ELF file */
   init_ftrace(ftrace_file);
+  
   /* Initialize memory. */
   init_mem();
 

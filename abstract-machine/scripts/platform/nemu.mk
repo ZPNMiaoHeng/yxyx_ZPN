@@ -13,7 +13,7 @@ LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld \
 LDFLAGS   += --gc-sections -e _start
 NEMUFLAGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt
 NEMUFLAGS += -b
-# 如何指定相对应的.elf文件 am-kernels/tests/cpu-tests/build/add-riscv64-nemu.elf
+# 执行ftrace功能，传入.elf文件
 NEMUFLAGS += -f $(IMAGE_ELF)
 
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
