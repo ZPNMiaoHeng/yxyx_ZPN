@@ -7,17 +7,14 @@
 
 int printf(const char *fmt, ...) {
 /*
-  va_list ap;
-  while (*fmt != '\0'){
-    if(*fmt == '%'){
-      fmt++;
-      switch(*fmt){
-        case 's':{   break;}
-      }
-    }
-  }
+  int i; 
+  char buf[256]; 
+
+  va_list arg = (va_list)((char*)(&fmt) + 4); 
+  i = sprintf(buf, fmt, arg); 
+  write(buf, i); 
+  return i; 
   */
-//  return 13;
   panic("Not implemented");
 }
 

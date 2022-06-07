@@ -57,28 +57,27 @@ endif
 ## 2. General Compilation Targets
 
 ### Create the destination directory (`build/$ARCH`)
-#/home/zpn/ysyx-workbench/abstract-machine(this file)  if am/Makefile +am
+# 打印当前文件路径
 WORK_DIR  = $(shell pwd)
-# ./build/riscv64-nemu
+# ./build/架构---> 架构路径
 DST_DIR   = $(WORK_DIR)/build/$(ARCH)
 $(shell mkdir -p $(DST_DIR))
 
 ### Compilation targets (a binary image or archive)
-# build am-riscv64-nemu
+# 路径
 IMAGE_REL = build/$(NAME)-$(ARCH)
-# IMAGE : /home/zpn/ysyx-workbench/abstract-machine/build/am-riscv64-nemu
+# 返回目标绝对地址： IMAGE : /home/zpn/ysyx-workbench/abstract-machine/build/*****
 IMAGE     = $(abspath $(IMAGE_REL))
-# ARCHIEVE: WORK_DIR/build/am-riscv64-nemu.a  ARCH:就是选择输入的架构
 IMAGE_ELF   = $(WORK_DIR)/build/$(NAME)-$(ARCH).elf
-
 ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a
 
 ### Collect the files to be linked: object files (`.o`) and libraries (`.a`)
-# SRCS all ' ./build/riscv64-npc'+ prefix+'.o'
+# SRCS all ' ./build/ARCH'/'SRCS.o'
 OBJS      = $(addprefix $(DST_DIR)/, $(addsuffix .o, $(basename $(SRCS))))
 # lazy evaluation ("=") causes infinite recursions ???
+# am klib
 LIBS     := $(sort $(LIBS) am klib)
-#  $(AM_HOME)/$(LIBS)/build/every file + $(LIBS)+riscv64-npc.a
+#  $(AM_HOME)/$(LIBS)/build/$(LIBS)+ARCH.a
 LINKAGE   = $(OBJS) \
   $(addsuffix -$(ARCH).a, $(join \
     $(addsuffix /build/, $(addprefix $(AM_HOME)/, $(LIBS))), \
@@ -97,7 +96,7 @@ OBJCOPY   = $(CROSS_COMPILE)objcopy
 READELF   = $(CROSS_COMPILE)readelf
 
 ### Compilation flags
-# $(AM_HOME)/$(LIBS)/include/???
+# -I $(WORK_DIR)/include $(AM_HOME)/$(LIBS)/include/
 INC_PATH += $(WORK_DIR)/include $(addsuffix /include/, $(addprefix $(AM_HOME)/, $(LIBS)))
 INCFLAGS += $(addprefix -I, $(INC_PATH))
 
@@ -127,16 +126,19 @@ endif
 ### Rule (compile): a single `.c` -> `.o` (gcc)
 # ./build/riscv64-npc
 $(DST_DIR)/%.o: %.c
+#	@echo + LD "->" $*
 	@mkdir -p $(dir $@) && echo + CC $<
 	@$(CC) -std=gnu11 $(CFLAGS) -c -o $@ $(realpath $<)
 
 ### Rule (compile): a single `.cc` -> `.o` (g++)
 $(DST_DIR)/%.o: %.cc
+#	@echo + LD "->" $*
 	@mkdir -p $(dir $@) && echo + CXX $<
 	@$(CXX) -std=c++17 $(CXXFLAGS) -c -o $@ $(realpath $<)
 
 ### Rule (compile): a single `.cpp` -> `.o` (g++)
 $(DST_DIR)/%.o: %.cpp
+#	@echo + LD "->" $*
 	@mkdir -p $(dir $@) && echo + CXX $<
 	@$(CXX) -std=c++17 $(CXXFLAGS) -c -o $@ $(realpath $<)
 
@@ -147,6 +149,7 @@ $(DST_DIR)/%.o: %.S
 
 ### Rule (recursive make): build a dependent library (am, klib, ...)
 $(LIBS): %:
+#	@echo + LD "->" $*
 	@$(MAKE) -s -C $(AM_HOME)/$* archive
 
 ### Rule (link): objects (`*.o`) and libraries (`*.a`) -> `IMAGE.elf`, the final ELF binary to be packed into image (ld)
