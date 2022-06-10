@@ -15,10 +15,6 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;                                                   // ???
 
-static struct iringbuf{
-  char iringp[128];
-} iringbuf[16];
-
 extern struct funt{
     uint64_t value;
     int ffnum;
@@ -27,6 +23,11 @@ extern struct funt{
 }func[20];
 
 void ftrace_main(word_t ftpc,uint64_t inst,word_t fdnpc);
+
+#ifdef CONFIG_IRINGBUF_COND
+static struct iringbuf{
+  char iringp[128];
+} iringbuf[16];
 
 static void iRingBuf( char irp[128]){
   static int i =0;
@@ -45,6 +46,7 @@ static void iRingBuf( char irp[128]){
     }
   }
 }
+#endif
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -54,7 +56,9 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }                  // ???
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
-  iRingBuf(_this->logbuf);
+  #ifdef CONFIG_IRINGBUF_COND
+    iRingBuf(_this->logbuf);
+  #endif
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
