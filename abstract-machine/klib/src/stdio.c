@@ -40,6 +40,7 @@ int sprintf(char *out, const char *fmt, ...) {
   int  n;
   char *s;
   char buf[65];
+//  char *d = buf;
   memset(buf, 0, sizeof(buf));
   va_list ap;
   va_start(ap, fmt);
@@ -50,13 +51,14 @@ int sprintf(char *out, const char *fmt, ...) {
       switch (*fmt ){
         case 'd':{ 
           n = va_arg(ap, int);                                     //将检测的 %d -> n
-          if(n < 0){
+          if(n < 0) {
               *out = '-';
               out++;
               n = -n;
           }
           itoa(n,buf);                 
           memmove(out,buf,strlen(buf));
+//          d += strlen(buf);
           count += strlen(buf);
           out += strlen(buf);
           break;
@@ -66,6 +68,7 @@ int sprintf(char *out, const char *fmt, ...) {
           memmove(out,s,strlen(s));
           count += strlen(s);
           out += strlen(s);
+          memset(buf, 0, sizeof(buf));
           break;
           }
         default:  break; //遇到中间字符串，直接打印

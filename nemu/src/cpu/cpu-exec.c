@@ -9,6 +9,7 @@
  * You can modify this value as you want.
  */
 #define MAX_INST_TO_PRINT 10
+//#define SEGMENT -----------------------------------------------------------------------
 
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
@@ -27,23 +28,26 @@ void ftrace_main(word_t ftpc,uint64_t inst,word_t fdnpc);
 #ifdef CONFIG_IRINGBUF_COND
 static struct iringbuf{
   char iringp[128];
-} iringbuf[16];
+} iringbuf[32];
 
 static void iRingBuf( char irp[128]){
   static int i =0;
   strcpy(iringbuf[i].iringp, irp);
-  if(i == 15) i = 0;
+  if(i == 31) i = 0;
     else i++;
   
   if(nemu_state.state == NEMU_ABORT || nemu_state.halt_ret ==1 ){
     char error_flag[10] = "-->";
     char zero_flag [10] = "   ";
-    for(int k =0; k<16; k++){
+    printf("\n--------------------------------iRingBuff--------------------------------\n");
+    printf("Num\t|Flag\t|PC\t\t    inst\tdisassemble\t\n");
+    for(int k =0; k<32; k++){
       if(k != i-1)
-        Log("%s\t%s\n", zero_flag ,iringbuf[k].iringp);
+        printf("%d\t|%s\t|%s\n", k, zero_flag, iringbuf[k].iringp);
       else 
-        Log("%s\t%s\n", error_flag ,iringbuf[k].iringp);
+        printf("%d\t|%s\t|%s\n", k, error_flag, iringbuf[k].iringp);
     }
+    printf("--------------------------------------------------------------------------\n");
   }
 }
 #endif

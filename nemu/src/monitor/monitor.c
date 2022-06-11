@@ -69,7 +69,7 @@ static int parse_args(int argc, char *argv[]) {
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
-      case 'l': printf("-----------log_file-------------\n");
+      case 'l': //printf("-----------log_file-------------\n");
         log_file = optarg; break;
       case 'f': printf("-----------ftrace_file-------------\n");
         ftrace_file = optarg; break;
