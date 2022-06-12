@@ -42,6 +42,7 @@ int sprintf(char *out, const char *fmt, ...) {
   char buf[65];
 //  char *d = buf;
   memset(buf, 0, sizeof(buf));
+  memset(out, 0 , 8 * sizeof(out));
   va_list ap;
   va_start(ap, fmt);
 
