@@ -42,7 +42,7 @@ endif
 ARCH_SPLIT = $(subst -, ,$(ARCH))
 # ISA:riscv64
 ISA        = $(word 1,$(ARCH_SPLIT))
-# PLATFORM: nemu
+# PLATFORM: nemu/npc
 PLATFORM   = $(word 2,$(ARCH_SPLIT))
 
 ### Check if there is something to build
@@ -126,19 +126,16 @@ endif
 ### Rule (compile): a single `.c` -> `.o` (gcc)
 # ./build/riscv64-npc
 $(DST_DIR)/%.o: %.c
-#	@echo + LD "->" $*
 	@mkdir -p $(dir $@) && echo + CC $<
 	@$(CC) -std=gnu11 $(CFLAGS) -c -o $@ $(realpath $<)
 
 ### Rule (compile): a single `.cc` -> `.o` (g++)
 $(DST_DIR)/%.o: %.cc
-#	@echo + LD "->" $*
 	@mkdir -p $(dir $@) && echo + CXX $<
 	@$(CXX) -std=c++17 $(CXXFLAGS) -c -o $@ $(realpath $<)
 
 ### Rule (compile): a single `.cpp` -> `.o` (g++)
 $(DST_DIR)/%.o: %.cpp
-#	@echo + LD "->" $*
 	@mkdir -p $(dir $@) && echo + CXX $<
 	@$(CXX) -std=c++17 $(CXXFLAGS) -c -o $@ $(realpath $<)
 
@@ -149,7 +146,7 @@ $(DST_DIR)/%.o: %.S
 
 ### Rule (recursive make): build a dependent library (am, klib, ...)
 $(LIBS): %:
-#	@echo + LD "->" $*
+	@echo + LD "->" $*
 	@$(MAKE) -s -C $(AM_HOME)/$* archive
 
 ### Rule (link): objects (`*.o`) and libraries (`*.a`) -> `IMAGE.elf`, the final ELF binary to be packed into image (ld)
@@ -159,6 +156,8 @@ $(IMAGE).elf: $(OBJS) am $(LIBS)
 
 ### Rule (archive): objects (`*.o`) -> `ARCHIVE.a` (ar)
 $(ARCHIVE): $(OBJS)
+#	@echo $(ARCHIVE)
+#	@echo $(OBJS)
 	@echo + AR "->" $(shell realpath $@ --relative-to .)
 	@ar rcs $(ARCHIVE) $(OBJS)
 
@@ -169,6 +168,7 @@ $(ARCHIVE): $(OBJS)
 
 ### Build order control
 image: image-dep
+#	@echo hello
 archive: $(ARCHIVE)
 image-dep: $(OBJS) am $(LIBS)
 	@echo \# Creating image [$(ARCH)]
