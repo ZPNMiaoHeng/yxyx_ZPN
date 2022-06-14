@@ -1,16 +1,16 @@
 // Verilated -*- C++ -*-
 // DESCRIPTION: Verilator output: Symbol table implementation internals
 
-#include "Vriscv64Top__Syms.h"
-#include "Vriscv64Top.h"
-#include "Vriscv64Top___024root.h"
+#include "VIDU__Syms.h"
+#include "VIDU.h"
+#include "VIDU___024root.h"
 
 // FUNCTIONS
-Vriscv64Top__Syms::~Vriscv64Top__Syms()
+VIDU__Syms::~VIDU__Syms()
 {
 }
 
-Vriscv64Top__Syms::Vriscv64Top__Syms(VerilatedContext* contextp, const char* namep,Vriscv64Top* modelp)
+VIDU__Syms::VIDU__Syms(VerilatedContext* contextp, const char* namep,VIDU* modelp)
     : VerilatedSyms{contextp}
     // Setup internal state of the Syms class
     , __Vm_modelp(modelp)

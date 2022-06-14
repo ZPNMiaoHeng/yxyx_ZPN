@@ -1,11 +1,11 @@
 #include "verilated.h"
 #include "verilated_vcd_c.h"
-#include "../obj_dir/Vriscv64Top.h"
+#include "../obj_dir/V.h"
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 
-static Vriscv64Top * top;
+static V  * top;
 // Combinational logic Circuit 
 void step_and_dump_wave(){
     top->eval();
@@ -33,7 +33,7 @@ void reset(int n) {
 void sim_init(){
     contextp = new VerilatedContext;
     tfp = new VerilatedVcdC;
-    top = new Vriscv64Top;
+    top = new V;
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
     tfp->open("../npc/playground/sim/dump.vcd");
@@ -48,7 +48,9 @@ void sim_exit(){
 int main() {
     int inst[5] = {0x00100093, 0x00200113, 0x00108193 };
     // addi x1,x0, 1; addi x2, x0, 2; addi x3, x1, 1  
-    int *p = inst;
+    int *p;
+
+    p = inst;
     sim_init();
     reset(1);
     top->io_instEn = 1;

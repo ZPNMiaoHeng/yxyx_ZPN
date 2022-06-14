@@ -48,9 +48,7 @@ void sim_exit(){
 int main() {
     int inst[5] = {0x00100093, 0x00200113, 0x00108193 };
     // addi x1,x0, 1; addi x2, x0, 2; addi x3, x1, 1  
-    int *p;
-
-    p = inst;
+    int *p = inst;
     sim_init();
     reset(1);
     top->io_instEn = 1;

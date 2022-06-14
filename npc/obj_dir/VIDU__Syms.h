@@ -4,36 +4,36 @@
 // Internal details; most calling programs do not need this header,
 // unless using verilator public meta comments.
 
-#ifndef VERILATED_VRISCV64TOP__SYMS_H_
-#define VERILATED_VRISCV64TOP__SYMS_H_  // guard
+#ifndef VERILATED_VIDU__SYMS_H_
+#define VERILATED_VIDU__SYMS_H_  // guard
 
 #include "verilated_heavy.h"
 
 // INCLUDE MODEL CLASS
 
-#include "Vriscv64Top.h"
+#include "VIDU.h"
 
 // INCLUDE MODULE CLASSES
-#include "Vriscv64Top___024root.h"
+#include "VIDU___024root.h"
 
 // SYMS CLASS (contains all model state)
-class Vriscv64Top__Syms final : public VerilatedSyms {
+class VIDU__Syms final : public VerilatedSyms {
   public:
     // INTERNAL STATE
-    Vriscv64Top* const __Vm_modelp;
+    VIDU* const __Vm_modelp;
     bool __Vm_activity = false;  ///< Used by trace routines to determine change occurred
     uint32_t __Vm_baseCode = 0;  ///< Used by trace routines when tracing multiple models
     bool __Vm_didInit = false;
 
     // MODULE INSTANCE STATE
-    Vriscv64Top___024root          TOP;
+    VIDU___024root                 TOP;
 
     // COVERAGE
-    uint32_t __Vcoverage[2905];
+    uint32_t __Vcoverage[163];
 
     // CONSTRUCTORS
-    Vriscv64Top__Syms(VerilatedContext* contextp, const char* namep, Vriscv64Top* modelp);
-    ~Vriscv64Top__Syms();
+    VIDU__Syms(VerilatedContext* contextp, const char* namep, VIDU* modelp);
+    ~VIDU__Syms();
 
     // METHODS
     const char* name() { return TOP.name(); }

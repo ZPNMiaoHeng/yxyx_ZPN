@@ -37,6 +37,8 @@ void sim_init(){
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
     tfp->open("../npc/playground/sim/dump.vcd");
+// initial signal
+//    top->      = 0b0 ; 
 }
 
 void sim_exit(){
@@ -44,19 +46,16 @@ void sim_exit(){
     tfp->close();
 }
 int main() {
+    int inst[5] = {0x00100093, 0x00200113, 0x00108193 };
+    // addi x1,x0, 1; addi x2, x0, 2; addi x3, x1, 1  
+    int *p = inst;
     sim_init();
     reset(1);
 //    top->io_instEn = 1;
-    top->io_inst = 0x00100093 ;
-    single_cycle();
-    top->io_inst = 0x00208113 ;
-    single_cycle();
-    top->io_inst = 0x00108093 ;
-    single_cycle();
-    for (int i = 0;i<3;i++){
-//        int  = rand() % ;
-//        top->io_inst = 0x3e800093;
+    for (int i = 0;i<4;i++){
+        top->io_inst = *(p + i);
         single_cycle();
     }   
+    
     sim_exit();
 }

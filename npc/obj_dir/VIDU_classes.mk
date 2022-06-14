@@ -2,7 +2,7 @@
 # DESCRIPTION: Verilator output: Make include file with class lists
 #
 # This file lists generated Verilated files, for including in higher level makefiles.
-# See Vriscv64Top.mk for the caller.
+# See VIDU.mk for the caller.
 
 ### Switches...
 # C11 constructs required?  0/1 (always on now)
@@ -10,7 +10,7 @@ VM_C11 = 1
 # Coverage output mode?  0/1 (from --coverage)
 VM_COVERAGE = 1
 # Parallel builds?  0/1 (from --output-split)
-VM_PARALLEL_BUILDS = 1
+VM_PARALLEL_BUILDS = 0
 # Threaded output mode?  0/1/N threads (from --threads)
 VM_THREADS = 0
 # Tracing output mode?  0/1 (from --trace/--trace-fst)
@@ -25,25 +25,21 @@ VM_TRACE_FST_WRITER_THREAD = 0
 ### Object file lists...
 # Generated module classes, fast-path, compile with highest optimization
 VM_CLASSES_FAST += \
-	Vriscv64Top \
-	Vriscv64Top___024root \
-	Vriscv64Top___024root__1 \
-	Vriscv64Top___024root__2 \
+	VIDU \
+	VIDU___024root \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
-	Vriscv64Top___024root__Slow \
-	Vriscv64Top___024root__1__Slow \
-	Vriscv64Top___024root__2__Slow \
+	VIDU___024root__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \
-	Vriscv64Top__Trace \
+	VIDU__Trace \
 
 # Generated support classes, non-fast-path, compile with low/medium optimization
 VM_SUPPORT_SLOW += \
-	Vriscv64Top__Syms \
-	Vriscv64Top__Trace__Slow \
+	VIDU__Syms \
+	VIDU__Trace__Slow \
 
 # Global classes, need linked once per executable, fast-path, compile with highest optimization
 VM_GLOBAL_FAST += \

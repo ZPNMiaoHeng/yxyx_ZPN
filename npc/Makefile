@@ -26,8 +26,8 @@ endif
 #DIFINE
 #------IF shell could input VERILOG_NAME?------------------------------
 #VERILOG_NAME = Fetch
-#VERILOG_NAME = IDU
-VERILOG_NAME = riscv64Top
+VERILOG_NAME = IDU
+#VERILOG_NAME = riscv64Top
 #VERILOG_NAME = regFile
 #VERILOG_NAME =Decode
 #VERILOG_NAME = Execute

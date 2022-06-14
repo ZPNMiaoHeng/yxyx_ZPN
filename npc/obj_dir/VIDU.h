@@ -5,23 +5,23 @@
 // The class here is then constructed to instantiate the design.
 // See the Verilator manual for examples.
 
-#ifndef VERILATED_VRISCV64TOP_H_
-#define VERILATED_VRISCV64TOP_H_  // guard
+#ifndef VERILATED_VIDU_H_
+#define VERILATED_VIDU_H_  // guard
 
 #include "verilated_heavy.h"
 #include "verilated_cov.h"
 
-class Vriscv64Top__Syms;
-class Vriscv64Top___024root;
+class VIDU__Syms;
+class VIDU___024root;
 class VerilatedVcdC;
-class Vriscv64Top_VerilatedVcd;
+class VIDU_VerilatedVcd;
 
 
 // This class is the main interface to the Verilated model
-class Vriscv64Top VL_NOT_FINAL {
+class VIDU VL_NOT_FINAL {
   private:
     // Symbol table holding complete model state (owned by this class)
-    Vriscv64Top__Syms* const vlSymsp;
+    VIDU__Syms* const vlSymsp;
 
   public:
 
@@ -30,10 +30,15 @@ class Vriscv64Top VL_NOT_FINAL {
     // propagate new values into/out from the Verilated model.
     VL_IN8(&clock,0,0);
     VL_IN8(&reset,0,0);
-    VL_IN8(&io_instEn,0,0);
     VL_IN64(&io_inst,63,0);
-    VL_OUT64(&io_instAddr,63,0);
-    VL_OUT64(&io_instResult,63,0);
+    VL_OUT8(&io_WAddr,4,0);
+    VL_OUT8(&io_WEn,0,0);
+    VL_OUT8(&io_RAddr1,4,0);
+    VL_OUT8(&io_REn1,0,0);
+    VL_OUT8(&io_RAddr2,4,0);
+    VL_OUT8(&io_REn2,0,0);
+    VL_OUT64(&io_imm,63,0);
+    VL_OUT8(&io_instType,4,0);
 
     // CELLS
     // Public to allow access to /* verilator public */ items.
@@ -41,19 +46,19 @@ class Vriscv64Top VL_NOT_FINAL {
 
     // Root instance pointer to allow access to model internals,
     // including inlined /* verilator public_flat_* */ items.
-    Vriscv64Top___024root* const rootp;
+    VIDU___024root* const rootp;
 
     // CONSTRUCTORS
     /// Construct the model; called by application code
     /// If contextp is null, then the model will use the default global context
     /// If name is "", then makes a wrapper with a
     /// single model invisible with respect to DPI scope names.
-    explicit Vriscv64Top(VerilatedContext* contextp, const char* name = "TOP");
-    explicit Vriscv64Top(const char* name = "TOP");
+    explicit VIDU(VerilatedContext* contextp, const char* name = "TOP");
+    explicit VIDU(const char* name = "TOP");
     /// Destroy the model; called (often implicitly) by application code
-    virtual ~Vriscv64Top();
+    virtual ~VIDU();
   private:
-    VL_UNCOPYABLE(Vriscv64Top);  ///< Copying not allowed
+    VL_UNCOPYABLE(VIDU);  ///< Copying not allowed
 
   public:
     // API METHODS
