@@ -12,8 +12,8 @@ class riscv64Top extends Module {
     })
 
 
-    val fetch = Module(new Fetch)
-    val decode = Module(new Decode)
+    val fetch   = Module(new Fetch)
+    val decode  = Module(new Decode)
     val execute = Module(new Execute)
 
     fetch.io.instEn := io.instEn
@@ -22,6 +22,7 @@ class riscv64Top extends Module {
 
     decode.io.inst  := fetch.io.inst
     decode.io.WData := execute.io.result
+    decode.io.pc    := fetch.io.pcOut
 
     execute.io.pcOut := fetch.io.pcOut
     execute.io.aluOp := decode.io.aluOp

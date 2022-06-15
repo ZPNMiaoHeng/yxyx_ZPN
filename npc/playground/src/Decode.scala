@@ -12,8 +12,9 @@ class Decode extends Module {
     val io = IO(new Bundle {
         val inst = Input(UInt(64.W))
         val WData= Input(UInt(64.W))
+        val pc   = Input(UInt(64.W))
 
-        val aluOp = Output(UInt(5.W))
+        val aluOp= Output(UInt(5.W))
         val regA = Output(UInt(64.W))
         val regB = Output(UInt(64.W))
     })
@@ -30,10 +31,12 @@ class Decode extends Module {
     regs.io.WEn    := idu.io.WEn
     regs.io.WData  := io.WData
 
-
     idu.io.inst := io.inst
-    io.regA := regs.io.RData1                                                 //op1R
-    io.regB := Mux(idu.io.instType === 1.U || idu.io.instType === 2.U
+
+//    io.regA := Mux(, regs.io.RData1, io.pc)                                                 //op1R
+//    io.regB := Mux(, regs.io.RData2, idu.io.imm)                                           //op2R
+    io.regA := Mux(idu.io.instType === 2.U , io.pc, regs.io.RData1)                                                 //op1R
+    io.regB := Mux(idu.io.instType === 1.U || idu.io.instType === 2.U || idu.io.instType === 4.U
       , idu.io.imm, regs.io.RData2)                                           //op2R
     io.aluOp := idu.io.instType
     
