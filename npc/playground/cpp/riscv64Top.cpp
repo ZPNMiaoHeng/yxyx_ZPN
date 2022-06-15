@@ -46,15 +46,16 @@ void sim_exit(){
     tfp->close();
 }
 int main() {
-    int inst[5] = {0x00100093, 0x00200113, 0x00108193 };
-    // addi x1,x0, 1; addi x2, x0, 2; addi x3, x1, 1  
+    int inst[10] = {0x00100093, 0x00200113, 0x00108193, 0x00009117, 0x00100073, };
+    // addi x1,x0, 1; addi x2, x0, 2; addi x3, x1, 1;   auipc	sp,0x9; ebreak
     int *p = inst;
     sim_init();
     reset(1);
     top->io_instEn = 1;
-    for (int i = 0;i<4;i++){
+    for (int i = 0;i < 10;i ++) {
         top->io_inst = *(p + i);
         single_cycle();
+        if(inst[i] == 0x00100073){break;}
     }   
     
     sim_exit();

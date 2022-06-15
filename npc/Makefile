@@ -24,13 +24,9 @@ VERILATOR_COVERAGE = $(VERILATOR_ROOT)/bin/verilator_coverage
 endif
 #######################################################################
 #DIFINE
-#------IF shell could input VERILOG_NAME?------------------------------
-#VERILOG_NAME = Fetch
-VERILOG_NAME = IDU
-#VERILOG_NAME = riscv64Top
-#VERILOG_NAME = regFile
-#VERILOG_NAME =Decode
-#VERILOG_NAME = Execute
+# Default test file name is riscv64Top
+TOP = riscv64Top
+VERILOG_NAME = $(TOP)
 EX_NAME = example
 #NVBOARD_DIR = $(NVBOARD_HOME)/example
 PLAYGROUND_DIR = $(NPC_HOME)/playground

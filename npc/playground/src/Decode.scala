@@ -8,7 +8,6 @@ import chisel3.util._
   *     And output parameter and signal according to the instruction typr.
   * Extend: find input instruction types ,and then output  
   */
-
 class Decode extends Module {
     val io = IO(new Bundle {
         val inst = Input(UInt(64.W))
@@ -34,7 +33,8 @@ class Decode extends Module {
 
     idu.io.inst := io.inst
     io.regA := regs.io.RData1                                                 //op1R
-    io.regB := Mux(idu.io.instType === "b00001".U, idu.io.imm, regs.io.RData2)//op2R
+    io.regB := Mux(idu.io.instType === 1.U || idu.io.instType === 2.U
+      , idu.io.imm, regs.io.RData2)                                           //op2R
     io.aluOp := idu.io.instType
     
 }
