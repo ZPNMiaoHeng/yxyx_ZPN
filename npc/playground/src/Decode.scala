@@ -10,34 +10,37 @@ import chisel3.util._
   */
 class Decode extends Module {
     val io = IO(new Bundle {
-        val inst = Input(UInt(64.W))
-        val WData= Input(UInt(64.W))
-        val pc   = Input(UInt(64.W))
+        val inst   = Input(UInt(64.W))
+        val WData  = Input(UInt(64.W))
+        val PC     = Input(UInt(64.W))
 
-        val aluOp= Output(UInt(5.W))
-        val regA = Output(UInt(64.W))
-        val regB = Output(UInt(64.W))
+        val ALUCtr = Output(UInt(4.W))
+        val Asrc   = Output(UInt(64.W))
+        val Bsrc   = Output(UInt(64.W))
+        val NextPC = Output(UInt(64.W))
     })
 
-    val idu = Module(new IDU)
     val regs = Module(new regFile)
+    val imm  = Module(new ImmGen)
+    val con  = Module(new ContrGen)
 
-    //idu.io <> regs.io
-    regs.io.RAddr1 := idu.io.RAddr1
-    regs.io.REn1   := idu.io.REn1
-    regs.io.RAddr2 := idu.io.RAddr2
-    regs.io.REn2   := idu.io.REn2
-    regs.io.WAddr  := idu.io.WAddr
-    regs.io.WEn    := idu.io.WEn
+    regs.io.RAddr1 := io.inst(19, 15)
+    regs.io.RAddr2 := io.inst(24, 20)
+    regs.io.WAddr  := io.inst(11, 7)
+    regs.io.RegWr  := con.io.RegWr
     regs.io.WData  := io.WData
+    imm.io.inst    := io.inst
+    imm.io.ExtOp   := con.io.ExtOp
+    con.io.inst    := io.inst
 
-    idu.io.inst := io.inst
-
-//    io.regA := Mux(, regs.io.RData1, io.pc)                                                 //op1R
-//    io.regB := Mux(, regs.io.RData2, idu.io.imm)                                           //op2R
-    io.regA := Mux(idu.io.instType === 2.U , io.pc, regs.io.RData1)                                                 //op1R
-    io.regB := Mux(idu.io.instType === 1.U || idu.io.instType === 2.U || idu.io.instType === 4.U
-      , idu.io.imm, regs.io.RData2)                                           //op2R
-    io.aluOp := idu.io.instType
-    
+    io.ALUCtr      := con.io.ALUCtr
+    io.Asrc := Mux(con.io.ALUAsrc === 1.U, io.PC, regs.io.RData1)                                                 //op1R
+    io.Bsrc := MuxCase(imm.io.imm, Array(
+      (con.io.ALUBsrc === "b00".U) -> regs.io.RData1,
+      (con.io.ALUBsrc === "b10".U) -> 4.U
+    ))                                           //op2R
+    io.NextPC := MuxCase(io.PC + 4.U, Array(
+      (con.io.Branch === "b001".U, io.PC + imm.io.imm),
+      (con.io.Branch === "b010".U, regs.io.RData1 + imm.io.imm)
+    ))
 }

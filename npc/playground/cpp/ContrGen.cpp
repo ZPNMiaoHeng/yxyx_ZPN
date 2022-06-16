@@ -1,11 +1,11 @@
 #include "verilated.h"
 #include "verilated_vcd_c.h"
-#include "../obj_dir/V.h"
+#include "../obj_dir/VContrGen.h"
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 
-static V  * top;
+static VContrGen  * top;
 // Combinational logic Circuit 
 void step_and_dump_wave(){
     top->eval();
@@ -33,7 +33,7 @@ void reset(int n) {
 void sim_init(){
     contextp = new VerilatedContext;
     tfp = new VerilatedVcdC;
-    top = new V;
+    top = new VContrGen;
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
     tfp->open("../npc/playground/sim/dump.vcd");
@@ -56,7 +56,7 @@ int main() {
     int *p = inst;
     sim_init();
     reset(1);
-    top->io_instEn = 1;
+//    top->io_instEn = 1;
     for (int i = 0;i < 10;i ++) {
         top->io_inst = *(p + i);
         single_cycle();
