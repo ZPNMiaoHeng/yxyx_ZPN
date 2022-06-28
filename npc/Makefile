@@ -35,7 +35,11 @@ CPP_DIR = $(PLAYGROUND_DIR)/cpp
 #File_DIR
 # Input files for Verilator
 VSRC_DIR = $(shell find ./build/ -name $(VERILOG_NAME).v)
-CSRC_DIR = $(shell find $(CPP_DIR)/$(VERILOG_NAME).cpp)
+CSRC_DIR = $(shell find $(CPP_DIR)/npc.cpp)
+
+#IMAGE = $(NPC_HOME)/../am-kernels/tests/cpu-tests/build/dummy-riscv64-npc.bin
+#SO  = $(NPC_HOME)/../nemu/tools/spike-diff/build/riscv64-spike-so
+
 GTK_DIR  = $(PLAYGROUND_DIR)/sim/dump.vcd
 BUILD_DIR = ./build
 OBJ_DIR = ./obj_dir
@@ -57,10 +61,10 @@ VERILATOR_FLAGS += -Os -x-assign 0
 VERILATOR_FLAGS += --trace
 # Generate coverage analysis
 VERILATOR_FLAGS += --coverage
-VERILATOR_FLAGS += --build 
-#-v
-#VERILATOR_FLAGS += -y IDU.v
-#VERILATOR_FLAGS += --top-module $(VERILOG_NAME).v
+VERILATOR_FLAGS += --build
+VERILATOR_FLAGS += -LDFLAGS
+VERILATOR_FLAGS += -ldl
+VERILATOR_FLAGS += --top-module $(VERILOG_NAME)
 #######################################################################
 # Table
 .PHONY : run nvboard_run nvboard_clean test verilog help compile bsp reformat checkformat clean sim retest
@@ -115,12 +119,17 @@ run:
 	@echo
 	@echo "-- VERILATE COMPILE----------------"
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
+	./obj_dir/V$(VERILOG_NAME) -i $(IMG) -d $(SO)
 
 	@echo
 	@echo "-- MAKE SIM ---------------------"
 	@rm -rf $(PLAYGROUND_DIR)/sim
 	@mkdir -p $(PLAYGROUND_DIR)/sim
 	obj_dir/V$(VERILOG_NAME) +trace
+	
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	@echo "-------------------------- Open GTKwave ------------------------"
+	gtkwave -f $(GTK_DIR)
 #####################################################################
 # ERROR
 #nvboard_run:

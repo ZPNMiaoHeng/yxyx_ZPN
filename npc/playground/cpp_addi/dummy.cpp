@@ -1,11 +1,11 @@
 #include "verilated.h"
 #include "verilated_vcd_c.h"
-#include "../obj_dir/VDecode.h"
+#include "../obj_dir/Vriscv64Top.h"
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 
-static VDecode  * top;
+static Vriscv64Top  * top;
 // Combinational logic Circuit 
 void step_and_dump_wave(){
     top->eval();
@@ -33,11 +33,12 @@ void reset(int n) {
 void sim_init(){
     contextp = new VerilatedContext;
     tfp = new VerilatedVcdC;
-    top = new VDecode;
+    top = new Vriscv64Top;
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
     tfp->open("../npc/playground/sim/dump.vcd");
-
+// initial signal
+//    top->      = 0b0 ; 
 }
 
 void sim_exit(){
@@ -46,19 +47,18 @@ void sim_exit(){
 }
 int main() {
     int inst[10] = {0x00100093, 0x00200113, 0x00108193, 0x00009117, 0x00001237, 
-    0x00c000ef, 
+    0x00c000ef, 0x001102e7, 0x00113423,
     0x00100073, };
     // addi x1,x0, 1; addi x2, x0, 2; addi x3, x1, 1; auipc sp,0x9; lui x4,1
-    // jal	ra,80000018;
+    // jal	ra,80000018; jalr x5,1(x2);sd	ra,8(sp)
     // ebreak
+    
     int *p = inst;
     sim_init();
     reset(1);
-//    top->io_instEn = 1;
+    top->io_instEn = 1;
     for (int i = 0;i < 10;i ++) {
         top->io_inst = *(p + i);
-//        top->io_WData = i * 16;
-//        top->io_PC = 0x80000000 + 4 * i;
         single_cycle();
     }   
     

@@ -43,12 +43,8 @@ class ContrGen extends Module {
   io.ExtOp := MuxCase(0.U, 
         Array(
           (instJalEn) -> "b100".U,                                             // J Type
-          //  (instJalEn) -> "b011".U,                                         // J Type
           (instSdEn)-> "b010".U,                                               // S Type
           (instAuipcEn || instLuiEn)  -> "b001".U,                             // U Type
           (instAddiEn  || instJalrEn) -> "b000".U))                            // I Type  
-
-
-
 
 }

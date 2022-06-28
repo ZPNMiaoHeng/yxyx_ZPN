@@ -44,15 +44,17 @@ void sim_exit(){
     tfp->close();
 }
 int main() {
-    int pc = 0x80000000;
-//    top->io_instEn = 1;
+    int pc = 0x0000000080000000;
     sim_init();
-    reset(1);
+    top->io_instEn   = 1;
+     top->io_instIn  = 1;
+        top->io_pcIn = 1;
+    reset(3);
     for (int i = 0;i < 20;i ++) {
-        int instEn = rand() % 2;
+//        int instEn = rand() % 2;
         int instIn = rand() % 99999;
         int pcIn   = pc + 4*i;
-        top->io_instEn = instEn ;
+//        top->io_instEn = instEn ;
         top->io_instIn = instIn ;
         top->io_pcIn   = pcIn   ;
         single_cycle();

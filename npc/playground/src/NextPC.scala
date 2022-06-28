@@ -14,6 +14,8 @@ class NextPC extends Module {
     val NextPC = Output(UInt(64.W))
   })
 
+//  val nextPC = RegInit("h8000_0000".U(64.W))
+
   val PCAsrc = Wire(UInt(1.W))
   val PCBsrc = Wire(UInt(1.W))
   val PCsrc  = Wire(UInt(2.W))
@@ -22,7 +24,6 @@ class NextPC extends Module {
     (io.Branch === "b010".U) -> "b11".U
   ))
   PCAsrc := PCsrc(1,1)
-  PCBsrc := PCsrc(0,0)
-
+  PCBsrc := PCsrc(0,0) 
   io.NextPC := Mux(PCAsrc === 0.U, 4.U, io.imm) + Mux(PCBsrc === 0.U, io.PC, io.rs1)
 }

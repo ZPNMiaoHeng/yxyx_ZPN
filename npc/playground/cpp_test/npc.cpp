@@ -5,7 +5,7 @@
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 
-static Vriscv64Top * top;
+static Vriscv64Top  * top;
 // Combinational logic Circuit 
 void step_and_dump_wave(){
     top->eval();
@@ -46,8 +46,13 @@ void sim_exit(){
     tfp->close();
 }
 int main() {
-    int inst[10] = {0x00100093, 0x00200113, 0x00108193, 0x00009117, 0x00100073, };
-    // addi x1,x0, 1; addi x2, x0, 2; addi x3, x1, 1;   auipc	sp,0x9; ebreak
+    int inst[10] = {0x00100093, 0x00200113, 0x00108193, 0x00009117, 0x00001237, 
+    0x00c000ef, 0x001102e7, 0x00113423,
+    0x00100073, };
+    // addi x1,x0, 1; addi x2, x0, 2; addi x3, x1, 1; auipc sp,0x9; lui x4,1
+    // jal	ra,80000018; jalr x5,1(x2);sd	ra,8(sp)
+    // ebreak
+    
     int *p = inst;
     sim_init();
     reset(1);
@@ -55,7 +60,6 @@ int main() {
     for (int i = 0;i < 10;i ++) {
         top->io_inst = *(p + i);
         single_cycle();
-        if(inst[i] == 0x00100073){break;}
     }   
     
     sim_exit();

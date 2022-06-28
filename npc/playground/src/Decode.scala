@@ -23,6 +23,7 @@ class Decode extends Module {
     val regs = Module(new regFile)
     val imm  = Module(new ImmGen)
     val con  = Module(new ContrGen)
+    val nextpc = Module(new NextPC)
 
     regs.io.RAddr1 := io.inst(19, 15)
     regs.io.RAddr2 := io.inst(24, 20)
@@ -32,6 +33,10 @@ class Decode extends Module {
     imm.io.inst    := io.inst
     imm.io.ExtOp   := con.io.ExtOp
     con.io.inst    := io.inst
+    nextpc.io.PC   := io.PC
+    nextpc.io.Branch := con.io.Branch
+    nextpc.io.imm  := imm.io.imm
+    nextpc.io.rs1  := regs.io.RData1
 
     io.ALUCtr      := con.io.ALUCtr
     io.Asrc := Mux(con.io.ALUAsrc === 1.U, io.PC, regs.io.RData1)                                                 //op1R
@@ -39,8 +44,10 @@ class Decode extends Module {
       (con.io.ALUBsrc === "b00".U) -> regs.io.RData1,
       (con.io.ALUBsrc === "b10".U) -> 4.U
     ))                                           //op2R
-    io.NextPC := MuxCase(io.PC + 4.U, Array(
+    io.NextPC := nextpc.io.NextPC
+/*    io.NextPC := MuxCase(io.PC + 4.U, Array(
       (con.io.Branch === "b001".U, io.PC + imm.io.imm),
       (con.io.Branch === "b010".U, regs.io.RData1 + imm.io.imm)
     ))
+    */
 }
