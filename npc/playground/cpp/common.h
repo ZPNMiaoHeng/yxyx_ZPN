@@ -20,7 +20,7 @@ typedef uint64_t paddr_t;
 typedef uint16_t ioaddr_t;
 
 #include "debug.h"
-#define CONFIG_PMEM 
+//#define CONFIG_PMEM 
 #define CONFIG_RT_CHECK
 #define CONFIG_MBASE 0x80000000
 #define CONFIG_MSIZE 0x8000000
