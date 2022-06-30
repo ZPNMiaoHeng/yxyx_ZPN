@@ -30,12 +30,14 @@ VERILOG_NAME = $(TOP)
 EX_NAME = example
 #NVBOARD_DIR = $(NVBOARD_HOME)/example
 PLAYGROUND_DIR = $(NPC_HOME)/playground
-CPP_DIR = $(PLAYGROUND_DIR)/cpp
+CPP_DIR = $(PLAYGROUND_DIR)/cpp_addi
 #######################################################################
 #File_DIR
 # Input files for Verilator
-VSRC_DIR = $(shell find ./build/ -name $(VERILOG_NAME).v)
-CSRC_DIR = $(shell find $(CPP_DIR)/npc.cpp)
+VSRC_DIR = $(shell find ./build/ -name jin.v)
+#$(VERILOG_NAME).v)
+#CSRC_DIR = $(shell find $(CPP_DIR)/npc.cpp)
+CSRC_DIR = $(shell find $(CPP_DIR)/jin.cpp)
 
 #IMAGE = $(NPC_HOME)/../am-kernels/tests/cpu-tests/build/dummy-riscv64-npc.bin
 #SO  = $(NPC_HOME)/../nemu/tools/spike-diff/build/riscv64-spike-so
@@ -64,7 +66,7 @@ VERILATOR_FLAGS += --coverage
 VERILATOR_FLAGS += --build
 VERILATOR_FLAGS += -LDFLAGS
 VERILATOR_FLAGS += -ldl
-VERILATOR_FLAGS += --top-module $(VERILOG_NAME)
+#VERILATOR_FLAGS += --top-module $(VERILOG_NAME)
 #######################################################################
 # Table
 .PHONY : run nvboard_run nvboard_clean test verilog help compile bsp reformat checkformat clean sim retest

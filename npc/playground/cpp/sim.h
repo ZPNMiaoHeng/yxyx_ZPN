@@ -4,11 +4,13 @@
 # ifndef __SIM_H__
 # define __SIM_H__
 
+#include <getopt.h>
+
 #include "verilated.h"
 #include "verilated_vcd_c.h"
 #include "../obj_dir/Vriscv64Top.h"
 #include "common.h"
 #include "debug.h"
-#include <getopt.h>
 
+#include "Vriscv64Top_Dpi.h"
 # endif

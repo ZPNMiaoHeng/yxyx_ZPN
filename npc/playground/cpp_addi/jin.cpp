@@ -1,8 +1,9 @@
+
 #include "verilated.h"
 #include "verilated_vcd_c.h"
 #include "../obj_dir/VFetch.h"
 
-#include "VFetch_Dpi.h"
+#include "Vjin_Dpi.h"
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
@@ -59,23 +60,18 @@ static const uint32_t img [] = {
 };
 
 int main() {
-    int pc = 0x80000000;
-    top->io_instEn = 1;
     sim_init();
     reset(1);
     for (int i = 0;i < 20;i ++) {
 //        int instEn = rand() % 2;
 //        int instIn = rand() % 99999;
-        int pcIn   = pc + 4*i;
-        top->io_instEn = 1 ;
         top->io_instIn = imh[i] ;
-        top->io_pcIn   = pcIn   ;
         single_cycle();
     }   
     sim_exit();
 }
 
-int Judge_ebreak(uint64_t inst) {
+int Judge_ebreak(int inst) {
   if(inst == 0x00100073) return 1;
     else return 0;
 }

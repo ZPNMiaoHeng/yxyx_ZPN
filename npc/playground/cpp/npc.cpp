@@ -21,18 +21,19 @@ static char *img_file = NULL;
 //static int difftest_port = 1234;
 
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 static const uint32_t img [] = {
     0x00100093,                 // addi x1,x0, 1; 
-/*    0x00200113,                 // addi x2, x0, 2;
+    0x00200113,                 // addi x2, x0, 2;
     0x00108193,                 // addi x3, x1, 1;
     0x00009117,                 // auipc sp,0x9;
     0x00001237,                 // lui x4,1
     0x00c000ef,                 // jal	ra,80000018;
     0x001102e7,                 // jalr x5,1(x2);
     0x00113423,                 // sd	ra,8(sp)
-    0x00100073,                 // ebreak */
+    0x00100073,                 // ebreak
 };
 
 const char *regs[] = {
@@ -57,7 +58,6 @@ static void restart() {
 static int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
 //    {"diff"     , required_argument, NULL, 'd'},
-//    {"image"   , required_argument, NULL, 'i'},
     {"help"     , no_argument      , NULL, 'h'},
     {0          , 0                , NULL,  0 },
   };
@@ -140,35 +140,22 @@ static void welcome() {
 }
 
 static long load_img() {
-
   if (img_file == NULL) {
     Log("No image is given. Use the default build-in image.");
     return 4096; // built-in image size
-  } else Log("The image is %s", img_file);
-
-/*
-  FILE *fp ;
-  if((fp = fopen("/home/zpn/ysyx-workbench/am-kernels/tests/cpu-tests/build/dummy-riscv64-npc.bin", "rb")) == NULL) {
-    Log("No image is given. Use the default build-in image.");
   }
-  */
-//  Log("The image is %s", img_file);
   FILE *fp ;
   fp = fopen(img_file, "rb");
-//  assert(fp, "Can not open '%s'", img_file);
 
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
   Log("The image is %s, size = %ld", img_file, size);
-
-//  Log("The image is ok, size = %ld", size);
   fseek(fp, 0, SEEK_SET);
   int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
   assert(ret == 1);
 
   fclose(fp);
   return size;
-  
 }
 
 void init_mem() {
@@ -206,4 +193,9 @@ static word_t pmem_read(paddr_t addr, int len) {
 
 static void pmem_write(paddr_t addr, int len, word_t data) {
   host_write(guest_to_host(addr), len, data);
+}
+
+int Judge_ebreak(uint64_t inst){
+  if(inst == 0x00100073) return 1;
+    else return 0;
 }
