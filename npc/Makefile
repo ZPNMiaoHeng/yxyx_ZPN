@@ -116,16 +116,18 @@ pre:
 
 run:
 # Modify run 
-	@echo
-	@echo "-- VERILATE COMPILE----------------"
+#	IMAGE = /home/zpn/ysyx-workbench/am-kernels/tests/cpu-tests/build/dummy-riscv64-npc.bin
+#	@echo IMAGE=$(IMAGE)
+	@echo "--------------------------- VERILATE COMPILE----------------"
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
-	./obj_dir/V$(VERILOG_NAME) -i $(IMG) -d $(SO)
+	./obj_dir/V$(VERILOG_NAME) $(IMG)
+# -d $(SO)
 
-	@echo
-	@echo "-- MAKE SIM ---------------------"
-	@rm -rf $(PLAYGROUND_DIR)/sim
-	@mkdir -p $(PLAYGROUND_DIR)/sim
-	obj_dir/V$(VERILOG_NAME) +trace
+#	@echo
+#	@echo "-- MAKE SIM ---------------------"
+#	@rm -rf $(PLAYGROUND_DIR)/sim
+#	@mkdir -p $(PLAYGROUND_DIR)/sim
+#	obj_dir/V$(VERILOG_NAME) +trace
 	
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-------------------------- Open GTKwave ------------------------"
@@ -149,4 +151,4 @@ show-config:
 #clean mostlyclean distclean maintainer-clean::
 #	-rm -rf obj_dir sim *.log *.dmp *.vpd coverage.dat core
 
-include ../Makefile
+include $(NPC_HOME)/../Makefile

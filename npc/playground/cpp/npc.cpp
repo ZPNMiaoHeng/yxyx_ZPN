@@ -25,14 +25,14 @@ uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 static const uint32_t img [] = {
     0x00100093,                 // addi x1,x0, 1; 
-    0x00200113,                 // addi x2, x0, 2;
+/*    0x00200113,                 // addi x2, x0, 2;
     0x00108193,                 // addi x3, x1, 1;
     0x00009117,                 // auipc sp,0x9;
     0x00001237,                 // lui x4,1
     0x00c000ef,                 // jal	ra,80000018;
     0x001102e7,                 // jalr x5,1(x2);
     0x00113423,                 // sd	ra,8(sp)
-    0x00100073,                 // ebreak 
+    0x00100073,                 // ebreak */
 };
 
 const char *regs[] = {
@@ -54,7 +54,27 @@ static void restart() {
   Log("restart npc:pc->0x8000_0000");
 }
 
-int main() {
+static int parse_args(int argc, char *argv[]) {
+  const struct option table[] = {
+//    {"diff"     , required_argument, NULL, 'd'},
+//    {"image"   , required_argument, NULL, 'i'},
+    {"help"     , no_argument      , NULL, 'h'},
+    {0          , 0                , NULL,  0 },
+  };
+  int o;
+  while ( (o = getopt_long(argc, argv, "-h", table, NULL)) != -1) {
+    switch (o) {
+//      case 'd': diff_so_file = optarg; break;
+      case 1: img_file = optarg; printf("img_file = %s\n", img_file); return 0;
+      default:
+        exit(0);
+    }
+  }
+  return 0;
+}
+
+int main(int argc, char *argv[]) {
+    parse_args(argc, argv);
     init_mem();
     memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));                         // 将数据存放在0x8000_00000开头
     Log("img -> pmem");
@@ -120,25 +140,35 @@ static void welcome() {
 }
 
 static long load_img() {
+
   if (img_file == NULL) {
     Log("No image is given. Use the default build-in image.");
     return 4096; // built-in image size
-  }
+  } else Log("The image is %s", img_file);
 
-  FILE *fp = fopen(img_file, "rb");
+/*
+  FILE *fp ;
+  if((fp = fopen("/home/zpn/ysyx-workbench/am-kernels/tests/cpu-tests/build/dummy-riscv64-npc.bin", "rb")) == NULL) {
+    Log("No image is given. Use the default build-in image.");
+  }
+  */
+//  Log("The image is %s", img_file);
+  FILE *fp ;
+  fp = fopen(img_file, "rb");
 //  assert(fp, "Can not open '%s'", img_file);
 
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
-
   Log("The image is %s, size = %ld", img_file, size);
 
+//  Log("The image is ok, size = %ld", size);
   fseek(fp, 0, SEEK_SET);
   int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
   assert(ret == 1);
 
   fclose(fp);
   return size;
+  
 }
 
 void init_mem() {
@@ -177,39 +207,3 @@ static word_t pmem_read(paddr_t addr, int len) {
 static void pmem_write(paddr_t addr, int len, word_t data) {
   host_write(guest_to_host(addr), len, data);
 }
-/*
-static int parse_args(int argc, char *argv[]) {
-  const struct option table[] = {
-//    {"batch"    , no_argument      , NULL, 'b'},
-//    {"log"      , required_argument, NULL, 'l'},
-//    {"diff"     , required_argument, NULL, 'd'},
-//    {"port"     , required_argument, NULL, 'p'},
-//    {"ftrace"   , required_argument, NULL, 'f'},
-//    {"help"     , no_argument      , NULL, 'h'},
-    {0          , 0                , NULL,  0 },
-  };
-  int o;
-  while ( (o = getopt_long(argc, argv, "h", table, NULL)) != -1) {
-    switch (o) {
-//      case 'b': sdb_set_batch_mode(); break;
-//      case 'p': sscanf(optarg, "%d", &difftest_port); break;
-//      case 'l': //printf("-----------log_file-------------\n");
-//        log_file = optarg; break;
-//      case 'f': printf("-----------ftrace_file-------------\n");
-//        ftrace_file = optarg; break;
-//      case 'd': diff_so_file = optarg; break;
-      case 1: img_file = optarg; return 0;
-      default:
-        printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
-//        printf("\t-b,--batch              run with batch mode\n");
-//        printf("\t-l,--log=FILE           output log to FILE\n");
-//        printf("\t-f,--ftrace=FILE        input ELF file to nemu\n");
-//        printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
-//        printf("\t-p,--port=PORT          run DiffTest with port PORT\n");
-        printf("\n");
-        exit(0);
-    }
-  }
-  return 0;
-}
-*/

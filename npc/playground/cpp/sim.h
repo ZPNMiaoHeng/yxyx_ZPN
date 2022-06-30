@@ -9,5 +9,6 @@
 #include "../obj_dir/Vriscv64Top.h"
 #include "common.h"
 #include "debug.h"
+#include <getopt.h>
 
 # endif

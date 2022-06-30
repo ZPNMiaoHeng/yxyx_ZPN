@@ -156,8 +156,6 @@ $(IMAGE).elf: $(OBJS) am $(LIBS)
 
 ### Rule (archive): objects (`*.o`) -> `ARCHIVE.a` (ar)
 $(ARCHIVE): $(OBJS)
-#	@echo $(ARCHIVE)
-#	@echo $(OBJS)
 	@echo + AR "->" $(shell realpath $@ --relative-to .)
 	@ar rcs $(ARCHIVE) $(OBJS)
 

@@ -1,4 +1,5 @@
 include $(AM_HOME)/scripts/isa/riscv64.mk
+#include $(NPC_HOME)/Makefile
 
 AM_SRCS := riscv/npc/start.S \
            riscv/npc/trm.c \
@@ -15,8 +16,7 @@ LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld --defsym=_pmem_start=0x80000000 --d
 LDFLAGS   += --gc-sections -e _start
 #NPCFLAGS  +=  -l $(shell dirname $(IMAGE).elf)/nemu-log.txt
 #NPCFLAGS  += -b
-# 执行ftrace功能，传入.elf文件
-#NPCFLAGS += -f $(IMAGE_ELF)
+#NPCFLAGS  += -i $(IMAGE).bin
 
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
@@ -26,6 +26,17 @@ image: $(IMAGE).elf
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
+#	@echo  IMAGE=$(IMAGE).bin
 
 run: image
-	$(MAKE) -C $(NPC_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
+	@echo ------ riscv64-npc.mk run-------
+  
+	@echo  IMAGE=$(IMAGE).bin
+	@$(MAKE) -C $(NPC_HOME) ISA=$(ISA) run IMG=$(IMAGE).bin
+  #ARGS="$(NPCFLAGS)"
+	@echo ------end run-------
+	@echo $(IMAGE) 
+	@echo IMG=$(IMG)
+  
+
+#	@echo $(LINKAGE)
