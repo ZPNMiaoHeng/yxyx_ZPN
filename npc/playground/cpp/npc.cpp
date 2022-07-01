@@ -1,6 +1,6 @@
-//#include "sim.h"
 #include "npc.h"
 #include "sim.h"
+#include "debug.h"
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;

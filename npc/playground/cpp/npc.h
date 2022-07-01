@@ -2,12 +2,8 @@
 
 #include <getopt.h>
 
-#include "verilated.h"
-#include "verilated_vcd_c.h"
-#include "../obj_dir/Vriscv64Top.h"
-
+#include <getopt.h>
 #include "common.h"
-#include "debug.h"
 
 enum { NPC_RUNNING, NPC_STOP, NPC_END, NPC_ABORT, NPC_QUIT };
 

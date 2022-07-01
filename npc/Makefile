@@ -1,8 +1,8 @@
 _default:
 ######################################################################
 #
-# DESCRIPTION: 删去一些现阶段用不到的东西
-#------------ Vesion 3.3.2------------
+# DESCRIPTION: 简单修改npc，但还没有实现编译链接2
+#------------ Vesion 3.3.3------------
 ######################################################################
 # Check for sanity to avoid later confusion
 ifneq ($(words $(CURDIR)),1)
@@ -29,15 +29,17 @@ TOP 				  =	riscv64Top
 VERILOG_NAME  = $(TOP)
 #NVBOARD_DIR = $(NVBOARD_HOME)/example
 PLAYGROUND_DIR = $(NPC_HOME)/playground
-CPP_DIR = $(PLAYGROUND_DIR)/cpp
+CPP_DIR = $(PLAYGROUND_DIR)/cpp/
 #CPP_DIR = $(PLAYGROUND_DIR)/cpp_addi
 #######################################################################
 #File_DIR
 # Input files for Verilator
-VSRC_DIR = $(shell find ./build/ -name *.v)
+VSRC = $(shell find ./build/ -name *.v)
 #CSRC_DIR = $(shell find $(CPP_DIR)/npc.cpp)
-CSRC_DIR = $(shell find $(CPP_DIR)/npc.cpp)
-VERILATOR_INPUT =  $(VSRC_DIR) $(CSRC_DIR)
+CSRC += $(shell find $(CPP_DIR) -name *.cpp)
+#CSRC += $(shell find $(CPP_DIR) -name *.c)
+#CSRC += $(shell find $(CPP_DIR) -name *.h)
+VERILATOR_INPUT =  $(VSRC) $(CSRC)
 #SO  = $(NPC_HOME)/../nemu/tools/spike-diff/build/riscv64-spike-so
 
 GTK_DIR  = $(PLAYGROUND_DIR)/sim/dump.vcd
