@@ -16,6 +16,8 @@
 // INCLUDE MODULE CLASSES
 #include "Vriscv64Top___024root.h"
 
+// DPI TYPES for DPI Export callbacks (Internal use)
+
 // SYMS CLASS (contains all model state)
 class Vriscv64Top__Syms final : public VerilatedSyms {
   public:
@@ -29,7 +31,7 @@ class Vriscv64Top__Syms final : public VerilatedSyms {
     Vriscv64Top___024root          TOP;
 
     // COVERAGE
-    uint32_t __Vcoverage[3241];
+    uint32_t __Vcoverage[3244];
 
     // CONSTRUCTORS
     Vriscv64Top__Syms(VerilatedContext* contextp, const char* namep, Vriscv64Top* modelp);

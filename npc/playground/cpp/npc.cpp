@@ -12,6 +12,7 @@ void reset(int n);
 void sim_init();
 void sim_exit();
 void init_mem();
+int is_exit_status_bad();
 
 void cpu_exec(uint64_t n);
 static void welcome();
@@ -75,8 +76,11 @@ int main(int argc, char *argv[]) {
     sim_init();
     reset(1);
     top->io_instEn = 1;
-    cpu_exec(10);
+    cpu_exec(99);
+//    cpu_exec(1);
     sim_exit();
+
+    return is_exit_status_bad();
 }
 
 // Combinational logic Circuit 
@@ -186,7 +190,7 @@ int Judge_ebreak(uint64_t inst){
 void cpu_exec(uint64_t n) {
   static int i=0;
   switch (npc_state.state) {                                                 //before execute inst nemu_state 
-    case NPC_END: case NPC_ABORT:
+    case NPC_END:// case NPC_ABORT:
       printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
       return;
     default: npc_state.state = NPC_RUNNING;
@@ -200,20 +204,51 @@ void cpu_exec(uint64_t n) {
           single_cycle();
         if (npc_state.state != NPC_RUNNING) break;
 
-        printf("%d: NPC state is %d\n", i, npc_state.state);
+        printf("%d: NPC state is %d, inst is 0x%08lx\n", i, npc_state.state, pmem_read(CONFIG_MBASE + 4 * i, 4));
       }
 
-  switch (npc_state.state) {                                                 //after execute inst nemu_state
-    case NPC_RUNNING: npc_state.state = NPC_STOP; break;
-
+  switch (npc_state.state) {                                                 // after execute inst nemu_state
+    case NPC_RUNNING: npc_state.state = NPC_STOP; break;                     // 当前执行完需要执行指令->NPC 进入STOP
+    /**/
     case NPC_END: case NPC_ABORT:
       Log("npc: %s at pc = " FMT_WORD,
           (npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
            (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
             ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
           npc_state.halt_pc);
-    case NPC_QUIT: printf("NPC state is quit!\n");//statistic();
+    case NPC_QUIT: Log("NPC state is quit!\n");//statistic();
   }
   
-  printf("NPC END:state is %d\n",npc_state.state);
+  Log("NPC execute end:state is %d\n",npc_state.state);
 }
+
+/*
+void set_npc_state(int state, vaddr_t pc, int halt_ret) {
+//  difftest_skip_ref();
+  npc_state.state = state;
+  npc_state.halt_pc = pc;
+  npc_state.halt_ret = halt_ret;
+}
+*/
+
+int is_exit_status_bad() {
+  int good = (npc_state.state == NPC_END && npc_state.halt_ret == 0) ||
+    (npc_state.state == NPC_QUIT) ||
+    (npc_state.state == NPC_STOP);
+  return !good;
+}
+
+void ebreak_D(){
+  Log("------------ NPC ebreak_D ----------------\n");
+  npc_state.state = NPC_END;
+}
+/*
+void ebreak_D(uint32_t instIn, uint64_t pc) {
+  printf("------------ NPC ebreak_D ----------------\n");
+  if(instIn == 0x00100073) {
+    npc_state.halt_ret == 1;
+    npc_state.halt_pc  == pc;
+    npc_state.state    == NPC_END;
+  }
+}
+*/

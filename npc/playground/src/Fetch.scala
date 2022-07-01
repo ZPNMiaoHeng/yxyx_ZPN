@@ -19,36 +19,8 @@ class Fetch extends Module {
 
   val pc     = RegInit("h8000_0000".U(64.W)) 
   val inst   = RegInit(0.U(64.W))
-/*
-  val IEN    = RegInit(0.U(1.W))
 
-  class Jin extends BlackBox with HasBlackBoxInline {
-    val io = IO(new Bundle {
-      val inst     = Input(UInt(64.W))
-      val ebreakEn = Output(UInt(1.W))                                      // 检测inst === ebreak, -> 0.U
-    })
-
-    setInline("jin.v",
-              """
-              |module jin(
-              |  input [63: 0] instIn,
-              |  output ebreakEn
-              |);
-              |  import "DPI-C" function int Judge_ebreak(uint64_t inst);
-              |
-              |  ebreakEn = Judge_ebreak(instIn);
-              |  
-              |endmodule
-              |
-              """.stripMargin)
-  }
-
-  val j0 = Module(new Jin)
-
-  j0.io.inst   := io.inst
-  IEN          := j0.io.ebreakEn
-*/
-  when(io.instEn === 1.U /*&& IEN === 0.U*/) {                                      // 指令有效，并且不是ebreak
+  when(io.instEn === 1.U ) {                                      // 指令有效，并且不是ebreak
     pc := io.pcIn
     inst := io.instIn
   }

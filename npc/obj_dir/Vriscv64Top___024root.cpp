@@ -5,13 +5,30 @@
 #include "Vriscv64Top___024root.h"
 #include "Vriscv64Top__Syms.h"
 
+#include "verilated_dpi.h"
+
 //==========
+
+extern "C" void ebreak_D();
+
+VL_INLINE_OPT void Vriscv64Top___024root____Vdpiimwrap_riscv64Top__DOT__ebreak__DOT__ebreak_D_TOP() {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vriscv64Top___024root____Vdpiimwrap_riscv64Top__DOT__ebreak__DOT__ebreak_D_TOP\n"); );
+    // Body
+    ebreak_D();
+}
 
 VL_INLINE_OPT void Vriscv64Top___024root___combo__TOP__2(Vriscv64Top___024root* vlSelf) {
     if (false && vlSelf) {}  // Prevent unused
     Vriscv64Top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vriscv64Top___024root___combo__TOP__2\n"); );
     // Body
+    ++(vlSymsp->__Vcoverage[3243]);
+    if ((0x100073ULL == vlSelf->io_inst)) {
+        ++(vlSymsp->__Vcoverage[3241]);
+        Vriscv64Top___024root____Vdpiimwrap_riscv64Top__DOT__ebreak__DOT__ebreak_D_TOP();
+    } else {
+        ++(vlSymsp->__Vcoverage[3242]);
+    }
     if (((IData)(vlSelf->clock) ^ (IData)(vlSelf->riscv64Top__DOT____Vtogcov__clock))) {
         ++(vlSymsp->__Vcoverage[0]);
         vlSelf->riscv64Top__DOT____Vtogcov__clock = vlSelf->clock;

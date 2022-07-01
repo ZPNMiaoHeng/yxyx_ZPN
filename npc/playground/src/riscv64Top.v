@@ -13,20 +13,30 @@ module Fetch(
   reg [63:0] _RAND_0;
   reg [63:0] _RAND_1;
 `endif // RANDOMIZE_REG_INIT
-  reg [63:0] pc; // @[Fetch.scala 18:23]
-  reg [63:0] inst; // @[Fetch.scala 19:23]
-  assign io_pcOut = pc; // @[Fetch.scala 26:14]
-  assign io_inst = inst; // @[Fetch.scala 27:14]
+  reg [63:0] pc; // @[Fetch.scala 20:23]
+  reg [63:0] inst; // @[Fetch.scala 21:23]
+
+/*
+  import "DPI-C" function void ebreak_D();
+  
+  always@(io_instIn or io_pcIn) begin
+    if(io_instIn == 64'h00100073)
+      ebreak_D();
+  end
+*/
+  
+  assign io_pcOut = pc; // @[Fetch.scala 59:14]
+  assign io_inst = inst; // @[Fetch.scala 60:14]
   always @(posedge clock) begin
-    if (reset) begin // @[Fetch.scala 18:23]
-      pc <= 64'h80000000; // @[Fetch.scala 18:23]
-    end else if (io_instEn) begin // @[Fetch.scala 20:27]
-      pc <= io_pcIn; // @[Fetch.scala 21:8]
+    if (reset) begin // @[Fetch.scala 20:23]
+      pc <= 64'h80000000; // @[Fetch.scala 20:23]
+    end else if (io_instEn) begin // @[Fetch.scala 53:28]
+      pc <= io_pcIn; // @[Fetch.scala 54:8]
     end
-    if (reset) begin // @[Fetch.scala 19:23]
-      inst <= 64'h0; // @[Fetch.scala 19:23]
-    end else if (io_instEn) begin // @[Fetch.scala 20:27]
-      inst <= io_instIn; // @[Fetch.scala 22:10]
+    if (reset) begin // @[Fetch.scala 21:23]
+      inst <= 64'h0; // @[Fetch.scala 21:23]
+    end else if (io_instEn) begin // @[Fetch.scala 53:28]
+      inst <= io_instIn; // @[Fetch.scala 55:10]
     end
   end
 // Register and memory initialization
@@ -711,6 +721,16 @@ module riscv64Top(
     .io_Bsrc(execute_io_Bsrc),
     .io_result(execute_io_result)
   );
+
+  
+  import "DPI-C" function void ebreak_D();
+  
+  always@(fetch_io_inst or fetch_io_pcOut) begin
+    if(fetch_io_inst == 64'h00100073)
+      ebreak_D();
+  end
+
+
   assign io_NextPC = decode_io_NextPC; // @[riscv64Top.scala 32:15]
   assign io_IRes = execute_io_result; // @[riscv64Top.scala 33:13]
   assign fetch_clock = clock;

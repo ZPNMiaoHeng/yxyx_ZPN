@@ -51,6 +51,8 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declQuad(c+9,"riscv64Top execute_io_Asrc", false,-1, 63,0);
         tracep->declQuad(c+11,"riscv64Top execute_io_Bsrc", false,-1, 63,0);
         tracep->declQuad(c+7,"riscv64Top execute_io_result", false,-1, 63,0);
+        tracep->declQuad(c+111,"riscv64Top ebreak_inst", false,-1, 63,0);
+        tracep->declQuad(c+1,"riscv64Top ebreak_pc", false,-1, 63,0);
         tracep->declBit(c+108,"riscv64Top fetch clock", false,-1);
         tracep->declBit(c+109,"riscv64Top fetch reset", false,-1);
         tracep->declBit(c+110,"riscv64Top fetch io_instEn", false,-1);
@@ -157,6 +159,8 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declQuad(c+9,"riscv64Top execute io_Asrc", false,-1, 63,0);
         tracep->declQuad(c+11,"riscv64Top execute io_Bsrc", false,-1, 63,0);
         tracep->declQuad(c+7,"riscv64Top execute io_result", false,-1, 63,0);
+        tracep->declQuad(c+111,"riscv64Top ebreak inst", false,-1, 63,0);
+        tracep->declQuad(c+1,"riscv64Top ebreak pc", false,-1, 63,0);
     }
 }
 

@@ -47,7 +47,8 @@ BUILD_DIR = ./build
 OBJ_DIR = ./obj_dir
 #######################################################################
 # Verliater option-- Generate C++ in executable form and coverage analysis               
-VERILATOR_FLAGS += --cc --exe -Wall --trace --coverage --build -LDFLAGS -ldl --top-module $(VERILOG_NAME)
+VERILATOR_FLAGS += --cc --exe -Wall --trace --coverage \
+	--build -LDFLAGS -ldl --top-module $(VERILOG_NAME)
 # Optimize                                 
 VERILATOR_FLAGS += -Os -x-assign 0         
 ######################## chisel compile ###############################

@@ -5,6 +5,8 @@
 #include "Vriscv64Top___024root.h"
 #include "Vriscv64Top__Syms.h"
 
+#include "verilated_dpi.h"
+
 void Vriscv64Top___024root___settle__TOP__4(Vriscv64Top___024root* vlSelf) {
     if (false && vlSelf) {}  // Prevent unused
     Vriscv64Top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
@@ -15,6 +17,16 @@ void Vriscv64Top___024root___settle__TOP__4(Vriscv64Top___024root* vlSelf) {
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs__DOT___GEN_45;
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs__DOT___GEN_58;
     // Body
+    if ((1U & ((IData)((vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__regFile_30 
+                        >> 0xeU)) ^ (IData)((vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT____Vtogcov__regFile_30 
+                                             >> 0xeU))))) {
+        ++(vlSymsp->__Vcoverage[2659]);
+        vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT____Vtogcov__regFile_30 
+            = ((0xffffffffffffbfffULL & vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT____Vtogcov__regFile_30) 
+               | ((QData)((IData)((1U & (IData)((vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__regFile_30 
+                                                 >> 0xeU))))) 
+                  << 0xeU));
+    }
     if ((1U & ((IData)((vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__regFile_30 
                         >> 0xfU)) ^ (IData)((vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT____Vtogcov__regFile_30 
                                              >> 0xfU))))) {

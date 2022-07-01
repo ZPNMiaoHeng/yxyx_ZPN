@@ -10,6 +10,7 @@
 
 #include "verilated_heavy.h"
 #include "verilated_cov.h"
+#include "svdpi.h"
 
 class Vriscv64Top__Syms;
 class Vriscv64Top___024root;

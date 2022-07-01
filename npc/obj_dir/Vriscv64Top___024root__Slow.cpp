@@ -5,6 +5,8 @@
 #include "Vriscv64Top___024root.h"
 #include "Vriscv64Top__Syms.h"
 
+#include "verilated_dpi.h"
+
 //==========
 
 
@@ -48,11 +50,20 @@ void Vriscv64Top___024root___initial__TOP__1(Vriscv64Top___024root* vlSelf) {
     ++(vlSymsp->__Vcoverage[2902]);
 }
 
+void Vriscv64Top___024root____Vdpiimwrap_riscv64Top__DOT__ebreak__DOT__ebreak_D_TOP();
+
 void Vriscv64Top___024root___settle__TOP__3(Vriscv64Top___024root* vlSelf) {
     if (false && vlSelf) {}  // Prevent unused
     Vriscv64Top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vriscv64Top___024root___settle__TOP__3\n"); );
     // Body
+    ++(vlSymsp->__Vcoverage[3243]);
+    if ((0x100073ULL == vlSelf->io_inst)) {
+        ++(vlSymsp->__Vcoverage[3241]);
+        Vriscv64Top___024root____Vdpiimwrap_riscv64Top__DOT__ebreak__DOT__ebreak_D_TOP();
+    } else {
+        ++(vlSymsp->__Vcoverage[3242]);
+    }
     if (((IData)(vlSelf->clock) ^ (IData)(vlSelf->riscv64Top__DOT____Vtogcov__clock))) {
         ++(vlSymsp->__Vcoverage[0]);
         vlSelf->riscv64Top__DOT____Vtogcov__clock = vlSelf->clock;
@@ -19948,15 +19959,5 @@ void Vriscv64Top___024root___settle__TOP__3(Vriscv64Top___024root* vlSelf) {
                | ((QData)((IData)((1U & (IData)((vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__regFile_30 
                                                  >> 0xdU))))) 
                   << 0xdU));
-    }
-    if ((1U & ((IData)((vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__regFile_30 
-                        >> 0xeU)) ^ (IData)((vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT____Vtogcov__regFile_30 
-                                             >> 0xeU))))) {
-        ++(vlSymsp->__Vcoverage[2659]);
-        vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT____Vtogcov__regFile_30 
-            = ((0xffffffffffffbfffULL & vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT____Vtogcov__regFile_30) 
-               | ((QData)((IData)((1U & (IData)((vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__regFile_30 
-                                                 >> 0xeU))))) 
-                  << 0xeU));
     }
 }

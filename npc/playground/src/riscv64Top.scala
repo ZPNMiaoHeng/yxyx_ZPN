@@ -16,6 +16,33 @@ class riscv64Top extends Module {
     val decode  = Module(new Decode)
     val execute = Module(new Execute)
 
+  class Ebreak extends BlackBox with HasBlackBoxInline {
+    val io = IO(new Bundle {
+      val inst   = Input(UInt(64.W))
+      val pc     = Input(UInt(64.W))
+    })
+
+    setInline("Ebreak.v",
+              """
+              |module Ebreak(
+              |  input [63: 0] inst,
+              |  input [63: 0] pc
+              |);
+              |  import "DPI-C" function void ebreak_D();
+              |  always@(inst or pc) begin
+              |   if(inst == 64'h00100073)
+              |     ebreak_D();
+              | end
+              |endmodule
+              """.stripMargin)
+  }
+
+  val ebreak = Module(new Ebreak)
+
+  ebreak.io.inst   := fetch.io.instIn
+  ebreak.io.pc     := fetch.io.pcIn
+
+
     fetch.io.instEn := io.instEn
     fetch.io.instIn := io.inst
     fetch.io.pcIn   := decode.io.NextPC

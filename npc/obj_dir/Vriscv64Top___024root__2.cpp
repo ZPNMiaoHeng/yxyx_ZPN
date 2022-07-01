@@ -5,6 +5,8 @@
 #include "Vriscv64Top___024root.h"
 #include "Vriscv64Top__Syms.h"
 
+#include "verilated_dpi.h"
+
 void Vriscv64Top___024root___combo__TOP__2(Vriscv64Top___024root* vlSelf);
 void Vriscv64Top___024root___sequent__TOP__5(Vriscv64Top___024root* vlSelf);
 void Vriscv64Top___024root___sequent__TOP__6(Vriscv64Top___024root* vlSelf);

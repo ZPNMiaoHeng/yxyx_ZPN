@@ -5,6 +5,8 @@
 #include "Vriscv64Top___024root.h"
 #include "Vriscv64Top__Syms.h"
 
+#include "verilated_dpi.h"
+
 VL_INLINE_OPT void Vriscv64Top___024root___sequent__TOP__6(Vriscv64Top___024root* vlSelf) {
     if (false && vlSelf) {}  // Prevent unused
     Vriscv64Top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
