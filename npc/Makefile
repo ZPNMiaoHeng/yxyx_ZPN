@@ -1,8 +1,8 @@
 _default:
 ######################################################################
 #
-# DESCRIPTION: 配合c文件使用npc.h
-#------------ Vesion 3.3.1------------
+# DESCRIPTION: 删去一些现阶段用不到的东西
+#------------ Vesion 3.3.2------------
 ######################################################################
 # Check for sanity to avoid later confusion
 ifneq ($(words $(CURDIR)),1)
@@ -25,9 +25,8 @@ endif
 #######################################################################
 #DIFINE
 # Default test file name is riscv64Top
-TOP 				  =	 riscv64Top
+TOP 				  =	riscv64Top
 VERILOG_NAME  = $(TOP)
-EX_NAME			  = example
 #NVBOARD_DIR = $(NVBOARD_HOME)/example
 PLAYGROUND_DIR = $(NPC_HOME)/playground
 CPP_DIR = $(PLAYGROUND_DIR)/cpp
@@ -45,22 +44,11 @@ GTK_DIR  = $(PLAYGROUND_DIR)/sim/dump.vcd
 BUILD_DIR = ./build
 OBJ_DIR = ./obj_dir
 #######################################################################
-#######################################################################
-# Verliater option
-# Generate C++ in executable form  
-# Generate coverage analysis               
+# Verliater option-- Generate C++ in executable form and coverage analysis               
 VERILATOR_FLAGS += --cc --exe -Wall --trace --coverage --build -LDFLAGS -ldl --top-module $(VERILOG_NAME)
 # Optimize                                 
 VERILATOR_FLAGS += -Os -x-assign 0         
-#######################################################################
-# Table
-.PHONY : run nvboard_run nvboard_clean test verilog help compile bsp reformat checkformat clean sim retest
-
-#######################################################################
-default: retest
-# It is use to test include elaborate verilog , compile and open gtkwave
-retest: verilog run sim
-#######################################################################
+######################## chisel compile ###############################
 test:
 	mill -i __.test
 
@@ -84,50 +72,27 @@ reformat:
 checkformat:
 	mill -i __.checkFormat
 
-clean:
-	-rm -rf $(BUILD_DIR) $(OBJ_DIR)
-
-.PHONY: test verilog help compile bsp reformat checkformat clean
-
+####################### npc compile ##################################
+# Table
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-------------------------- Open GTKwave ------------------------"
 	gtkwave -f $(GTK_DIR)
 
-# touch test cpp file ,but it must modify
-pre:
-	@echo
-	@echo "------------------- prepare -----------------"
-	@echo "--------------- touch test.cpp -----------------------"
-	@cp $(CPP_DIR)/$(EX_NAME).cpp $(CPP_DIR)/$(VERILOG_NAME).cpp
-
 run:
 # Modify run 
-#	IMAGE = /home/zpn/ysyx-workbench/am-kernels/tests/cpu-tests/build/dummy-riscv64-npc.bin
-#	@echo IMAGE=$(IMAGE)
 	@echo "--------------------------- VERILATE COMPILE----------------"
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
 	./obj_dir/V$(VERILOG_NAME) $(IMG)
 # -d $(SO)
-
-#	@echo
-#	@echo "-- MAKE SIM ---------------------"
-#	@rm -rf $(PLAYGROUND_DIR)/sim
-#	@mkdir -p $(PLAYGROUND_DIR)/sim
-#	obj_dir/V$(VERILOG_NAME) +trace
 	
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "-------------------------- Open GTKwave ------------------------"
 	gtkwave -f $(GTK_DIR)
-#####################################################################
-# ERROR
-#nvboard_run:
-#	@echo "--connect nvboard------------------"
-#	cd $(NVBOARD_DIR) && $(MAKERUN)
-#
-#nvboard_clean:
-#	@echo "--clean nvboard------------------"
-#	cd $(NVBOARD_DIR) && $(MAKRCLEAN)
+
+clean:
+	-rm -rf $(BUILD_DIR) $(OBJ_DIR)
+
 ######################################################################
 # Other targets
 
@@ -138,4 +103,8 @@ show-config:
 #clean mostlyclean distclean maintainer-clean::
 #	-rm -rf obj_dir sim *.log *.dmp *.vpd coverage.dat core
 
+#######################################################################
+# Table
+.PHONY : run test verilog help compile bsp reformat checkformat clean sim
+#######################################################################
 include $(NPC_HOME)/../Makefile
