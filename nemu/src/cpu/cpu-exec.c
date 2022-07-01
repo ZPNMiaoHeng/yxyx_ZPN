@@ -111,7 +111,7 @@ static void execute(uint64_t n) {                   // CPU break only NO NEMU_RU
     IFDEF(CONFIG_DEVICE, device_update());
   }
 }
-
+/* 打印出nemu状态 */
 static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%ld", "%'ld")

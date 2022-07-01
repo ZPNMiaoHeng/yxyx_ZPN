@@ -1,8 +1,8 @@
 _default:
 ######################################################################
 #
-# DESCRIPTION: Verilator Makefile :YSYX
-#------------ Vesion 3.1.2------------
+# DESCRIPTION: 配合c文件使用npc.h
+#------------ Vesion 3.3.1------------
 ######################################################################
 # Check for sanity to avoid later confusion
 ifneq ($(words $(CURDIR)),1)
@@ -25,48 +25,33 @@ endif
 #######################################################################
 #DIFINE
 # Default test file name is riscv64Top
-TOP = riscv64Top
-VERILOG_NAME = $(TOP)
-EX_NAME = example
+TOP 				  =	 riscv64Top
+VERILOG_NAME  = $(TOP)
+EX_NAME			  = example
 #NVBOARD_DIR = $(NVBOARD_HOME)/example
 PLAYGROUND_DIR = $(NPC_HOME)/playground
-CPP_DIR = $(PLAYGROUND_DIR)/cpp_addi
+CPP_DIR = $(PLAYGROUND_DIR)/cpp
+#CPP_DIR = $(PLAYGROUND_DIR)/cpp_addi
 #######################################################################
 #File_DIR
 # Input files for Verilator
-VSRC_DIR = $(shell find ./build/ -name jin.v)
-#$(VERILOG_NAME).v)
+VSRC_DIR = $(shell find ./build/ -name *.v)
 #CSRC_DIR = $(shell find $(CPP_DIR)/npc.cpp)
-CSRC_DIR = $(shell find $(CPP_DIR)/jin.cpp)
-
-#IMAGE = $(NPC_HOME)/../am-kernels/tests/cpu-tests/build/dummy-riscv64-npc.bin
+CSRC_DIR = $(shell find $(CPP_DIR)/npc.cpp)
+VERILATOR_INPUT =  $(VSRC_DIR) $(CSRC_DIR)
 #SO  = $(NPC_HOME)/../nemu/tools/spike-diff/build/riscv64-spike-so
 
 GTK_DIR  = $(PLAYGROUND_DIR)/sim/dump.vcd
 BUILD_DIR = ./build
 OBJ_DIR = ./obj_dir
 #######################################################################
-# Command
-MAKERUN = make run
-MAKRCLEAN = make clean
-#VERILATOR_INPUT = -f input.vc $(VSRC_DIR) $(CSRC_DIR)
-VERILATOR_INPUT =  $(VSRC_DIR) $(CSRC_DIR)
 #######################################################################
 # Verliater option
-# Generate C++ in executable form
-VERILATOR_FLAGS += --cc --exe
-# Warn abount lint issues; may not want this on less solid designs
-VERILATOR_FLAGS += -Wall
-# Optimize
-VERILATOR_FLAGS += -Os -x-assign 0
-# Make waveforms
-VERILATOR_FLAGS += --trace
-# Generate coverage analysis
-VERILATOR_FLAGS += --coverage
-VERILATOR_FLAGS += --build
-VERILATOR_FLAGS += -LDFLAGS
-VERILATOR_FLAGS += -ldl
-#VERILATOR_FLAGS += --top-module $(VERILOG_NAME)
+# Generate C++ in executable form  
+# Generate coverage analysis               
+VERILATOR_FLAGS += --cc --exe -Wall --trace --coverage --build -LDFLAGS -ldl --top-module $(VERILOG_NAME)
+# Optimize                                 
+VERILATOR_FLAGS += -Os -x-assign 0         
 #######################################################################
 # Table
 .PHONY : run nvboard_run nvboard_clean test verilog help compile bsp reformat checkformat clean sim retest

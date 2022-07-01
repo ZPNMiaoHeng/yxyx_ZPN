@@ -1,3 +1,5 @@
+//#include "sim.h"
+#include "npc.h"
 #include "sim.h"
 
 VerilatedContext* contextp = NULL;
@@ -10,11 +12,12 @@ void reset(int n);
 void sim_init();
 void sim_exit();
 void init_mem();
+
+void cpu_exec(uint64_t n);
 static void welcome();
 static long load_img();
 static word_t pmem_read(paddr_t addr, int len);
 
-static char *log_file = NULL;
 //static char *ftrace_file = NULL;
 //static char *diff_so_file = NULL;
 static char *img_file = NULL;
@@ -36,19 +39,6 @@ static const uint32_t img [] = {
     0x00100073,                 // ebreak
 };
 
-const char *regs[] = {
-  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
-};
-
-typedef struct{
-  uint64_t gpr[32];
-  uint64_t pc;
-} CPU_state;
-
-CPU_state cpu = {};
 static void restart() {
   cpu.pc = RESET_VECTOR;                                                           /* Set the initial program counter. */
   cpu.gpr[0] = 0;                                                                  /* The zero register is always 0. */
@@ -85,14 +75,7 @@ int main(int argc, char *argv[]) {
     sim_init();
     reset(1);
     top->io_instEn = 1;
-    
-    for (int i = 0;i < 10;i ++) {
-#ifdef CONFIG_PMEM
-        printf("0x%08x:\t0x%08lx\n",CONFIG_MBASE + 4 * i, pmem_read(CONFIG_MBASE + 4 * i, 4));
-#endif
-        top->io_inst = pmem_read(CONFIG_MBASE + 4 * i, 4);
-        single_cycle();
-    }
+    cpu_exec(10);
     sim_exit();
 }
 
@@ -198,4 +181,39 @@ static void pmem_write(paddr_t addr, int len, word_t data) {
 int Judge_ebreak(uint64_t inst){
   if(inst == 0x00100073) return 1;
     else return 0;
+}
+
+void cpu_exec(uint64_t n) {
+  static int i=0;
+  switch (npc_state.state) {                                                 //before execute inst nemu_state 
+    case NPC_END: case NPC_ABORT:
+      printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
+      return;
+    default: npc_state.state = NPC_RUNNING;
+  }
+
+  for (;i < n;i ++) {
+        #ifdef CONFIG_PMEM
+                printf("0x%08x:\t0x%08lx\n",CONFIG_MBASE + 4 * i, pmem_read(CONFIG_MBASE + 4 * i, 4));
+        #endif
+          top->io_inst = pmem_read(CONFIG_MBASE + 4 * i, 4);
+          single_cycle();
+        if (npc_state.state != NPC_RUNNING) break;
+
+        printf("%d: NPC state is %d\n", i, npc_state.state);
+      }
+
+  switch (npc_state.state) {                                                 //after execute inst nemu_state
+    case NPC_RUNNING: npc_state.state = NPC_STOP; break;
+
+    case NPC_END: case NPC_ABORT:
+      Log("npc: %s at pc = " FMT_WORD,
+          (npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
+           (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
+            ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
+          npc_state.halt_pc);
+    case NPC_QUIT: printf("NPC state is quit!\n");//statistic();
+  }
+  
+  printf("NPC END:state is %d\n",npc_state.state);
 }
