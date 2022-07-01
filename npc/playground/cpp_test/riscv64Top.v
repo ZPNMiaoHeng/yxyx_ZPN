@@ -15,28 +15,18 @@ module Fetch(
 `endif // RANDOMIZE_REG_INIT
   reg [63:0] pc; // @[Fetch.scala 20:23]
   reg [63:0] inst; // @[Fetch.scala 21:23]
-
-/*
-  import "DPI-C" function void ebreak_D();
-  
-  always@(io_instIn or io_pcIn) begin
-    if(io_instIn == 64'h00100073)
-      ebreak_D();
-  end
-*/
-  
-  assign io_pcOut = pc; // @[Fetch.scala 59:14]
-  assign io_inst = inst; // @[Fetch.scala 60:14]
+  assign io_pcOut = pc; // @[Fetch.scala 29:14]
+  assign io_inst = inst; // @[Fetch.scala 30:14]
   always @(posedge clock) begin
     if (reset) begin // @[Fetch.scala 20:23]
       pc <= 64'h80000000; // @[Fetch.scala 20:23]
-    end else if (io_instEn) begin // @[Fetch.scala 53:28]
-      pc <= io_pcIn; // @[Fetch.scala 54:8]
+    end else if (io_instEn) begin // @[Fetch.scala 23:28]
+      pc <= io_pcIn; // @[Fetch.scala 24:8]
     end
     if (reset) begin // @[Fetch.scala 21:23]
       inst <= 64'h0; // @[Fetch.scala 21:23]
-    end else if (io_instEn) begin // @[Fetch.scala 53:28]
-      inst <= io_instIn; // @[Fetch.scala 55:10]
+    end else if (io_instEn) begin // @[Fetch.scala 23:28]
+      inst <= io_instIn; // @[Fetch.scala 25:10]
     end
   end
 // Register and memory initialization
@@ -681,24 +671,26 @@ module riscv64Top(
   output [63:0] io_NextPC,
   output [63:0] io_IRes
 );
-  wire  fetch_clock; // @[riscv64Top.scala 15:25]
-  wire  fetch_reset; // @[riscv64Top.scala 15:25]
-  wire  fetch_io_instEn; // @[riscv64Top.scala 15:25]
-  wire [63:0] fetch_io_instIn; // @[riscv64Top.scala 15:25]
-  wire [63:0] fetch_io_pcIn; // @[riscv64Top.scala 15:25]
-  wire [63:0] fetch_io_pcOut; // @[riscv64Top.scala 15:25]
-  wire [63:0] fetch_io_inst; // @[riscv64Top.scala 15:25]
-  wire  decode_clock; // @[riscv64Top.scala 16:25]
-  wire [63:0] decode_io_inst; // @[riscv64Top.scala 16:25]
-  wire [63:0] decode_io_WData; // @[riscv64Top.scala 16:25]
-  wire [63:0] decode_io_PC; // @[riscv64Top.scala 16:25]
-  wire [63:0] decode_io_Asrc; // @[riscv64Top.scala 16:25]
-  wire [63:0] decode_io_Bsrc; // @[riscv64Top.scala 16:25]
-  wire [63:0] decode_io_NextPC; // @[riscv64Top.scala 16:25]
-  wire [63:0] execute_io_Asrc; // @[riscv64Top.scala 17:25]
-  wire [63:0] execute_io_Bsrc; // @[riscv64Top.scala 17:25]
-  wire [63:0] execute_io_result; // @[riscv64Top.scala 17:25]
-  Fetch fetch ( // @[riscv64Top.scala 15:25]
+  wire  fetch_clock; // @[riscv64Top.scala 14:25]
+  wire  fetch_reset; // @[riscv64Top.scala 14:25]
+  wire  fetch_io_instEn; // @[riscv64Top.scala 14:25]
+  wire [63:0] fetch_io_instIn; // @[riscv64Top.scala 14:25]
+  wire [63:0] fetch_io_pcIn; // @[riscv64Top.scala 14:25]
+  wire [63:0] fetch_io_pcOut; // @[riscv64Top.scala 14:25]
+  wire [63:0] fetch_io_inst; // @[riscv64Top.scala 14:25]
+  wire  decode_clock; // @[riscv64Top.scala 15:25]
+  wire [63:0] decode_io_inst; // @[riscv64Top.scala 15:25]
+  wire [63:0] decode_io_WData; // @[riscv64Top.scala 15:25]
+  wire [63:0] decode_io_PC; // @[riscv64Top.scala 15:25]
+  wire [63:0] decode_io_Asrc; // @[riscv64Top.scala 15:25]
+  wire [63:0] decode_io_Bsrc; // @[riscv64Top.scala 15:25]
+  wire [63:0] decode_io_NextPC; // @[riscv64Top.scala 15:25]
+  wire [63:0] execute_io_Asrc; // @[riscv64Top.scala 16:25]
+  wire [63:0] execute_io_Bsrc; // @[riscv64Top.scala 16:25]
+  wire [63:0] execute_io_result; // @[riscv64Top.scala 16:25]
+  wire [63:0] ebreak_inst; // @[riscv64Top.scala 41:22]
+  wire [63:0] ebreak_pc; // @[riscv64Top.scala 41:22]
+  Fetch fetch ( // @[riscv64Top.scala 14:25]
     .clock(fetch_clock),
     .reset(fetch_reset),
     .io_instEn(fetch_io_instEn),
@@ -707,7 +699,7 @@ module riscv64Top(
     .io_pcOut(fetch_io_pcOut),
     .io_inst(fetch_io_inst)
   );
-  Decode decode ( // @[riscv64Top.scala 16:25]
+  Decode decode ( // @[riscv64Top.scala 15:25]
     .clock(decode_clock),
     .io_inst(decode_io_inst),
     .io_WData(decode_io_WData),
@@ -716,32 +708,35 @@ module riscv64Top(
     .io_Bsrc(decode_io_Bsrc),
     .io_NextPC(decode_io_NextPC)
   );
-  Execute execute ( // @[riscv64Top.scala 17:25]
+  Execute execute ( // @[riscv64Top.scala 16:25]
     .io_Asrc(execute_io_Asrc),
     .io_Bsrc(execute_io_Bsrc),
     .io_result(execute_io_result)
   );
-
-  
+/*
+  Ebreak ebreak ( // @[riscv64Top.scala 41:22]
+    .inst(ebreak_inst),
+    .pc(ebreak_pc)
+  );
+*/
   import "DPI-C" function void ebreak_D();
-  
-  always@(fetch_io_inst or fetch_io_pcOut) begin
-    if(fetch_io_inst == 64'h00100073)
-      ebreak_D();
-  end
-
-
-  assign io_NextPC = decode_io_NextPC; // @[riscv64Top.scala 32:15]
-  assign io_IRes = execute_io_result; // @[riscv64Top.scala 33:13]
+  always@(fetch_io_inst or fetch_io_pcIn) begin
+   if(fetch_io_inst == 64'h00100073)
+     ebreak_D();
+ end
+  assign io_NextPC = decode_io_NextPC; // @[riscv64Top.scala 60:15]
+  assign io_IRes = execute_io_result; // @[riscv64Top.scala 61:13]
   assign fetch_clock = clock;
   assign fetch_reset = reset;
-  assign fetch_io_instEn = io_instEn; // @[riscv64Top.scala 19:21]
-  assign fetch_io_instIn = io_inst; // @[riscv64Top.scala 20:21]
-  assign fetch_io_pcIn = decode_io_NextPC; // @[riscv64Top.scala 21:21]
+  assign fetch_io_instEn = io_instEn; // @[riscv64Top.scala 47:21]
+  assign fetch_io_instIn = io_inst; // @[riscv64Top.scala 48:21]
+  assign fetch_io_pcIn = decode_io_NextPC; // @[riscv64Top.scala 49:21]
   assign decode_clock = clock;
-  assign decode_io_inst = fetch_io_inst; // @[riscv64Top.scala 23:21]
-  assign decode_io_WData = execute_io_result; // @[riscv64Top.scala 24:21]
-  assign decode_io_PC = fetch_io_pcOut; // @[riscv64Top.scala 25:21]
-  assign execute_io_Asrc = decode_io_Asrc; // @[riscv64Top.scala 29:23]
-  assign execute_io_Bsrc = decode_io_Bsrc; // @[riscv64Top.scala 30:23]
+  assign decode_io_inst = fetch_io_inst; // @[riscv64Top.scala 51:21]
+  assign decode_io_WData = execute_io_result; // @[riscv64Top.scala 52:21]
+  assign decode_io_PC = fetch_io_pcOut; // @[riscv64Top.scala 53:21]
+  assign execute_io_Asrc = decode_io_Asrc; // @[riscv64Top.scala 57:23]
+  assign execute_io_Bsrc = decode_io_Bsrc; // @[riscv64Top.scala 58:23]
+  assign ebreak_inst = fetch_io_instIn; // @[riscv64Top.scala 43:20]
+  assign ebreak_pc = fetch_io_pcIn; // @[riscv64Top.scala 44:20]
 endmodule

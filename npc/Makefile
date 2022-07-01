@@ -34,7 +34,9 @@ CPP_DIR = $(PLAYGROUND_DIR)/cpp/
 #######################################################################
 #File_DIR
 # Input files for Verilator
-VSRC = $(shell find ./build/ -name *.v)
+VSRC += $(shell find ./build/ -name *.v)
+VSRC += /home/zpn/ysyx-workbench/npc/playground/src/main/resources/vsrc/Ebreak.v
+#$(shell find $(playground)/src -name *.v)
 #CSRC_DIR = $(shell find $(CPP_DIR)/npc.cpp)
 CSRC += $(shell find $(CPP_DIR) -name *.cpp)
 #CSRC += $(shell find $(CPP_DIR) -name *.c)
@@ -50,7 +52,7 @@ OBJ_DIR = ./obj_dir
 VERILATOR_FLAGS += --cc --exe -Wall --trace --coverage \
 	--build -LDFLAGS -ldl --top-module $(VERILOG_NAME)
 # Optimize                                 
-VERILATOR_FLAGS += -Os -x-assign 0         
+VERILATOR_FLAGS += -Os -x-assign 0
 ######################## chisel compile ###############################
 test:
 	mill -i __.test

@@ -13,7 +13,7 @@ extern "C" {
 
 
     // DPI IMPORTS
-    // DPI import at build/Ebreak.v:6:32
+    // DPI import at /home/zpn/ysyx-workbench/npc/playground/src/main/resources/vsrc/Ebreak.v:6:32
     extern void ebreak_D();
 
 #ifdef __cplusplus
