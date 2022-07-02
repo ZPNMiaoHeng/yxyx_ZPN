@@ -5,7 +5,8 @@ import chisel3.util.HasBlackBoxInline
   * Subtracts the smaller from the larger until register y is zero.
   * value in register x is then the GCD
   *
-  * ebreak：通过检测到输入指令是ebreak，将instEn变为0
+  * instEn === 0.U 时才会将输入inst，pcc传入内部电路；
+  * 否则 pc == 8000_0000, inst=0
   */
 class Fetch extends Module {
   val io = IO(new Bundle {
