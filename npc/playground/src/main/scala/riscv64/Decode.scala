@@ -39,7 +39,7 @@ class Decode extends Module {
     nextpc.io.rs1  := regs.io.RData1
 
     io.ALUCtr      := con.io.ALUCtr
-    io.Asrc := Mux(con.io.ALUAsrc === 0.U, regs.io.RData1, io.PC)                                                 //op1R
+    io.Asrc := Mux(con.io.ALUAsrc === 0.U, regs.io.RData1, io.PC)                                                   //op1R
     io.Bsrc := MuxCase(imm.io.imm, Array(
       (con.io.ALUBsrc === "b00".U) -> regs.io.RData1,
       (con.io.ALUBsrc === "b10".U) -> 4.U

@@ -34,8 +34,8 @@ class Fetch extends Module {
 
 //  val pc = Wire(UInt(64.W))
 //  pc := "h8000_0000".U
-/*
-  io.pcOut   := Mux((io.instEn === 0.U), io.pcIn  , "h8000_0000".U)                                    // Mux(io.instEn, io.pcIn, pc)
-  io.inst    := Mux((io.instEn === 0.U), io.instIn, 0.U)
-*/
+
+//  io.pcOut   := Mux((io.instEn === 0.U), io.pcIn  , "h8000_0000".U)                                    // Mux(io.instEn, io.pcIn, pc)
+//  io.inst    := Mux((io.instEn === 0.U), io.instIn, 0.U)
+
 }
