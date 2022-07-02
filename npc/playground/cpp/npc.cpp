@@ -26,6 +26,7 @@ static char *img_file = NULL;
 
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 
+
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 
 static const uint32_t img [] = {
@@ -69,16 +70,15 @@ int main(int argc, char *argv[]) {
     parse_args(argc, argv);
     init_mem();
     memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));                         // 将数据存放在0x8000_00000开头
-    Log("img -> pmem");
+//    Log("img -> pmem");
     restart();
     load_img();
     welcome();
 
     sim_init();
     reset(1);
-    top->io_instEn = 1;
-    cpu_exec(99);
-//    cpu_exec(1);
+    top->io_instEn = 0;                                                            //
+    cpu_exec(20);
     sim_exit();
 
     return is_exit_status_bad();
@@ -188,25 +188,33 @@ int Judge_ebreak(uint64_t inst){
     else return 0;
 }
 
+
+static word_t pc = CONFIG_MBASE;
+static word_t next_pc ;
+
 void cpu_exec(uint64_t n) {
   static int i=0;
   switch (npc_state.state) {                                                 //before execute inst nemu_state 
-    case NPC_END:// case NPC_ABORT:
+    case NPC_END: case NPC_ABORT:
       printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
       return;
     default: npc_state.state = NPC_RUNNING;
   }
 
   for (;i < n;i ++) {
-        #ifdef CONFIG_PMEM
-                printf("0x%08x:\t0x%08lx\n",CONFIG_MBASE + 4 * i, pmem_read(CONFIG_MBASE + 4 * i, 4));
-        #endif
-          top->io_inst = pmem_read(CONFIG_MBASE + 4 * i, 4);
-          single_cycle();
-        if (npc_state.state != NPC_RUNNING) break;
+    #ifdef CONFIG_PMEM
+            printf("0x%08x:\t0x%08lx\n",CONFIG_MBASE + 4 * i, pmem_read(CONFIG_MBASE + 4 * i, 4));
+    #endif
+      cpu.pc = top->io_NextPC;
+      top->io_inst = pmem_read(cpu.pc, 4);
+//      top->io_
+      single_cycle();
+      cpu.pc = cpu.pc + 4;
+      if (npc_state.state != NPC_RUNNING) break;
 
-        printf("%d: NPC state is %d, inst is 0x%08lx\n", i, npc_state.state, pmem_read(CONFIG_MBASE + 4 * i, 4));
-      }
+    printf("%d:\tnpc_state:%d\tpc:0x%08lx\tinst:0x%08lx\n",\
+      i, npc_state.state, cpu.pc, pmem_read(cpu.pc, 4));
+  }
 
   switch (npc_state.state) {                                                 // after execute inst nemu_state
     case NPC_RUNNING: npc_state.state = NPC_STOP; break;                     // 当前执行完需要执行指令->NPC 进入STOP

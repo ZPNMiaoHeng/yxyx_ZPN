@@ -2750,19 +2750,19 @@ VL_INLINE_OPT void Vriscv64Top___024root___sequent__TOP__6(Vriscv64Top___024root
         ++(vlSymsp->__Vcoverage[581]);
         vlSelf->riscv64Top__DOT__fetch__DOT__pc = 0x80000000ULL;
     } else if (vlSelf->io_instEn) {
+        ++(vlSymsp->__Vcoverage[580]);
+    } else {
         ++(vlSymsp->__Vcoverage[579]);
         vlSelf->riscv64Top__DOT__fetch__DOT__pc = vlSelf->riscv64Top__DOT__decode__DOT__nextpc_io_NextPC;
-    } else {
-        ++(vlSymsp->__Vcoverage[580]);
     }
     if (vlSelf->reset) {
         ++(vlSymsp->__Vcoverage[584]);
         vlSelf->riscv64Top__DOT__fetch__DOT__inst = 0ULL;
     } else if (vlSelf->io_instEn) {
+        ++(vlSymsp->__Vcoverage[583]);
+    } else {
         ++(vlSymsp->__Vcoverage[582]);
         vlSelf->riscv64Top__DOT__fetch__DOT__inst = vlSelf->io_inst;
-    } else {
-        ++(vlSymsp->__Vcoverage[583]);
     }
     if ((1U & ((IData)(vlSelf->riscv64Top__DOT__fetch__DOT__pc) 
                ^ (IData)(vlSelf->riscv64Top__DOT____Vtogcov__fetch_io_pcOut)))) {
