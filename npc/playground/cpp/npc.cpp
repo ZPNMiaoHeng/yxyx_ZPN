@@ -34,7 +34,7 @@ static const uint32_t img [] = {
     0x00200113,                 // addi x2, x0, 2;
     0x00108193,                 // addi x3, x1, 1;
     0x00009117,                 // auipc sp,0x9;
-    0x00100073,                 // ebreak
+//    0x00100073,                 // ebreak
     0x00001237,                 // lui x4,1
     0x00c000ef,                 // jal	ra,80000018;
     0x001102e7,                 // jalr x5,1(x2);
@@ -188,7 +188,6 @@ int Judge_ebreak(uint64_t inst){
     else return 0;
 }
 
-
 static word_t pc = CONFIG_MBASE;
 static word_t next_pc ;
 
@@ -205,15 +204,15 @@ void cpu_exec(uint64_t n) {
     #ifdef CONFIG_PMEM
             printf("0x%08x:\t0x%08lx\n",CONFIG_MBASE + 4 * i, pmem_read(CONFIG_MBASE + 4 * i, 4));
     #endif
-      cpu.pc = top->io_NextPC;
+      top->io_pc   = cpu.pc;
       top->io_inst = pmem_read(cpu.pc, 4);
-//      top->io_
       single_cycle();
-      cpu.pc = cpu.pc + 4;
       if (npc_state.state != NPC_RUNNING) break;
 
-    printf("%d:\tnpc_state:%d\tpc:0x%08lx\tinst:0x%08lx\n",\
-      i, npc_state.state, cpu.pc, pmem_read(cpu.pc, 4));
+    printf("%d:\tnpc_state:%d\tpc:0x%08lx\tinst:0x%08lx\tNextpc:0x%08lx\n",\
+      i, npc_state.state, cpu.pc, pmem_read(cpu.pc, 4), top->io_NextPC);
+//      cpu.pc = cpu.pc + 4;
+      cpu.pc = top->io_NextPC;
   }
 
   switch (npc_state.state) {                                                 // after execute inst nemu_state

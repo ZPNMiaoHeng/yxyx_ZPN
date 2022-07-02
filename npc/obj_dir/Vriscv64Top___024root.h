@@ -24,6 +24,7 @@ VL_MODULE(Vriscv64Top___024root) {
     VL_IN8(reset,0,0);
     VL_IN8(io_instEn,0,0);
     VL_IN64(io_inst,63,0);
+    VL_IN64(io_pc,63,0);
     VL_OUT64(io_NextPC,63,0);
     VL_OUT64(io_IRes,63,0);
 
@@ -43,6 +44,7 @@ VL_MODULE(Vriscv64Top___024root) {
     QData/*63:0*/ riscv64Top__DOT__fetch__DOT__inst;
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs_io_RData1;
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm_io_imm;
+    QData/*63:0*/ riscv64Top__DOT__decode__DOT__nextpc_io_NextPC;
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs__DOT__regFile_0;
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs__DOT__regFile_1;
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs__DOT__regFile_2;
@@ -78,7 +80,6 @@ VL_MODULE(Vriscv64Top___024root) {
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT__immType_0;
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT__immType_1;
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT__immType_2;
-    QData/*63:0*/ riscv64Top__DOT__decode__DOT__nextpc__DOT__NextPC;
 
     // LOCAL VARIABLES
     // Anonymous structures to workaround compiler member-count bugs
@@ -101,14 +102,15 @@ VL_MODULE(Vriscv64Top___024root) {
         CData/*1:0*/ riscv64Top__DOT__decode__DOT__nextpc__DOT____Vtogcov__PCsrc;
         CData/*0:0*/ __Vclklast__TOP__clock;
         QData/*63:0*/ riscv64Top__DOT____Vtogcov__io_inst;
+        QData/*63:0*/ riscv64Top__DOT____Vtogcov__io_pc;
         QData/*63:0*/ riscv64Top__DOT____Vtogcov__io_NextPC;
         QData/*63:0*/ riscv64Top__DOT____Vtogcov__io_IRes;
-        QData/*63:0*/ riscv64Top__DOT____Vtogcov__fetch_io_pcIn;
         QData/*63:0*/ riscv64Top__DOT____Vtogcov__fetch_io_pcOut;
         QData/*63:0*/ riscv64Top__DOT____Vtogcov__fetch_io_inst;
         QData/*63:0*/ riscv64Top__DOT____Vtogcov__decode_io_WData;
         QData/*63:0*/ riscv64Top__DOT____Vtogcov__decode_io_Asrc;
         QData/*63:0*/ riscv64Top__DOT____Vtogcov__decode_io_Bsrc;
+        QData/*63:0*/ riscv64Top__DOT____Vtogcov__decode_io_NextPC;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__regs_io_RData1;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__imm_io_imm;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs__DOT____Vtogcov__regFile_0;
@@ -146,11 +148,10 @@ VL_MODULE(Vriscv64Top___024root) {
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_0;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_1;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_2;
-        QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_3;
     };
     struct {
+        QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_3;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_4;
-        QData/*63:0*/ __Vdly__riscv64Top__DOT__decode__DOT__nextpc__DOT__NextPC;
         VlUnpacked<CData/*0:0*/, 2> __Vm_traceActivity;
     };
 

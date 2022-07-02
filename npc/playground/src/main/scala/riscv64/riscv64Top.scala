@@ -6,7 +6,8 @@ import chisel3.util._
 class riscv64Top extends Module {
     val io = IO(new Bundle{
         val instEn = Input(UInt(1.W))
-        val inst = Input(UInt(64.W))
+        val inst   = Input(UInt(64.W))
+        val pc     = Input(UInt(64.W))
         
         val NextPC = Output(UInt(64.W))
         val IRes = Output(UInt(64.W))
@@ -47,7 +48,7 @@ class riscv64Top extends Module {
 
     fetch.io.instEn := io.instEn
     fetch.io.instIn := io.inst
-    fetch.io.pcIn   := decode.io.NextPC
+    fetch.io.pcIn   := io.pc                                                    //decode.io.NextPC
 
     decode.io.inst  := fetch.io.inst
     decode.io.WData := execute.io.result
