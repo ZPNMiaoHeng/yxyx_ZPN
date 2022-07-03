@@ -22,8 +22,10 @@ class riscv64Top extends Module {
       val inst   = Input(UInt(64.W))
       val pc     = Input(UInt(64.W))
     })
-//  addResource("src/main/resources/vsrc/Ebreak.v")
+
 /*
+  addResource("src/main/resources/vsrc/Ebreak.v")
+
     setInline("Ebreak.v",
                     """
                     |module Ebreak(
@@ -38,6 +40,7 @@ class riscv64Top extends Module {
                     |endmodule
                     """.stripMargin)
 */
+
   }
 
   val ebreak = Module(new Ebreak)

@@ -10,6 +10,7 @@
 void Vriscv64Top___024root___combo__TOP__2(Vriscv64Top___024root* vlSelf);
 void Vriscv64Top___024root___sequent__TOP__5(Vriscv64Top___024root* vlSelf);
 void Vriscv64Top___024root___sequent__TOP__6(Vriscv64Top___024root* vlSelf);
+void Vriscv64Top___024root___combo__TOP__7(Vriscv64Top___024root* vlSelf);
 
 void Vriscv64Top___024root___eval(Vriscv64Top___024root* vlSelf) {
     if (false && vlSelf) {}  // Prevent unused
@@ -17,11 +18,13 @@ void Vriscv64Top___024root___eval(Vriscv64Top___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vriscv64Top___024root___eval\n"); );
     // Body
     Vriscv64Top___024root___combo__TOP__2(vlSelf);
+    vlSelf->__Vm_traceActivity[1U] = 1U;
     if (((IData)(vlSelf->clock) & (~ (IData)(vlSelf->__Vclklast__TOP__clock)))) {
         Vriscv64Top___024root___sequent__TOP__5(vlSelf);
-        vlSelf->__Vm_traceActivity[1U] = 1U;
+        vlSelf->__Vm_traceActivity[2U] = 1U;
         Vriscv64Top___024root___sequent__TOP__6(vlSelf);
     }
+    Vriscv64Top___024root___combo__TOP__7(vlSelf);
     // Final
     vlSelf->__Vclklast__TOP__clock = vlSelf->clock;
 }

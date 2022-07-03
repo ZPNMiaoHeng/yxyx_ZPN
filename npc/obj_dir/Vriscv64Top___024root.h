@@ -37,11 +37,11 @@ VL_MODULE(Vriscv64Top___024root) {
     CData/*1:0*/ riscv64Top__DOT__decode__DOT__nextpc__DOT__PCsrc;
     VlWide<3>/*64:0*/ riscv64Top__DOT__decode__DOT__imm__DOT___immType_3_T_11;
     VlWide<3>/*64:0*/ riscv64Top__DOT__decode__DOT__imm__DOT___immType_4_T_11;
+    QData/*63:0*/ riscv64Top__DOT__fetch_io_pcOut;
+    QData/*63:0*/ riscv64Top__DOT__fetch_io_inst;
     QData/*63:0*/ riscv64Top__DOT__decode_io_Asrc;
     QData/*63:0*/ riscv64Top__DOT__decode_io_Bsrc;
     QData/*63:0*/ riscv64Top__DOT__execute_io_result;
-    QData/*63:0*/ riscv64Top__DOT__fetch__DOT__pc;
-    QData/*63:0*/ riscv64Top__DOT__fetch__DOT__inst;
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs_io_RData1;
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm_io_imm;
     QData/*63:0*/ riscv64Top__DOT__decode__DOT__nextpc_io_NextPC;
@@ -152,7 +152,7 @@ VL_MODULE(Vriscv64Top___024root) {
     struct {
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_3;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_4;
-        VlUnpacked<CData/*0:0*/, 2> __Vm_traceActivity;
+        VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
     };
 
     // INTERNAL VARIABLES
