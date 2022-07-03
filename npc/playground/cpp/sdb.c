@@ -2,16 +2,20 @@
 #include <readline/history.h>
 #include "sdb.h"
 #include "cpu.h"
-//#include "npc.h"
 
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 
-void isa_reg_display() {
-  for(int i=0; i<32; i ++) {
-    printf("%d\t%s\t%#16lx\n",i,regs[i],cpu.gpr[i]);
-  }
-}
+word_t pmem_read(paddr_t addr, int len);
+void pmem_write(paddr_t addr, int len, word_t data);
 
+/*
+void isa_reg_display() {
+//  for(int i=0; i<32; i ++) {
+//    printf("%d\t%s\t%#16lx\n",i,regs[i],cpu.gpr[i]);
+//  }
+//  return 0;
+}
+*/
 static char* rl_gets() {
   static char *line_read = NULL;
   if (line_read) {
@@ -48,16 +52,35 @@ static int cmd_si(char *args){
 }
 
 static int cmd_info(char *args){
+  printf("------------------------------------Enter   cmd_info   -------------------------------\n");
   char *arg = strtok(args," ");
 //  sscanf(args," %s",arg);
 //  printf("%s\n",arg);
   if(strcmp(arg,"r") == 0){
-//    printf("1%s\n",arg);
-    isa_reg_display();
+    printf("1%s\n",arg);
+//    isa_reg_display();
+    return 0;
   }else if(strcmp(arg,"w")==0){
     printf("2%s\n",arg); 
   }else printf("Error\n");
 
+  return 0;
+}
+
+static int cmd_x(char *args){
+//  printf("------------------------------------Enter   cmd_x   -------------------------------\n");
+  int num, i;
+  word_t addr;
+  word_t read_addr;
+  sscanf(args,"%d %x", &num, &addr);
+//  printf("%d\t%x\n", num, addr);
+  printf("i\tPC\t\tPmem\n");
+  for(i=0; i<num; i++){
+    read_addr = pmem_read(addr, 8);
+    printf("%d\t0x%x\t0x%08x\n", i, addr, read_addr);
+    addr = addr +4;
+  }
+  
   return 0;
 }
 
@@ -67,6 +90,8 @@ static struct {
   int (*handler) (char *);
 } cmd_table [] = {
   { "si", "Suspend execution after having the program step through N instructions,when N is not given, the default is 1", cmd_si },
+  { "info", "Print Register status(r) or the surveillance point information(w)", cmd_info },
+  { "x", "The value of the expression EXPR is evaluated, and the result is used as the starting memory address", cmd_x },
   { "q", "Exit NEMU", cmd_q },
 };
 

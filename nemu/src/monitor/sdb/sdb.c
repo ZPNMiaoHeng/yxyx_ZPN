@@ -56,7 +56,6 @@ static int cmd_si(char *args){
     return 0;
   }
 }
-
 static int cmd_info(char *args){
   char *arg = strtok(args," ");
 //  sscanf(args," %s",arg);
@@ -70,7 +69,6 @@ static int cmd_info(char *args){
 
   return 0;
 }
-
 static int cmd_x(char *args){
   int num,i;
   long int addr;

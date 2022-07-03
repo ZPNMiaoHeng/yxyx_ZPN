@@ -29,14 +29,14 @@ image: $(IMAGE).elf
 #	@echo  IMAGE=$(IMAGE).bin
 
 run: image
-	@echo ------ riscv64-npc.mk run-------
+#	@echo ------ riscv64-npc.mk run-------
   
-	@echo  IMAGE=$(IMAGE).bin
+#	@echo  IMAGE=$(IMAGE).bin
 	@$(MAKE) -C $(NPC_HOME) ISA=$(ISA) run IMG=$(IMAGE).bin
   #ARGS="$(NPCFLAGS)"
-	@echo ------end run-------
-	@echo $(IMAGE) 
-	@echo IMG=$(IMG)
+#	@echo ------end run-------
+#	@echo $(IMAGE) 
+#	@echo IMG=$(IMG)
   
 
 #	@echo $(LINKAGE)

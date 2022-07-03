@@ -18,7 +18,7 @@ void sdb_mainloop();
 void cpu_exec(uint64_t n);
 static void welcome();
 static long load_img();
-static word_t pmem_read(paddr_t addr, int len);
+word_t pmem_read(paddr_t addr, int len);
 static int parse_args(int argc, char *argv[]);
 
 //static char *ftrace_file = NULL;
@@ -139,12 +139,12 @@ static inline void host_write(void *addr, int len, word_t data) {
   }
 }
 
-static word_t pmem_read(paddr_t addr, int len) {
+word_t pmem_read(paddr_t addr, int len) {
   word_t ret = host_read(guest_to_host(addr), len);
   return ret;
 }
 
-static void pmem_write(paddr_t addr, int len, word_t data) {
+void pmem_write(paddr_t addr, int len, word_t data) {
   host_write(guest_to_host(addr), len, data);
 }
 
@@ -174,7 +174,7 @@ void cpu_exec(uint64_t n) {
       single_cycle();
       if (npc_state.state != NPC_RUNNING) break;
 
-    printf("%d:\tnpc_state:%d\tpc:0x%08lx\tinst:0x%08lx\tNextpc:0x%08lx\n",\
+    printf("%d:\tnpc_state:%d\tpc:0x%08lx\tinst:0x%08lx\tNextpc:0x%08x\n",\
       i, npc_state.state, cpu.pc, pmem_read(cpu.pc, 4), top->io_NextPC);
 //      cpu.pc = cpu.pc + 4;
       cpu.pc = top->io_NextPC;
@@ -207,7 +207,8 @@ void set_npc_state(int state, vaddr_t pc, int halt_ret) {
 int is_exit_status_bad() {
   int good = (npc_state.state == NPC_END && npc_state.halt_ret == 0) ||
     (npc_state.state == NPC_QUIT) ||
-    (npc_state.state == NPC_STOP);
+    (npc_state.state == NPC_STOP) ||
+    (npc_state.state == NPC_RUNNING);
   return !good;
 }
 
