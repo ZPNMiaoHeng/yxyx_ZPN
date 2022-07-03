@@ -34,7 +34,7 @@ static const uint32_t img [] = {
     0x00200113,                 // addi x2, x0, 2;
     0x00108193,                 // addi x3, x1, 1;
     0x00009117,                 // auipc sp,0x9;
-//    0x00100073,                 // ebreak
+    0x00100073,                 // ebreak
     0x00001237,                 // lui x4,1
     0x00c000ef,                 // jal	ra,80000018;
     0x001102e7,                 // jalr x5,1(x2);

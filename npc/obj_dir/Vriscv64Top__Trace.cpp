@@ -112,6 +112,7 @@ void Vriscv64Top___024root__traceChgSub0(Vriscv64Top___024root* vlSelf, Verilate
         tracep->chgQData(oldp+110,(vlSelf->io_pc),64);
         tracep->chgQData(oldp+112,(vlSelf->io_NextPC),64);
         tracep->chgQData(oldp+114,(vlSelf->io_IRes),64);
+        tracep->chgBit(oldp+116,((0x100073ULL == vlSelf->io_inst)));
     }
 }
 

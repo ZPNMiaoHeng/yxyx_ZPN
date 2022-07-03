@@ -18,31 +18,20 @@ class Fetch extends Module {
     val inst = Output(UInt(64.W))
   })
 
-  val pc     = RegInit("h8000_0000".U(64.W)) 
-  val inst   = RegInit(0.U(64.W))
-
-/*
-  class Ebreak extends BlackBox/* with HasBlackBoxResource*/ {
+  class Ebreak extends BlackBox {
     val io = IO(new Bundle {
       val inst   = Input(UInt(64.W))
       val pc     = Input(UInt(64.W))
     })
+  }
 
   val ebreak = Module(new Ebreak)
+  val Debreak = Mux((io.instIn === "h00100073".U), true.B, false.B)
 
   ebreak.io.inst   := io.instIn
   ebreak.io.pc     := io.pcIn
-*/
-/*
-  when(io.instEn === 0.U ) {                                      // 指令有效，并且不是ebreak
-    pc := io.pcIn
-    inst := io.instIn
-  }
-*/
-//  io.pcOut   := pc   // Mux((io.instEn === 1.U), io.pcIn, "h8000_0000".U)                                    // Mux(io.instEn, io.pcIn, pc)
-//  io.inst    := inst //Mux((io.instEn === 1.U) , io.instIn, 0.U)
 
-  io.pcOut   := Mux((io.instEn === 0.U), io.pcIn  , "h8000_0000".U)                                    // Mux(io.instEn, io.pcIn, pc)
-  io.inst    := Mux((io.instEn === 0.U), io.instIn, 0.U)
-
+  io.pcOut   := Mux((io.instEn === 0.U && !Debreak), io.pcIn  , "h7fff_fffc".U)                                    // Mux(io.instEn, io.pcIn, pc)
+  io.inst    := Mux((io.instEn === 0.U && !Debreak), io.instIn, 0.U)
+  
 }

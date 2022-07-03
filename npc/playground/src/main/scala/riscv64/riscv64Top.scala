@@ -17,12 +17,12 @@ class riscv64Top extends Module {
     val decode  = Module(new Decode)
     val execute = Module(new Execute)
 
-  class Ebreak extends BlackBox/* with HasBlackBoxResource*/ {
-    val io = IO(new Bundle {
+//  class Ebreak extends BlackBox/* with HasBlackBoxResource*/ {
+/*    val io = IO(new Bundle {
       val inst   = Input(UInt(64.W))
       val pc     = Input(UInt(64.W))
     })
-
+*/
 /*
   addResource("src/main/resources/vsrc/Ebreak.v")
 
@@ -41,13 +41,13 @@ class riscv64Top extends Module {
                     """.stripMargin)
 */
 
-  }
-
+//  }
+/*
   val ebreak = Module(new Ebreak)
 
   ebreak.io.inst   := fetch.io.instIn
   ebreak.io.pc     := fetch.io.pcIn
-
+*/
 
     fetch.io.instEn := io.instEn
     fetch.io.instIn := io.inst

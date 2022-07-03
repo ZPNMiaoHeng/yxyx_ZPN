@@ -87,6 +87,7 @@ VL_MODULE(Vriscv64Top___024root) {
         CData/*0:0*/ riscv64Top__DOT____Vtogcov__clock;
         CData/*0:0*/ riscv64Top__DOT____Vtogcov__reset;
         CData/*0:0*/ riscv64Top__DOT____Vtogcov__io_instEn;
+        CData/*0:0*/ riscv64Top__DOT__fetch__DOT____Vtogcov__Debreak;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__regs_io_RegWr;
         CData/*2:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__imm_io_ExtOp;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__con_io_ALUAsrc;
@@ -147,9 +148,9 @@ VL_MODULE(Vriscv64Top___024root) {
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs__DOT____Vtogcov__regFile_31;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_0;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_1;
-        QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_2;
     };
     struct {
+        QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_2;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_3;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_4;
         VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;

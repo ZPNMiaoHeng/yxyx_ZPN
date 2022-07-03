@@ -51,13 +51,16 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declQuad(c+7,"riscv64Top execute_io_Asrc", false,-1, 63,0);
         tracep->declQuad(c+9,"riscv64Top execute_io_Bsrc", false,-1, 63,0);
         tracep->declQuad(c+5,"riscv64Top execute_io_result", false,-1, 63,0);
-        tracep->declQuad(c+109,"riscv64Top ebreak_inst", false,-1, 63,0);
-        tracep->declQuad(c+111,"riscv64Top ebreak_pc", false,-1, 63,0);
         tracep->declBit(c+108,"riscv64Top fetch io_instEn", false,-1);
         tracep->declQuad(c+109,"riscv64Top fetch io_instIn", false,-1, 63,0);
         tracep->declQuad(c+111,"riscv64Top fetch io_pcIn", false,-1, 63,0);
         tracep->declQuad(c+1,"riscv64Top fetch io_pcOut", false,-1, 63,0);
         tracep->declQuad(c+3,"riscv64Top fetch io_inst", false,-1, 63,0);
+        tracep->declQuad(c+109,"riscv64Top fetch ebreak_inst", false,-1, 63,0);
+        tracep->declQuad(c+111,"riscv64Top fetch ebreak_pc", false,-1, 63,0);
+        tracep->declBit(c+117,"riscv64Top fetch Debreak", false,-1);
+        tracep->declQuad(c+109,"riscv64Top fetch ebreak inst", false,-1, 63,0);
+        tracep->declQuad(c+111,"riscv64Top fetch ebreak pc", false,-1, 63,0);
         tracep->declBit(c+106,"riscv64Top decode clock", false,-1);
         tracep->declQuad(c+3,"riscv64Top decode io_inst", false,-1, 63,0);
         tracep->declQuad(c+5,"riscv64Top decode io_WData", false,-1, 63,0);
@@ -153,8 +156,6 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declQuad(c+7,"riscv64Top execute io_Asrc", false,-1, 63,0);
         tracep->declQuad(c+9,"riscv64Top execute io_Bsrc", false,-1, 63,0);
         tracep->declQuad(c+5,"riscv64Top execute io_result", false,-1, 63,0);
-        tracep->declQuad(c+109,"riscv64Top ebreak inst", false,-1, 63,0);
-        tracep->declQuad(c+111,"riscv64Top ebreak pc", false,-1, 63,0);
     }
 }
 
@@ -274,5 +275,6 @@ void Vriscv64Top___024root__traceFullSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->fullQData(oldp+111,(vlSelf->io_pc),64);
         tracep->fullQData(oldp+113,(vlSelf->io_NextPC),64);
         tracep->fullQData(oldp+115,(vlSelf->io_IRes),64);
+        tracep->fullBit(oldp+117,((0x100073ULL == vlSelf->io_inst)));
     }
 }
