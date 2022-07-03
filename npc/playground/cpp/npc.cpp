@@ -13,21 +13,24 @@ void sim_init();
 void sim_exit();
 void init_mem();
 int is_exit_status_bad();
+void sdb_mainloop();
 
 void cpu_exec(uint64_t n);
 static void welcome();
 static long load_img();
 static word_t pmem_read(paddr_t addr, int len);
+static int parse_args(int argc, char *argv[]);
 
 //static char *ftrace_file = NULL;
 //static char *diff_so_file = NULL;
 static char *img_file = NULL;
 //static int difftest_port = 1234;
 
+
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 
-
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+
 
 static const uint32_t img [] = {
     0x00100093,                 // addi x1,x0, 1; 
@@ -74,6 +77,8 @@ int main(int argc, char *argv[]) {
     restart();
     load_img();
     welcome();
+
+    sdb_mainloop();
 
     sim_init();
     reset(1);

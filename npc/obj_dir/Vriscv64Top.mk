@@ -12,9 +12,9 @@ PERL = perl
 # Path to Verilator kit (from $VERILATOR_ROOT)
 VERILATOR_ROOT = /home/zpn/verilator
 # SystemC include directory with systemc.h (from $SYSTEMC_INCLUDE)
-SYSTEMC_INCLUDE ?= 
+SYSTEMC_INCLUDE ?= /usr/local/systemc-2.3.3/include
 # SystemC library directory with libsystemc.a (from $SYSTEMC_LIBDIR)
-SYSTEMC_LIBDIR ?= 
+SYSTEMC_LIBDIR ?= /usr/local/systemc-2.3.3/lib-linux64
 
 ### Switches...
 # C++ code coverage  0/1 (from --prof-c)
@@ -39,10 +39,13 @@ VM_USER_CFLAGS = \
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
 	-ldl \
+	-lreadline \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
+	init \
 	npc \
+	sdb \
 
 # User .cpp directories (from .cpp's on Verilator command line)
 VM_USER_DIR = \
@@ -58,7 +61,11 @@ include $(VERILATOR_ROOT)/include/verilated.mk
 ### Executable rules... (from --exe)
 VPATH += $(VM_USER_DIR)
 
+init.o: /home/zpn/ysyx-workbench/npc/playground/cpp/init.c
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 npc.o: /home/zpn/ysyx-workbench/npc/playground/cpp/npc.cpp
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+sdb.o: /home/zpn/ysyx-workbench/npc/playground/cpp/sdb.c
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 
 ### Link rules... (from --exe)

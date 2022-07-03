@@ -5,6 +5,8 @@
 
 #include "debug.h"
 #include <stdio.h>
+#include <cassert>
+
 //#include <assert.h>
 
 // -------- log -----------------------------------------

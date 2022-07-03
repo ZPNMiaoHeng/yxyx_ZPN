@@ -45,9 +45,4 @@ class Decode extends Module {
       (con.io.ALUBsrc === "b10".U) -> 4.U
     ))                                           //op2R
     io.NextPC := nextpc.io.NextPC
-/*    io.NextPC := MuxCase(io.PC + 4.U, Array(
-      (con.io.Branch === "b001".U, io.PC + imm.io.imm),
-      (con.io.Branch === "b010".U, regs.io.RData1 + imm.io.imm)
-    ))
-    */
 }

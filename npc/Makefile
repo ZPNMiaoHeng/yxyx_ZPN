@@ -32,15 +32,21 @@ PLAYGROUND_DIR = $(NPC_HOME)/playground
 CPP_DIR = $(PLAYGROUND_DIR)/cpp/
 #CPP_DIR = $(PLAYGROUND_DIR)/cpp_addi
 #######################################################################
-#File_DIR
-# Input files for Verilator
+#---------------------- File ------------------------------------------
 VSRC += $(shell find ./build/ -name *.v)
 VSRC += /home/zpn/ysyx-workbench/npc/playground/src/main/resources/vsrc/Ebreak.v
-#$(shell find $(playground)/src -name *.v)
+#---------------------- CSRC ------------------------------------------
 #CSRC_DIR = $(shell find $(CPP_DIR)/npc.cpp)
 CSRC += $(shell find $(CPP_DIR) -name *.cpp)
-#CSRC += $(shell find $(CPP_DIR) -name *.c)
+CSRC += $(shell find $(CPP_DIR) -name *.c)
 #CSRC += $(shell find $(CPP_DIR) -name *.h)
+#---------------------- INC_PATH --------------------------------------
+# 存放头文件路径
+#INC_PATH +=
+#INCLUDES = $(addprefix -I, $(INC_PATH))
+#CFLAGS  := -O2 -MMD -Wall -Werror $(INCLUDES) $(CFLAGS)
+#LDFLAGS := -O2 $(LDFLAGS)
+########################################################################
 VERILATOR_INPUT =  $(VSRC) $(CSRC)
 #SO  = $(NPC_HOME)/../nemu/tools/spike-diff/build/riscv64-spike-so
 
@@ -50,9 +56,16 @@ OBJ_DIR = ./obj_dir
 #######################################################################
 # Verliater option-- Generate C++ in executable form and coverage analysis               
 VERILATOR_FLAGS += --cc --exe -Wall --trace --coverage \
-	--build -LDFLAGS -ldl --top-module $(VERILOG_NAME)
+	--build --top-module $(VERILOG_NAME)
 # Optimize                                 
 VERILATOR_FLAGS += -Os -x-assign 0
+# LDFLAGS 编译时选项
+VERILATOR_FLAGS += -LDFLAGS -ldl \
+ -LDFLAGS -lreadline
+# -lncurses
+#  -pie -lLLVM-12
+# CFLAGS  链接时选项
+#VERILATOR_FLAGS += -CFLASS
 ######################## chisel compile ###############################
 test:
 	mill -i __.test
@@ -91,13 +104,13 @@ run:
 	./obj_dir/V$(VERILOG_NAME) $(IMG)
 # -d $(SO)
 	
-	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@echo "-------------------------- Open GTKwave ------------------------"
-	gtkwave -f $(GTK_DIR)
+#	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+#	@echo "-------------------------- Open GTKwave ------------------------"
+#	gtkwave -f $(GTK_DIR)
 
 clean:
-	-rm -rf $(BUILD_DIR) $(OBJ_DIR)
-
+#	-rm -rf $(BUILD_DIR) $(OBJ_DIR)
+	-rm -rf $(OBJ_DIR)
 ######################################################################
 # Other targets
 

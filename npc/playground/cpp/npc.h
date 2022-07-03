@@ -36,3 +36,6 @@ void reset(int n);
 void sim_init();
 void sim_exit();
 void init_mem();
+
+//static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+//uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
