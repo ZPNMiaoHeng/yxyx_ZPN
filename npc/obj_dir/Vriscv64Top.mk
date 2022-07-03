@@ -43,7 +43,6 @@ VM_USER_LDLIBS = \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
-	init \
 	npc \
 	sdb \
 
@@ -61,8 +60,6 @@ include $(VERILATOR_ROOT)/include/verilated.mk
 ### Executable rules... (from --exe)
 VPATH += $(VM_USER_DIR)
 
-init.o: /home/zpn/ysyx-workbench/npc/playground/cpp/init.c
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 npc.o: /home/zpn/ysyx-workbench/npc/playground/cpp/npc.cpp
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 sdb.o: /home/zpn/ysyx-workbench/npc/playground/cpp/sdb.c

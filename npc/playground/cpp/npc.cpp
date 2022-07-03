@@ -73,58 +73,18 @@ int main(int argc, char *argv[]) {
     parse_args(argc, argv);
     init_mem();
     memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));                         // 将数据存放在0x8000_00000开头
-//    Log("img -> pmem");
     restart();
     load_img();
     welcome();
 
-    sdb_mainloop();
-
     sim_init();
     reset(1);
-    top->io_instEn = 0;                                                            //
-    cpu_exec(20);
+    top->io_instEn = 0; 
+    sdb_mainloop();
+//    cpu_exec(20);
     sim_exit();
 
     return is_exit_status_bad();
-}
-
-// Combinational logic Circuit 
-void step_and_dump_wave(){
-    top->eval();
-    contextp->timeInc(1);
-    tfp->dump(contextp->time());
-}
-
-// Sequential circuit 
-void single_cycle() {
-  top->clock = 0; top->eval();
-  contextp->timeInc(1);
-  tfp->dump(contextp->time());
-
-  top->clock = 1; top->eval();
-  contextp->timeInc(1);
-  tfp->dump(contextp->time());
-}
-
-void reset(int n) {
-  top->reset = 1;
-  while (n -- > 0) single_cycle();
-  top->reset = 0;
-}
-
-void sim_init(){
-    contextp = new VerilatedContext;
-    tfp = new VerilatedVcdC;
-    top = new Vriscv64Top;
-    contextp->traceEverOn(true);
-    top->trace(tfp, 0);
-    tfp->open("../npc/playground/sim/dump.vcd");
-}
-
-void sim_exit(){
-    step_and_dump_wave();
-    tfp->close();
 }
 
 static void welcome() {
@@ -267,3 +227,40 @@ void ebreak_D(uint32_t instIn, uint64_t pc) {
   }
 }
 */
+// Combinational logic Circuit 
+void step_and_dump_wave(){
+    top->eval();
+    contextp->timeInc(1);
+    tfp->dump(contextp->time());
+}
+
+// Sequential circuit 
+void single_cycle() {
+  top->clock = 0; top->eval();
+  contextp->timeInc(1);
+  tfp->dump(contextp->time());
+
+  top->clock = 1; top->eval();
+  contextp->timeInc(1);
+  tfp->dump(contextp->time());
+}
+
+void reset(int n) {
+  top->reset = 1;
+  while (n -- > 0) single_cycle();
+  top->reset = 0;
+}
+
+void sim_init(){
+    contextp = new VerilatedContext;
+    tfp = new VerilatedVcdC;
+    top = new Vriscv64Top;
+    contextp->traceEverOn(true);
+    top->trace(tfp, 0);
+    tfp->open("../npc/playground/sim/dump.vcd");
+}
+
+void sim_exit(){
+    step_and_dump_wave();
+    tfp->close();
+}
