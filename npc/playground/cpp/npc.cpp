@@ -2,9 +2,12 @@
 #include "sim.h"
 #include "debug.h"
 
+
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 static Vriscv64Top* top;
+//static bool g_print_step = false;                                                   // ???
+static uint64_t g_timer = 0; // unit: us
 
 void step_and_dump_wave(); 
 void single_cycle();
@@ -25,12 +28,9 @@ static int parse_args(int argc, char *argv[]);
 //static char *diff_so_file = NULL;
 static char *img_file = NULL;
 //static int difftest_port = 1234;
-
-
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
-
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
-
+uint64_t g_nr_guest_inst = -1;
 
 static const uint32_t img [] = {
     0x00100093,                 // addi x1,x0, 1; 
@@ -156,6 +156,16 @@ int Judge_ebreak(uint64_t inst){
 static word_t pc = CONFIG_MBASE;
 static word_t next_pc ;
 
+static void statistic() {
+#define NUMBERIC_FMT "%ld"
+  Log("host time spent = " NUMBERIC_FMT " us", g_timer);
+  Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
+  if (g_timer > 0) Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
+  else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
+}
+
+  uint64_t get_time();
+
 void cpu_exec(uint64_t n) {
   static int i=0;
   switch (npc_state.state) {                                                 //before execute inst nemu_state 
@@ -165,34 +175,41 @@ void cpu_exec(uint64_t n) {
     default: npc_state.state = NPC_RUNNING;
   }
 
+  uint64_t timer_start = clock();
+  
   for (;i < n;i ++) {
-    #ifdef CONFIG_PMEM
-            printf("0x%08x:\t0x%08lx\n",CONFIG_MBASE + 4 * i, pmem_read(CONFIG_MBASE + 4 * i, 4));
-    #endif
       top->io_pc   = cpu.pc;
       top->io_inst = pmem_read(cpu.pc, 4);
       single_cycle();
+      g_nr_guest_inst ++;
+//      Log("g_nr_guest_inst is %ld", g_nr_guest_inst);
       if (npc_state.state != NPC_RUNNING) break;
 
-    printf("%d:\tnpc_state:%d\tpc:0x%08lx\tinst:0x%08lx\tNextpc:0x%08x\n",\
+  if( n < 10) {
+    printf("%d:\tnpc_state:%d\tpc:0x%08lx\tinst:0x%08x\tNextpc:0x%08lx\n",\
       i, npc_state.state, cpu.pc, pmem_read(cpu.pc, 4), top->io_NextPC);
-//      cpu.pc = cpu.pc + 4;
+  }
+
       cpu.pc = top->io_NextPC;
   }
+
+  uint64_t timer_end = clock();
+  g_timer += timer_end - timer_start;
 
   switch (npc_state.state) {                                                 // after execute inst nemu_state
     case NPC_RUNNING: npc_state.state = NPC_STOP; break;                     // 当前执行完需要执行指令->NPC 进入STOP
     /**/
     case NPC_END: case NPC_ABORT:
+      npc_state.halt_pc = cpu.pc;
       Log("npc: %s at pc = " FMT_WORD,
           (npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
            (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
             ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
           npc_state.halt_pc);
-    case NPC_QUIT: Log("NPC state is quit!\n");//statistic();
+    case NPC_QUIT: /*Log("NPC state is quit!\n");*/ statistic();
   }
   
-  Log("NPC execute end:state is %d\n",npc_state.state);
+//  Log("NPC execute end:state is %d\n",npc_state.state);
 }
 
 /*
@@ -213,9 +230,9 @@ int is_exit_status_bad() {
 }
 
 void ebreak_D(){
-  static int i = 0;
-  i ++;
-  Log("------------ NPC ebreak_D :%d----------------\n",i);
+//  static int i = 0;
+//  i ++;
+//  Log("------------ NPC ebreak_D :%d----------------\n",i);
   npc_state.state = NPC_END;
 }
 /*

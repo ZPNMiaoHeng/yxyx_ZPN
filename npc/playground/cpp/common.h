@@ -8,7 +8,7 @@
 
 typedef uint32_t word_t;
 typedef int64_t  sword_t;
-#define FMT_WORD "0x%016lx"
+#define FMT_WORD "0x%016x"
 #define FMT_PADDR "0x%016lx"
 /*
 #if CONFIG_MBASE + CONFIG_MSIZE > 0x100000000ul

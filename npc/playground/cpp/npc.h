@@ -1,7 +1,5 @@
 //#include "sim.h"
-
-#include <getopt.h>
-
+#include <time.h>
 #include <getopt.h>
 #include "common.h"
 
