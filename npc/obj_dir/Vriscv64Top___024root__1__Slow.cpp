@@ -105,7 +105,6 @@ void Vriscv64Top___024root___ctor_var_reset(Vriscv64Top___024root* vlSelf) {
     vlSelf->riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instOF = VL_RAND_RESET_I(8);
     vlSelf->riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instAddiEn = VL_RAND_RESET_I(1);
     vlSelf->riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instJalrEn = VL_RAND_RESET_I(1);
-    vlSelf->riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instSdEn = VL_RAND_RESET_I(1);
     vlSelf->riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instAuipcEn = VL_RAND_RESET_I(1);
     vlSelf->riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instLuiEn = VL_RAND_RESET_I(1);
     vlSelf->riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instJalEn = VL_RAND_RESET_I(1);
@@ -3544,10 +3543,10 @@ void Vriscv64Top___024root___configure_coverage(Vriscv64Top___024root* vlSelf, b
     vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1182]), first, "build/riscv64Top.v", 51, 14, ".riscv64Top.decode.con", "v_toggle/ContrGen", "instOF[7]", "");
     vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1183]), first, "build/riscv64Top.v", 52, 9, ".riscv64Top.decode.con", "v_toggle/ContrGen", "instAddiEn", "");
     vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1184]), first, "build/riscv64Top.v", 53, 9, ".riscv64Top.decode.con", "v_toggle/ContrGen", "instJalrEn", "");
-    vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1185]), first, "build/riscv64Top.v", 54, 9, ".riscv64Top.decode.con", "v_toggle/ContrGen", "instSdEn", "");
-    vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1186]), first, "build/riscv64Top.v", 55, 9, ".riscv64Top.decode.con", "v_toggle/ContrGen", "instAuipcEn", "");
-    vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1187]), first, "build/riscv64Top.v", 56, 9, ".riscv64Top.decode.con", "v_toggle/ContrGen", "instLuiEn", "");
-    vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1188]), first, "build/riscv64Top.v", 57, 9, ".riscv64Top.decode.con", "v_toggle/ContrGen", "instJalEn", "");
+    vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[647]), first, "build/riscv64Top.v", 54, 9, ".riscv64Top.decode.con", "v_toggle/ContrGen", "instSdEn", "");
+    vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1185]), first, "build/riscv64Top.v", 55, 9, ".riscv64Top.decode.con", "v_toggle/ContrGen", "instAuipcEn", "");
+    vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1186]), first, "build/riscv64Top.v", 56, 9, ".riscv64Top.decode.con", "v_toggle/ContrGen", "instLuiEn", "");
+    vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1187]), first, "build/riscv64Top.v", 57, 9, ".riscv64Top.decode.con", "v_toggle/ContrGen", "instJalEn", "");
     vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[259]), first, "build/riscv64Top.v", 71, 17, ".riscv64Top.decode.nextpc", "v_toggle/NextPC", "io_PC[0]", "");
     vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[260]), first, "build/riscv64Top.v", 71, 17, ".riscv64Top.decode.nextpc", "v_toggle/NextPC", "io_PC[1]", "");
     vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[261]), first, "build/riscv64Top.v", 71, 17, ".riscv64Top.decode.nextpc", "v_toggle/NextPC", "io_PC[2]", "");
@@ -3807,8 +3806,8 @@ void Vriscv64Top___024root___configure_coverage(Vriscv64Top___024root* vlSelf, b
     vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[640]), first, "build/riscv64Top.v", 75, 17, ".riscv64Top.decode.nextpc", "v_toggle/NextPC", "io_NextPC[61]", "");
     vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[641]), first, "build/riscv64Top.v", 75, 17, ".riscv64Top.decode.nextpc", "v_toggle/NextPC", "io_NextPC[62]", "");
     vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[642]), first, "build/riscv64Top.v", 75, 17, ".riscv64Top.decode.nextpc", "v_toggle/NextPC", "io_NextPC[63]", "");
-    vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1189]), first, "build/riscv64Top.v", 80, 14, ".riscv64Top.decode.nextpc", "v_toggle/NextPC", "PCsrc[0]", "");
-    vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1190]), first, "build/riscv64Top.v", 80, 14, ".riscv64Top.decode.nextpc", "v_toggle/NextPC", "PCsrc[1]", "");
+    vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1188]), first, "build/riscv64Top.v", 80, 14, ".riscv64Top.decode.nextpc", "v_toggle/NextPC", "PCsrc[0]", "");
+    vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[1189]), first, "build/riscv64Top.v", 80, 14, ".riscv64Top.decode.nextpc", "v_toggle/NextPC", "PCsrc[1]", "");
     vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[451]), first, "build/riscv64Top.v", 171, 17, ".riscv64Top.execute", "v_toggle/Execute", "io_Asrc[0]", "");
     vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[452]), first, "build/riscv64Top.v", 171, 17, ".riscv64Top.execute", "v_toggle/Execute", "io_Asrc[1]", "");
     vlSelf->__vlCoverInsert(&(vlSymsp->__Vcoverage[453]), first, "build/riscv64Top.v", 171, 17, ".riscv64Top.execute", "v_toggle/Execute", "io_Asrc[2]", "");

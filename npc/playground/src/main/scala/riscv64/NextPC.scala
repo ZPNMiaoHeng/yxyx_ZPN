@@ -14,8 +14,6 @@ class NextPC extends Module {
     val NextPC = Output(UInt(64.W))
   })
 
-//  val NextPC = RegInit("h8000_0000".U(64.W))
-//  io.NextPC := NextPC
   val PCsrc  = Wire(UInt(2.W))
   /* 通过译码得到Branch信号 -----> PCsrc信号（控制PC与 4/imm 操作） */
   PCsrc := MuxCase("b00".U, Array(                                                      // 默认：PC + 4

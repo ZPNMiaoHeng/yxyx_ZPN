@@ -38,7 +38,7 @@ class ContrGen extends Module {
           (instJalEn)  -> "b001".U,
           (instJalrEn) -> "b010".U
         ))
-  io.RegWr  := Mux(instSdEn, 0.U, 1.U)                                         // 0.U -> 不写会寄存器
+  io.RegWr  := Mux(instSdEn, 1.U, 0.U)                                         // 0.U -> 写回寄存器堆
   
   io.ExtOp := MuxCase(0.U, 
         Array(

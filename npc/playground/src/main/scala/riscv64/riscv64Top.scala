@@ -1,12 +1,10 @@
 
 import chisel3._ 
 import chisel3.util._
-//import chisel3.util.HasBlackBoxResource
+//import chisel3.util.HasBlackBoxInline
 
 class riscv64Top extends Module {
     val io = IO(new Bundle{
-//        val clk    = Input(Clock())
-//        val reset  = Input(Bool())//Reset())
         val instEn = Input(UInt(1.W))
         val inst   = Input(UInt(64.W))
         val pc     = Input(UInt(64.W))
@@ -19,15 +17,13 @@ class riscv64Top extends Module {
     val decode  = Module(new Decode)
     val execute = Module(new Execute)
 
-//  class Ebreak extends BlackBox/* with HasBlackBoxResource*/ {
+//  class Ebreak extends BlackBox/* with HasBlackBoxInline*/ {
 /*    val io = IO(new Bundle {
       val inst   = Input(UInt(64.W))
       val pc     = Input(UInt(64.W))
     })
 */
 /*
-  addResource("src/main/resources/vsrc/Ebreak.v")
-
     setInline("Ebreak.v",
                     """
                     |module Ebreak(
@@ -55,8 +51,6 @@ class riscv64Top extends Module {
     fetch.io.instIn := io.inst
     fetch.io.pcIn   := io.pc                                                    //decode.io.NextPC
 
-//    decode.io.clk   := io.clk
-//    decode.io.reset := io.reset
     decode.io.inst  := fetch.io.inst
     decode.io.WData := execute.io.result
     decode.io.PC    := fetch.io.pcOut
@@ -70,6 +64,5 @@ class riscv64Top extends Module {
     io.IRes := execute.io.result
 
 //        fetch.io <> io
-        
 }
 

@@ -10,8 +10,6 @@ import chisel3.util._
   */
 class Decode extends Module {
     val io = IO(new Bundle {
-//        val clk    = Input(Clock())
-//        val reset  = Input(Reset())
         val inst   = Input(UInt(64.W))
         val WData  = Input(UInt(64.W))
         val PC     = Input(UInt(64.W))

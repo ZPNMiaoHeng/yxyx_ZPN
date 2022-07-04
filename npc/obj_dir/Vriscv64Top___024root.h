@@ -65,7 +65,6 @@ VL_MODULE(Vriscv64Top___024root) {
     CData/*7:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instOF;
     CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instAddiEn;
     CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instJalrEn;
-    CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instSdEn;
     CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instAuipcEn;
     CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instLuiEn;
     CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instJalEn;
