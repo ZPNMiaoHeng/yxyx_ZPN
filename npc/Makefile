@@ -109,8 +109,8 @@ run:
 #	gtkwave -f $(GTK_DIR)
 
 clean:
-#	-rm -rf $(BUILD_DIR) $(OBJ_DIR)
-	-rm -rf $(OBJ_DIR)
+	-rm -rf $(BUILD_DIR) $(OBJ_DIR)
+#	-rm -rf $(OBJ_DIR)
 ######################################################################
 # Other targets
 

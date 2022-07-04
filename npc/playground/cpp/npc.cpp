@@ -1,7 +1,7 @@
 #include "npc.h"
 #include "sim.h"
 #include "debug.h"
-
+//#include "verilated_dpi.h"
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
@@ -31,18 +31,26 @@ static char *img_file = NULL;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 uint64_t g_nr_guest_inst = -1;
+uint64_t *cpu_gpr = NULL;
+/*
+extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
+  cpu_gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
+}
+*/
 
 static const uint32_t img [] = {
     0x00100093,                 // addi x1,x0, 1; 
     0x00200113,                 // addi x2, x0, 2;
     0x00108193,                 // addi x3, x1, 1;
     0x00009117,                 // auipc sp,0x9;
+    0x00050513,
     0x00100073,                 // ebreak
     0x00001237,                 // lui x4,1
     0x00c000ef,                 // jal	ra,80000018;
     0x001102e7,                 // jalr x5,1(x2);
     0x00113423,                 // sd	ra,8(sp)
     0x00100073,                 // ebreak
+
 };
 
 static void restart() {
@@ -81,7 +89,6 @@ int main(int argc, char *argv[]) {
     reset(1);
     top->io_instEn = 0; 
     sdb_mainloop();
-//    cpu_exec(20);
     sim_exit();
 
     return is_exit_status_bad();
@@ -112,8 +119,6 @@ static long load_img() {
 }
 
 void init_mem() {
-//  memcpy(pmem , (uint8_t *)malloc(CONFIG_MSIZE), );
-//  pmem = malloc(CONFIG_MSIZE);
     Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]",
       (paddr_t)CONFIG_MBASE, (paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1);
   assert(pmem);
@@ -154,7 +159,6 @@ int Judge_ebreak(uint64_t inst){
 }
 
 static word_t pc = CONFIG_MBASE;
-static word_t next_pc ;
 
 static void statistic() {
 #define NUMBERIC_FMT "%ld"
@@ -185,11 +189,11 @@ void cpu_exec(uint64_t n) {
 //      Log("g_nr_guest_inst is %ld", g_nr_guest_inst);
       if (npc_state.state != NPC_RUNNING) break;
 
-  if( n < 10) {
-    printf("%d:\tnpc_state:%d\tpc:0x%08lx\tinst:0x%08x\tNextpc:0x%08lx\n",\
-      i, npc_state.state, cpu.pc, pmem_read(cpu.pc, 4), top->io_NextPC);
-  }
-
+//  if( n < 10) {
+    printf("%d:\tnpc_state:%d\tpc:0x%08lx\tinst:0x%08x\t->\tNextpc:0x%08lx\tNextinst:0x%08x\n",\
+      i, npc_state.state, cpu.pc, pmem_read(cpu.pc, 4), \
+       top->io_NextPC, pmem_read(top->io_NextPC, 4));
+//  }
       cpu.pc = top->io_NextPC;
   }
 
@@ -236,12 +240,10 @@ void ebreak_D(){
   npc_state.state = NPC_END;
 }
 /*
-void ebreak_D(uint32_t instIn, uint64_t pc) {
-  printf("------------ NPC ebreak_D ----------------\n");
-  if(instIn == 0x00100073) {
-    npc_state.halt_ret == 1;
-    npc_state.halt_pc  == pc;
-    npc_state.state    == NPC_END;
+void dump_gpr() {
+  int i;
+  for (i = 0; i < 32; i++) {
+    printf("gpr[%d] = 0x%lx\n", i, cpu_gpr[i]);
   }
 }
 */
