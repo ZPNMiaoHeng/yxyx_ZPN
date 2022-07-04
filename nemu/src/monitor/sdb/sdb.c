@@ -47,8 +47,8 @@ static int cmd_si(char *args){
   char *arg = strtok(args," ");
   if(arg == NULL){
     cpu_exec(1);
-    printf("\n--------------------------------Display Reg--------------------------------\n");
-    isa_reg_display();
+//    printf("\n--------------------------------Display Reg--------------------------------\n");
+//    isa_reg_display();
     return 0;
   } else{
     int num = atoi(arg);

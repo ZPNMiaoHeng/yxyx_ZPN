@@ -7,8 +7,8 @@ typedef struct Decode {
   vaddr_t pc;
   vaddr_t snpc; // static next pc
   vaddr_t dnpc; // dynamic next pc
-  ISADecodeInfo isa;
-  IFDEF(CONFIG_ITRACE, char logbuf[128]);                                  //trace log buf
+  ISADecodeInfo isa;                                                       // riscv64__ISADecodeInfo
+  IFDEF(CONFIG_ITRACE, char logbuf[128]);                                  // trace log buf
 } Decode;
 
 // --- pattern matching mechanism ---

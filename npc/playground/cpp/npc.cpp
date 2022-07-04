@@ -1,10 +1,12 @@
 #include "npc.h"
 #include "sim.h"
 #include "debug.h"
+#include <locale.h>
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 static Vriscv64Top* top;
+uint64_t g_nr_guest_inst = -1;
 //static bool g_print_step = false;                                                   // ???
 static uint64_t g_timer = 0; // unit: us
 
@@ -16,6 +18,8 @@ void sim_exit();
 void init_mem();
 int is_exit_status_bad();
 void sdb_mainloop();
+extern "C" void init_disasm(const char *triple);
+extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
 void cpu_exec(uint64_t n);
 static void welcome();
@@ -29,26 +33,10 @@ static char *img_file = NULL;
 //static int difftest_port = 1234;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
-uint64_t g_nr_guest_inst = -1;
+//uint64_t g_nr_guest_inst = -1;
+uint64_t get_time();
 
 static const uint32_t img [] = {
-  /*
-    0x00100093,                 // addi x1,x0, 1; 
-    0x00200113,                 // addi x2, x0, 2;
-    0x00108193,                 // addi x3, x1, 1;
-    0x00009117,                 // auipc sp,0x9;
-//    0x00100073,                 // ebreak
-
-    0x00008067,                 // ret -> halt
-
-    0x00050513,
-    0x00100073,                 // ebreak
-    0x00001237,                 // lui x4,1
-    0x00c000ef,                 // jal	ra,80000018;
-    0x001102e7,                 // jalr x5,1(x2);
-    0x00113423,                 // sd	ra,8(sp)
-    0x00100073,                 // ebreak
-  */
     0x00000413,                  // 	li	s0,0
     0x00009117,                  // 	auipc	sp,0x9
     0xffc10113,                  // 	addi	sp,sp,-4 # 80009000 <_end>
@@ -95,6 +83,7 @@ int main(int argc, char *argv[]) {
     memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));                         // 将数据存放在0x8000_00000开头
     restart();
     load_img();
+    init_disasm("riscv64-pc-linux-gnu");
     welcome();
 
     sim_init();
@@ -111,65 +100,6 @@ static void welcome() {
   printf("Welcome to riscv64-NPC!\n");
 }
 
-static long load_img() {
-  if (img_file == NULL) {
-    Log("No image is given. Use the default build-in image.");
-    return 4096; // built-in image size
-  }
-  FILE *fp ;
-  fp = fopen(img_file, "rb");
-
-  fseek(fp, 0, SEEK_END);
-  long size = ftell(fp);
-  Log("The image is %s, size = %ld", img_file, size);
-  fseek(fp, 0, SEEK_SET);
-  int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
-  assert(ret == 1);
-
-  fclose(fp);
-  return size;
-}
-
-void init_mem() {
-    Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]",
-      (paddr_t)CONFIG_MBASE, (paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1);
-  assert(pmem);
-}
-
-static inline word_t host_read(void *addr, int len) {
-  switch (len) {
-    case 1: return *(uint8_t  *)addr;
-    case 2: return *(uint16_t *)addr;
-    case 4: return *(uint32_t *)addr;
-    case 8: return *(uint64_t *)addr;
-    default: return 0;//MUXDEF(CONFIG_RT_CHECK, assert(0), return 0);
-  }
-}
-
-static inline void host_write(void *addr, int len, word_t data) {
-  switch (len) {
-    case 1: *(uint8_t  *)addr = data; return;
-    case 2: *(uint16_t *)addr = data; return;
-    case 4: *(uint32_t *)addr = data; return;
-    case 8: *(uint64_t *)addr = data; return;
-    default: assert(0);//IFDEF(CONFIG_RT_CHECK, default: assert(0));
-  }
-}
-
-word_t pmem_read(paddr_t addr, int len) {
-  word_t ret = host_read(guest_to_host(addr), len);
-  return ret;
-}
-
-void pmem_write(paddr_t addr, int len, word_t data) {
-  host_write(guest_to_host(addr), len, data);
-}
-
-int Judge_ebreak(uint64_t inst){
-  if(inst == 0x00100073) return 1;
-    else return 0;
-}
-
 static word_t pc = CONFIG_MBASE;
 
 static void statistic() {
@@ -180,7 +110,57 @@ static void statistic() {
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
 
-  uint64_t get_time();
+#ifdef CONFIG_IRINGBUF
+static struct iringbuf{
+  char iringp[128];
+} iringbuf[32];
+
+static void iRingBuf( char irp[128]){
+  static int i =0;
+  strcpy(iringbuf[i].iringp, irp);
+  if(i == 31) i = 0;
+    else i++;
+  
+  if(npc_state.state == NPC_ABORT || npc_state.halt_ret ==1 ){
+    char error_flag[10] = "-->";
+    char zero_flag [10] = "   ";
+    printf("\n--------------------------------iRingBuff--------------------------------\n");
+    printf("Num\t|Flag\t|PC\t\t    inst\tdisassemble\t\n");
+    for(int k =0; k<32; k++){
+      if(k != i-1)
+        printf("%d\t|%s\t|%s\n", k, zero_flag, iringbuf[k].iringp);
+      else 
+        printf("%d\t|%s\t|%s\n", k, error_flag, iringbuf[k].iringp);
+    }
+    printf("--------------------------------------------------------------------------\n");
+  }
+}
+#endif
+
+static void exec_once (){
+      cpu.val = pmem_read(cpu.pc, 4);
+      top->io_pc   = cpu.pc;
+      top->io_inst = cpu.val;
+      single_cycle();
+      g_nr_guest_inst ++;
+
+#ifdef CONFIG_ITRACE
+  char *p = cpu.logbuf;
+  static int i;
+  p += snprintf(p, sizeof(cpu.logbuf), FMT_HWORD ":", cpu.pc);
+  uint8_t *inst = (uint8_t *)&cpu.val;
+  for (i = 3; i >= 0; i --) {
+    p += snprintf(p, 4, " %02x", inst[i]);
+  }
+  memset(p, ' ', 1);
+  p ++;
+  disassemble(p, cpu.logbuf + sizeof(cpu.logbuf) - p, cpu.pc, (uint8_t *)&cpu.val, 4);
+  puts(cpu.logbuf);
+  iRingBuf(cpu.logbuf);
+//  IFDEF(CONFIG_FTRACE,ftrace_main(s->pc,s->isa.inst.val,s->dnpc));
+//  ftrace_main(s->pc,s->isa.inst.val,s->dnpc);
+#endif
+}
 
 void cpu_exec(uint64_t n) {
   static int i=0;
@@ -194,18 +174,13 @@ void cpu_exec(uint64_t n) {
   uint64_t timer_start = clock();
   
   for (;i < n;i ++) {
-      top->io_pc   = cpu.pc;
-      top->io_inst = pmem_read(cpu.pc, 4);
-      single_cycle();
-      g_nr_guest_inst ++;
-//      Log("g_nr_guest_inst is %ld", g_nr_guest_inst);
-      if (npc_state.state != NPC_RUNNING) break;
-
-//  if( n < 10) {
-    printf("%d:\tnpc_state:%d\tpc:0x%08lx\tinst:0x%08x\t->\tNextpc:0x%08lx\tNextinst:0x%08x\n",\
+    exec_once();
+    if (npc_state.state != NPC_RUNNING) break;
+    /*
+    printf("%d:\tnpc_state:%d\tpc:0x%08x\tinst:0x%08x\t->\tNextpc:0x%08lx\tNextinst:0x%08x\n",\
       i, npc_state.state, cpu.pc, pmem_read(cpu.pc, 4), \
        top->io_NextPC, pmem_read(top->io_NextPC, 4));
-//  }
+    */
       cpu.pc = top->io_NextPC;
   }
 
@@ -288,4 +263,63 @@ void sim_init(){
 void sim_exit(){
     step_and_dump_wave();
     tfp->close();
+}
+
+static long load_img() {
+  if (img_file == NULL) {
+    Log("No image is given. Use the default build-in image.");
+    return 4096; // built-in image size
+  }
+  FILE *fp ;
+  fp = fopen(img_file, "rb");
+
+  fseek(fp, 0, SEEK_END);
+  long size = ftell(fp);
+  Log("The image is %s, size = %ld", img_file, size);
+  fseek(fp, 0, SEEK_SET);
+  int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
+  assert(ret == 1);
+
+  fclose(fp);
+  return size;
+}
+
+void init_mem() {
+    Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]",
+      (paddr_t)CONFIG_MBASE, (paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1);
+  assert(pmem);
+}
+
+static inline word_t host_read(void *addr, int len) {
+  switch (len) {
+    case 1: return *(uint8_t  *)addr;
+    case 2: return *(uint16_t *)addr;
+    case 4: return *(uint32_t *)addr;
+    case 8: return *(uint64_t *)addr;
+    default: return 0;//MUXDEF(CONFIG_RT_CHECK, assert(0), return 0);
+  }
+}
+
+static inline void host_write(void *addr, int len, word_t data) {
+  switch (len) {
+    case 1: *(uint8_t  *)addr = data; return;
+    case 2: *(uint16_t *)addr = data; return;
+    case 4: *(uint32_t *)addr = data; return;
+    case 8: *(uint64_t *)addr = data; return;
+    default: assert(0);//IFDEF(CONFIG_RT_CHECK, default: assert(0));
+  }
+}
+
+word_t pmem_read(paddr_t addr, int len) {
+  word_t ret = host_read(guest_to_host(addr), len);
+  return ret;
+}
+
+void pmem_write(paddr_t addr, int len, word_t data) {
+  host_write(guest_to_host(addr), len, data);
+}
+
+int Judge_ebreak(uint64_t inst){
+  if(inst == 0x00100073) return 1;
+    else return 0;
 }

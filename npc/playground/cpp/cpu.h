@@ -13,5 +13,5 @@ void pmem_write(paddr_t addr, int len, word_t data);
 
 //#define NEMUTRAP(thispc, code) set_nemu_state(NEMU_END, thispc, code)
 //#define INV(thispc) invalid_inst(thispc)
-
+//void exec_once ();
 #endif

@@ -36,10 +36,9 @@ CPP_DIR = $(PLAYGROUND_DIR)/cpp/
 VSRC += $(shell find ./build/ -name *.v)
 VSRC += /home/zpn/ysyx-workbench/npc/playground/src/main/resources/vsrc/Ebreak.v
 #---------------------- CSRC ------------------------------------------
-#CSRC_DIR = $(shell find $(CPP_DIR)/npc.cpp)
 CSRC += $(shell find $(CPP_DIR) -name *.cpp)
 CSRC += $(shell find $(CPP_DIR) -name *.c)
-#CSRC += $(shell find $(CPP_DIR) -name *.h)
+CSRC += $(shell find $(CPP_DIR) -name *.cc)
 #---------------------- INC_PATH --------------------------------------
 # 存放头文件路径
 #INC_PATH +=
@@ -61,11 +60,16 @@ VERILATOR_FLAGS += --cc --exe -Wall --trace --coverage \
 VERILATOR_FLAGS += -Os -x-assign 0
 # LDFLAGS 编译时选项
 VERILATOR_FLAGS += -LDFLAGS -ldl \
- -LDFLAGS -lreadline
+ -LDFLAGS -lreadline \
+ -LDFLAGS $(shell llvm-config --libs)
+# -LDFLAGS -lLLVM-12 \
+# -LDFLAGS -pie
 # -lncurses
-#  -pie -lLLVM-12
 # CFLAGS  链接时选项
-#VERILATOR_FLAGS += -CFLASS
+VERILATOR_FLAGS += -CFLAGS -I/usr/lib/llvm-12/include
+#VERILATOR_FLAGS += -CFLAGS -std=c++14
+
+#VERILATOR_FLAGS += -CFLAGS -fPIE -CFLAGS $(shell llvm-config --cxxflags)
 ######################## chisel compile ###############################
 test:
 	mill -i __.test

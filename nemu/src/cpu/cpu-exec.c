@@ -53,13 +53,17 @@ static void iRingBuf( char irp[128]){
 #endif
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
+
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) {
         log_write("%s\n", _this->logbuf);                                               // itrace
   }                            // 将本条指令中的logbuf输出到 log中
 #endif
+  
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }                  // ???
+
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+
   #ifdef CONFIG_IRINGBUF_COND
     iRingBuf(_this->logbuf);
   #endif
@@ -72,7 +76,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   cpu.pc = s->dnpc;
 
 #ifdef CONFIG_ITRACE
-  char *p = s->logbuf;
+  char *p = s->logbuf;                                                              // 声明一个指针指向指令内存
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);                         //PC以128（小于128也就是全部）输出到nemu-log格式
   int ilen = s->snpc - s->pc;                                                       //一般为4,跳转指令（跳转到除了下一条指令之外）大于4
   int i;

@@ -35,14 +35,17 @@ VM_PREFIX = Vriscv64Top
 VM_MODPREFIX = Vriscv64Top
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
+	-I/usr/lib/llvm-12/include \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
 	-ldl \
 	-lreadline \
+	-lLLVM-12 \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
+	disasm \
 	npc \
 	sdb \
 
@@ -60,6 +63,8 @@ include $(VERILATOR_ROOT)/include/verilated.mk
 ### Executable rules... (from --exe)
 VPATH += $(VM_USER_DIR)
 
+disasm.o: /home/zpn/ysyx-workbench/npc/playground/cpp/disasm.cc
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 npc.o: /home/zpn/ysyx-workbench/npc/playground/cpp/npc.cpp
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 sdb.o: /home/zpn/ysyx-workbench/npc/playground/cpp/sdb.c
