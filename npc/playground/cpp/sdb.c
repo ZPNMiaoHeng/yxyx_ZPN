@@ -1,21 +1,22 @@
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "verilated_dpi.h"
 #include "sdb.h"
 #include "cpu.h"
 
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 
+uint64_t *cpu_gpr = NULL;
+
+extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
+  cpu_gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
+}
+
 word_t pmem_read(paddr_t addr, int len);
 void pmem_write(paddr_t addr, int len, word_t data);
 
-/*
-void isa_reg_display() {
-//  for(int i=0; i<32; i ++) {
-//    printf("%d\t%s\t%#16lx\n",i,regs[i],cpu.gpr[i]);
-//  }
-//  return 0;
-}
-*/
+void isa_reg_display();
+
 static char* rl_gets() {
   static char *line_read = NULL;
   if (line_read) {
@@ -52,13 +53,14 @@ static int cmd_si(char *args){
 }
 
 static int cmd_info(char *args){
-  printf("------------------------------------Enter   cmd_info   -------------------------------\n");
+//  printf("------------------------------------Enter   cmd_info   -------------------------------\n");
   char *arg = strtok(args," ");
 //  sscanf(args," %s",arg);
 //  printf("%s\n",arg);
   if(strcmp(arg,"r") == 0){
-    printf("1%s\n",arg);
-//    isa_reg_display();
+//    printf("1%s\n",arg);
+//    dump_gpr();
+    isa_reg_display();
     return 0;
   }else if(strcmp(arg,"w")==0){
     printf("2%s\n",arg); 
@@ -133,4 +135,11 @@ void sdb_mainloop() {
     if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
   }
   printf("------------------end sdb----------------------------\n");
+}
+
+void isa_reg_display() {
+  static int i;
+  for(i=0; i<32; i ++) {
+    printf("%s\tgpr[%d]\t=%#08lx\n", regs[i], i, cpu_gpr[i]);
+  }
 }

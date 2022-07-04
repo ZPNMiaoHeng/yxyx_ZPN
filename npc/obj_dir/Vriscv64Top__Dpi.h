@@ -15,6 +15,8 @@ extern "C" {
     // DPI IMPORTS
     // DPI import at /home/zpn/ysyx-workbench/npc/playground/src/main/resources/vsrc/Ebreak.v:6:32
     extern void ebreak_D();
+    // DPI import at build/regFile.v:14:32
+    extern void set_gpr_ptr(const svOpenArrayHandle a);
 
 #ifdef __cplusplus
 }

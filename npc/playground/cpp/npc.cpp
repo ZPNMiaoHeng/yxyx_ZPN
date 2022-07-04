@@ -1,7 +1,6 @@
 #include "npc.h"
 #include "sim.h"
 #include "debug.h"
-//#include "verilated_dpi.h"
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
@@ -31,12 +30,6 @@ static char *img_file = NULL;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 uint64_t g_nr_guest_inst = -1;
-uint64_t *cpu_gpr = NULL;
-/*
-extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
-  cpu_gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
-}
-*/
 
 static const uint32_t img [] = {
   /*
@@ -258,14 +251,7 @@ void ebreak_D(){
 //  Log("------------ NPC ebreak_D :%d----------------\n",i);
   npc_state.state = NPC_END;
 }
-/*
-void dump_gpr() {
-  int i;
-  for (i = 0; i < 32; i++) {
-    printf("gpr[%d] = 0x%lx\n", i, cpu_gpr[i]);
-  }
-}
-*/
+
 // Combinational logic Circuit 
 void step_and_dump_wave(){
     top->eval();
