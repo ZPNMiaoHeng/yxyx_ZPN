@@ -3,7 +3,7 @@ import chisel3.util.HasBlackBoxInline
 /** 负责产生 RData1 RData2 
   * The reg module include 32 * 64 bit regs.
   */
-
+/*
 class regFile extends Module {
     val io = IO(new Bundle {
         val RAddr1 = Input(UInt(5.W))
@@ -16,13 +16,13 @@ class regFile extends Module {
         val RData2 = Output(UInt(64.W))
     })
     val regFile = Reg( Vec(32, UInt(64.W)))
-
     regFile(io.WAddr) := Mux(io.RegWr && io.WAddr =/= 0.U, io.WData, 0.U)
     io.RData1 := regFile(io.RAddr1)
     io.RData2 := regFile(io.RAddr2)
 }
+*/
 
-/*
+
 class regFile extends BlackBox with HasBlackBoxInline {
   val io = IO(new Bundle{
     val clk    = Input(Clock())
@@ -35,41 +35,39 @@ class regFile extends BlackBox with HasBlackBoxInline {
     val RData1 = Output(UInt(64.W))
     val RData2 = Output(UInt(64.W))
   })
+
+
   setInline("regFile.v",
               """
-              |module regFile(
-              |  input         clk    ,
-              |  input         reset  ,
-              |  input  [4 :0] RAddr1 ,
-              |  input  [4 :0] RAddr2 ,
-              |  input  [4 :0] WAddr  ,
-              |  input         RegWr  ,
-              |  input  [63:0] WData  ,
-              |  output [63:0] RData1 ,
-              |  output [63:0] RData2
+              |module regFile #(ADDR_WIDTH = 5, DATA_WIDTH = 64) (
+              |  input                    clk    ,
+              |  input                    reset  ,
+              |  input  [ADDR_WIDTH-1 :0] RAddr1 ,
+              |  input  [ADDR_WIDTH-1 :0] RAddr2 ,
+              |  input  [ADDR_WIDTH-1 :0] WAddr  ,
+              |  input                    RegWr  ,
+              |  input  [DATA_WIDTH-1 :0] WData  ,
+              |  output [DATA_WIDTH-1 :0] RData1 ,
+              |  output [DATA_WIDTH-1 :0] RData2
               |);
-              |
-              |  reg [63:0] regFile [31:0];
-              |
+              |    reg [DATA_WIDTH-1:0] rf [31:0];
               |//  import "DPI-C" function void set_gpr_ptr(input logic [63:0] a []);
               |//  initial set_gpr_ptr(regFile);  // sim test 读寄存器值
-              |  
-              |  assign RData1 = regFile[RAddr1];
-              |  assign RData2 = regFile[RAddr2];
-              |//  assign a0     = regFile[5'd10];     //sim test
               |  integer i;
+              |  initial rf[0] = 64'b0;
+              |
               |  always @(posedge clk) begin
-              |    if(reset == 1'b1)begin
-              |        for(i = 0;i < 64;i = i + 1)
-              |            regFile[i] <= 64'b0;
+              |    if(reset)begin
+              |        for(i = 1;i < ADDR_WIDTH;i = i + 1)
+              |            rf[i] <= 64'b0;
               |    end
-              |    else if((WAddr != 5'b0) && RegWr == 1'b0)
-              |        regFile[WAddr] <= WData;
+              |    else if((WAddr != 5'b0) && RegWr == 1'b1)
+              |        rf[WAddr] <= WData;
               |  end
-              |endmodule
+              | assign RData1 = (RAddr1 != 0) ? rf[RAddr1] : 64'b0;
+              | assign RData2 = (RAddr2 != 0) ? rf[RAddr2] : 64'b0;
+              |endmodule              
+              |
+              |
               """.stripMargin)
-
-//   val regFile = Module(new RegFile)
-
 }
-*/
