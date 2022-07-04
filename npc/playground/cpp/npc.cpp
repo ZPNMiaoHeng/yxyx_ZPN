@@ -8,7 +8,7 @@ VerilatedVcdC* tfp = NULL;
 static Vriscv64Top* top;
 uint64_t g_nr_guest_inst = -1;
 //static bool g_print_step = false;                                                   // ???
-static uint64_t g_timer = 0; // unit: us
+static uint64_t g_timer = 0;
 
 void step_and_dump_wave(); 
 void single_cycle();
@@ -27,13 +27,11 @@ static long load_img();
 word_t pmem_read(paddr_t addr, int len);
 static int parse_args(int argc, char *argv[]);
 
-//static char *ftrace_file = NULL;
 //static char *diff_so_file = NULL;
 static char *img_file = NULL;
 //static int difftest_port = 1234;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
-//uint64_t g_nr_guest_inst = -1;
 uint64_t get_time();
 
 static const uint32_t img [] = {
