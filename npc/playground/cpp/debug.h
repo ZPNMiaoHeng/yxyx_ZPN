@@ -1,23 +1,17 @@
-//void     halt        (int code) __attribute__((__noreturn__));
-
 #ifndef __DEBUG_H__
-#define __DEBUG_H__
+#define __DEBUG_H_
 
-#include "debug.h"
 #include <stdio.h>
 #include <cassert>
-
-//#include <assert.h>
-
-// ----------- timer -----------
-//uint64_t get_time();
-// -------- log -----------------------------------------
 
 #define ANSI_FG_RED     "\33[1;31m"
 #define ANSI_FG_GREEN   "\33[1;32m"
 #define ANSI_FG_BLUE    "\33[1;34m"
 #define ANSI_NONE       "\33[0m"
-#define ANSI_FMT(str, fmt) fmt str ANSI_NONE               //: str color
+#define ANSI_FMT(str, fmt) fmt str ANSI_NONE
+
+#define bool _Bool
+
 #define _Log(...) \
   do { \
     printf(__VA_ARGS__); \
@@ -39,12 +33,11 @@
 //    } \
 //  } while (0)
 
-
-#define bool _Bool
-
 __attribute__((noinline))
 void check(bool cond) {
   if (!cond) assert(0)/*halt(1)*/;
 }
+
+//void     halt        (int code) __attribute__((__noreturn__));
 
 #endif

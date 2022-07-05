@@ -1,8 +1,10 @@
-//#include "sim.h"
 #include <time.h>
 #include <getopt.h>
 #include "common.h"
 #include "sim.h"
+#include <dlfcn.h>
+#include "debug.h"
+#include <locale.h>
 
 enum { NPC_RUNNING, NPC_STOP, NPC_END, NPC_ABORT, NPC_QUIT };
 
@@ -14,6 +16,7 @@ typedef struct {
 
 NPCState npc_state;
 
+
 typedef struct{
   uint64_t gpr[32];
   uint32_t pc;
@@ -24,4 +27,6 @@ typedef struct{
 
 CPU_state cpu = {};
 
-word_t pmem_read(paddr_t addr, int len);
+
+//uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+uint8_t* guest_to_host(paddr_t paddr);

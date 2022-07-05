@@ -22,7 +22,6 @@ typedef uint64_t paddr_t;
 //typedef uint32_t paddr_t;
 typedef uint16_t ioaddr_t;
 
-//#define CONFIG_PMEM 
 #define CONFIG_RT_CHECK
 #define CONFIG_MBASE 0x80000000
 #define CONFIG_MSIZE 0x8000000
@@ -31,8 +30,8 @@ typedef uint16_t ioaddr_t;
 
 #define CONFIG_ITRACE
 #define CONFIG_IRINGBUF
+#define CONFIG_DIFFTEST
 
 #define PG_ALIGN __attribute((aligned(4096)))
-//static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 
 #endif

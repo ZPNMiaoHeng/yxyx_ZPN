@@ -112,9 +112,11 @@ run:
 #	@echo "-------------------------- Open GTKwave ------------------------"
 #	gtkwave -f $(GTK_DIR)
 
-clean:
-	-rm -rf $(BUILD_DIR) $(OBJ_DIR)
-#	-rm -rf $(OBJ_DIR)
+clean: cleanB cleanO
+cleanB:
+	@-rm -rf $(BUILD_DIR)
+cleanO: 
+	@-rm -rf $(OBJ_DIR)
 ######################################################################
 # Other targets
 

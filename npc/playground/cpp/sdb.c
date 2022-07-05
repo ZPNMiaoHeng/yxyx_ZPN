@@ -3,6 +3,7 @@
 #include "verilated_dpi.h"
 #include "sdb.h"
 #include "cpu.h"
+//#include "debug.h"
 
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 
@@ -16,6 +17,7 @@ word_t pmem_read(paddr_t addr, int len);
 void pmem_write(paddr_t addr, int len, word_t data);
 
 void isa_reg_display();
+
 
 static char* rl_gets() {
   static char *line_read = NULL;
@@ -111,14 +113,8 @@ void sdb_mainloop() {
   printf("----------------start sdb----------------------------\n");
   for (char *str; (str = rl_gets()) != NULL; ) {
     char *str_end = str + strlen(str);
-
-    /* extract the first token as the command */
     char *cmd = strtok(str, " ");
     if (cmd == NULL) { continue; }
-
-    /* treat the remaining string as the arguments,
-     * which may need further parsing
-     */
     char *args = cmd + strlen(cmd) + 1;
     if (args >= str_end) {
       args = NULL;

@@ -1,13 +1,9 @@
 #include "npc.h"
-#include "sim.h"
-#include "debug.h"
-#include <locale.h>
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 static Vriscv64Top* top;
 uint64_t g_nr_guest_inst = -1;
-//static bool g_print_step = false;                                                   // ???
 static uint64_t g_timer = 0;
 
 void step_and_dump_wave(); 
@@ -21,15 +17,18 @@ void sdb_mainloop();
 extern "C" void init_disasm(const char *triple);
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
+//void init_difftest(char *ref_so_file, long img_size, int port);
+
 void cpu_exec(uint64_t n);
 static void welcome();
 static long load_img();
 word_t pmem_read(paddr_t addr, int len);
 static int parse_args(int argc, char *argv[]);
 
-//static char *diff_so_file = NULL;
+static char *diff_so_file = NULL;
 static char *img_file = NULL;
-//static int difftest_port = 1234;
+static int difftest_port = 1234;
+
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 uint64_t get_time();
@@ -59,14 +58,14 @@ static void restart() {
 
 static int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
-//    {"diff"     , required_argument, NULL, 'd'},
+    {"diff"     , required_argument, NULL, 'd'},
     {"help"     , no_argument      , NULL, 'h'},
     {0          , 0                , NULL,  0 },
   };
   int o;
-  while ( (o = getopt_long(argc, argv, "-h", table, NULL)) != -1) {
+  while ( (o = getopt_long(argc, argv, "-hd:", table, NULL)) != -1) {
     switch (o) {
-//      case 'd': diff_so_file = optarg; break;
+      case 'd': diff_so_file = optarg; break;
       case 1: img_file = optarg; printf("img_file = %s\n", img_file); return 0;
       default:
         exit(0);
@@ -81,6 +80,8 @@ int main(int argc, char *argv[]) {
     memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));                         // 将数据存放在0x8000_00000开头
     restart();
     load_img();
+    long img_size = load_img();
+//    init_difftest(diff_so_file, img_size, difftest_port);
     init_disasm("riscv64-pc-linux-gnu");
     welcome();
 
@@ -156,7 +157,6 @@ static void exec_once (){
   puts(cpu.logbuf);
   iRingBuf(cpu.logbuf);
 //  IFDEF(CONFIG_FTRACE,ftrace_main(s->pc,s->isa.inst.val,s->dnpc));
-//  ftrace_main(s->pc,s->isa.inst.val,s->dnpc);
 #endif
 }
 
