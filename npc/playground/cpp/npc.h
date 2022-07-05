@@ -5,6 +5,7 @@
 #include <dlfcn.h>
 #include "debug.h"
 #include <locale.h>
+#include "difftest-def.h"
 
 enum { NPC_RUNNING, NPC_STOP, NPC_END, NPC_ABORT, NPC_QUIT };
 
