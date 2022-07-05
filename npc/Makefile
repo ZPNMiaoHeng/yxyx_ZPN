@@ -39,6 +39,7 @@ VSRC += /home/zpn/ysyx-workbench/npc/playground/src/main/resources/vsrc/Ebreak.v
 CSRC += $(shell find $(CPP_DIR) -name *.cpp)
 CSRC += $(shell find $(CPP_DIR) -name *.c)
 CSRC += $(shell find $(CPP_DIR) -name *.cc)
+
 #---------------------- INC_PATH --------------------------------------
 # 存放头文件路径
 #INC_PATH +=
@@ -47,7 +48,8 @@ CSRC += $(shell find $(CPP_DIR) -name *.cc)
 #LDFLAGS := -O2 $(LDFLAGS)
 ########################################################################
 VERILATOR_INPUT =  $(VSRC) $(CSRC)
-#SO  = $(NPC_HOME)/../nemu/tools/spike-diff/build/riscv64-spike-so
+#SO  = $(NPC_HOME)/tools/spike-diff/build/riscv64-spike-so
+SO = /home/zpn/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so
 
 GTK_DIR  = $(PLAYGROUND_DIR)/sim/dump.vcd
 BUILD_DIR = ./build
@@ -105,8 +107,9 @@ run:
 # Modify run 
 	@echo "--------------------------- VERILATE COMPILE----------------"
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
-	./obj_dir/V$(VERILOG_NAME) $(IMG)
-# -d $(SO)
+	@echo $(SO)
+	@echo $(IMG)
+	./obj_dir/V$(VERILOG_NAME) $(IMG)	-d$(SO)
 	
 #	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 #	@echo "-------------------------- Open GTKwave ------------------------"

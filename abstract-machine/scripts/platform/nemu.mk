@@ -30,8 +30,6 @@ run: image
 #	@echo IMG=$(IMG)
 #	@echo IMAGE=$(IMAGE)
 #	@echo $(LINKAGE)
-  
-  
 
 gdb: image
 	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) gdb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin

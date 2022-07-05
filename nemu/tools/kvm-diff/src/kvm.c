@@ -334,7 +334,16 @@ void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
   if (direction == DIFFTEST_TO_REF) memcpy(vm.mem + addr, buf, n);
   else memcpy(buf, vm.mem + addr, n);
 }
-
+/*
+struct vcpu {
+  int fd;
+  struct kvm_run *kvm_run;
+  int int_wp_state;
+  int has_error_code;
+  uint32_t entry;
+};
+static struct vcpu vcpu;
+*/
 void difftest_regcpy(void *r, bool direction) {
   struct kvm_regs *ref = &(vcpu.kvm_run->s.regs.regs);
   x86_CPU_state *x86 = r;

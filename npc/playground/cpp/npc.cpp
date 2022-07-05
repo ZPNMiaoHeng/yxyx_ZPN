@@ -63,8 +63,8 @@ static int parse_args(int argc, char *argv[]) {
   int o;
   while ( (o = getopt_long(argc, argv, "-hd:", table, NULL)) != -1) {
     switch (o) {
-      case 'd': diff_so_file = optarg; break;
-      case 1: img_file = optarg; printf("img_file = %s\n", img_file); return 0;
+      case 'd': diff_so_file = optarg; Log("diff_so_file = %s\n", diff_so_file); break;
+      case 1: img_file = optarg; Log("img_file = %s\n", img_file); return 0;
       default:
         exit(0);
     }
@@ -79,8 +79,12 @@ int main(int argc, char *argv[]) {
     restart();
     load_img();
     long img_size = load_img();
+    printf("-----------------------difftest start----------------------------\n");
     init_difftest(diff_so_file, img_size, difftest_port);
+    printf("-----------------------difftest End----------------------------\n");
+
     init_disasm("riscv64-pc-linux-gnu");
+    printf("-----------------------welcome----------------------------\n");
     welcome();
 
     sim_init();
@@ -105,6 +109,11 @@ static void statistic() {
   Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
   if (g_timer > 0) Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
+}
+
+void assert_fail_msg() {
+  isa_reg_display();
+  statistic();
 }
 
 #ifdef CONFIG_IRINGBUF
@@ -250,20 +259,13 @@ void difftest_skip_dut(int nr_ref, int nr_dut) {
 
 void init_difftest(char *ref_so_file, long img_size, int port) {
   assert(ref_so_file != NULL);
-
   void *handle;
   handle = dlopen(ref_so_file, RTLD_LAZY);
   assert(handle);
-  //返回 符号对应地址
-//  ref_difftest_memcpy = (fptr_ref_difftest_memcpy)dlsym(handle, "difftest_memcpy");
   ref_difftest_memcpy = (void  (*)(paddr_t, void *, size_t, bool))dlsym(handle, "difftest_memcpy");
   assert(ref_difftest_memcpy);
-
-//  ref_difftest_regcpy = (fptr_ref_difftest_regcpy)dlsym(handle, "difftest_regcpy");
   ref_difftest_regcpy = (void  (*)(void *, bool))dlsym(handle, "difftest_regcpy");
   assert(ref_difftest_regcpy);
-
-//  ref_difftest_exec = (fptr_ref_difftest_exec)dlsym(handle, "difftest_exec");
   ref_difftest_exec = (void  (*)(uint64_t))dlsym(handle, "difftest_exec");
   assert(ref_difftest_exec);
 
@@ -287,7 +289,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
     isa_reg_display();
   }
 }
-/*
+
 void difftest_step(vaddr_t pc, vaddr_t npc) {
   CPU_state ref_r;
 
@@ -316,7 +318,7 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
 
   checkregs(&ref_r, pc);
 }
-*/
+
 #else
 void init_difftest(char *ref_so_file, long img_size, int port) { }
 #endif
@@ -342,9 +344,6 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
     }
   return true;
 }
-
-
-
 //-------------------------------------Verilator clock--------------------------------------------------------------
 // Combinational logic Circuit 
 void step_and_dump_wave(){
