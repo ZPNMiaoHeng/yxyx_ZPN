@@ -179,7 +179,7 @@ void cpu_exec(uint64_t n) {
   }
   uint64_t timer_start = clock();
   for (;i < n;i ++) {
-    Log("inst to difftest");
+//    Log("inst to difftest");
     exec_once();
     IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, top->io_NextPC)); 
     if (npc_state.state != NPC_RUNNING) break;

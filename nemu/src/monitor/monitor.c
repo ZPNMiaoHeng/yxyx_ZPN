@@ -142,6 +142,7 @@ static long load_img() {
 }
 
 void am_init_monitor() {
+//  Log("------ init monitor ----------------");
   init_rand();
   init_mem();
   init_isa();

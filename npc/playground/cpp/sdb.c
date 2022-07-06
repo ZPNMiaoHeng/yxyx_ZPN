@@ -39,15 +39,25 @@ static int cmd_q(char *args) {
 
 static int cmd_si(char *args){
   static int num = 0;
+  static int num_t =0;
 //  printf("------------------------------------Enter   cmd_si   -------------------------------\n");
   char *arg = strtok(args," ");
-  if(arg == NULL){
+  if(arg != NULL)
+    num_t = atoi(arg);
+
+  if(arg == NULL ) {
     num ++;
     printf("Exec cpu step is %d\n", num);
     cpu_exec(num);
     return 0;
-  } else{
-    num = num + atoi(arg);
+  } else if(num_t == 1) {
+    num ++;
+    printf("Exec cpu step is %d\n", num);
+    cpu_exec(num);
+    isa_reg_display();
+    return 0;
+  } else {
+    num = num + num_t; //atoi(arg);
     printf("Exec cpu step is %d\n", num);
     cpu_exec(num);
     return 0;
@@ -102,6 +112,7 @@ static struct {
 } cmd_table [] = {
   { "c", "Continue the execution of the program", cmd_c },
   { "si", "Suspend execution after having the program step through N instructions,when N is not given, the default is 1", cmd_si },
+//  { "sir", "Single execution and info all regs", cmd_sir },
   { "info", "Print Register status(r) or the surveillance point information(w)", cmd_info },
   { "x", "The value of the expression EXPR is evaluated, and the result is used as the starting memory address", cmd_x },
   { "q", "Exit NEMU", cmd_q },
