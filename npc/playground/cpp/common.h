@@ -30,7 +30,7 @@ typedef uint16_t ioaddr_t;
 
 #define CONFIG_ITRACE
 #define CONFIG_IRINGBUF
-//#define CONFIG_DIFFTEST
+#define CONFIG_DIFFTEST
 
 #define PG_ALIGN __attribute((aligned(4096)))
 
@@ -42,5 +42,15 @@ typedef uint16_t ioaddr_t;
 #define __KEEP(...) __VA_ARGS__
 #define ISDEF(macro) MUXDEF(macro, 1, 0)
 #define IFDEF(macro, ...) MUXDEF(macro, __KEEP, __IGNORE)(__VA_ARGS__)
+
+typedef struct{
+  uint64_t gpr[32];
+  uint32_t pc;
+  uint32_t val;                                                       // riscv64__ISADecodeInfo
+  char logbuf[128];
+//  IFDEF(CONFIG_ITRACE, char logbuf[128]);  
+} CPU_state;
+
+extern CPU_state cpu;
 
 #endif

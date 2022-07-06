@@ -17,7 +17,7 @@ typedef struct {
 
 NPCState npc_state;
 
-
+/*
 typedef struct{
   uint64_t gpr[32];
   uint32_t pc;
@@ -26,8 +26,8 @@ typedef struct{
 //  IFDEF(CONFIG_ITRACE, char logbuf[128]);  
 } CPU_state;
 
-CPU_state cpu = {};
-
+extern CPU_state cpu;
+*/
 
 //uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 uint8_t* guest_to_host(paddr_t paddr);

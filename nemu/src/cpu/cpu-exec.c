@@ -132,7 +132,7 @@ void assert_fail_msg() {
 
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
-
+//  Log("--------------- nemu exce %ld -------------", n);
   g_print_step = (n < MAX_INST_TO_PRINT);
   switch (nemu_state.state) {                                                 //before execute inst nemu_state 
     case NEMU_END: case NEMU_ABORT:
@@ -160,6 +160,9 @@ void cpu_exec(uint64_t n) {
       // fall through
     case NEMU_QUIT: statistic();
   }
+
+  /*打印寄存器*/
+//  isa_reg_display();
 }
 
 void ftrace_main(word_t ftpc,uint64_t inst,word_t fdnpc){

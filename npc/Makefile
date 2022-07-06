@@ -101,8 +101,8 @@ run:
 # Modify run 
 	@echo "--------------------------- VERILATE COMPILE----------------"
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
-	@echo $(SO)
-	@echo $(IMG)
+#	@echo $(SO)
+#	@echo $(IMG)
 #	./obj_dir/V$(VERILOG_NAME) $(IMG) --diff=$(SO)
 	
 	./obj_dir/V$(VERILOG_NAME) --diff=$(SO) --image=$(IMG)

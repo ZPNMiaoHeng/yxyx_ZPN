@@ -32,6 +32,10 @@ static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 uint64_t get_time();
 
+static bool is_skip_ref = false;
+static int skip_dut_nr_inst = 0;
+extern  uint64_t *cpu_gpr;
+
 static const uint32_t img [] = {
     0x00000413,                  // 	li	s0,0
     0x00009117,                  // 	auipc	sp,0x9
@@ -48,6 +52,8 @@ static const uint32_t img [] = {
     0x00100073,                  // 	ebreak
     0x0000006f,                  //   j	80000034 <_trm_init+0x1c>
 };
+
+CPU_state cpu = {};
 
 static void restart() {
   cpu.pc = RESET_VECTOR;                                                           /* Set the initial program counter. */
@@ -69,7 +75,6 @@ static int parse_args(int argc, char *argv[]) {
       case 'i': img_file = optarg; Log("Load img_file = %s", img_file); break;
       default:
         return 0;
-//        exit(0);
     }
   }
   return 0;
@@ -81,12 +86,12 @@ int main(int argc, char *argv[]) {
     memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));                         // 将数据存放在0x8000_00000开头
     restart();
     long img_size = load_img();
-    printf("-----------------------difftest start----------------------------\n");
+//    printf("-----------------------difftest start----------------------------\n");
     init_difftest(diff_so_file, img_size, difftest_port);
-    printf("-----------------------difftest End----------------------------\n");
+//    printf("-----------------------difftest End----------------------------\n");
 
     init_disasm("riscv64-pc-linux-gnu");
-    printf("-----------------------welcome----------------------------\n");
+//    printf("-----------------------welcome----------------------------\n");
     welcome();
 
     sim_init();
@@ -177,11 +182,14 @@ void cpu_exec(uint64_t n) {
       return;
     default: npc_state.state = NPC_RUNNING;
   }
+
   uint64_t timer_start = clock();
   for (;i < n;i ++) {
-//    Log("inst to difftest");
     exec_once();
-    IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, top->io_NextPC)); 
+//    Log("cpu.pc=%08x,NextPC=%08lx, is_skip_ref is %d, skip_dut_nr_inst is %d",\
+     cpu.pc, top->io_NextPC, is_skip_ref, skip_dut_nr_inst);
+//    IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, top->io_NextPC)); 
+    difftest_step(cpu.pc, top->io_NextPC);                                              // nemu需要执行一次指令与NPC匹配
     if (npc_state.state != NPC_RUNNING) break;
     /*
     printf("%d:\tnpc_state:%d\tpc:0x%08x\tinst:0x%08x\t->\tNextpc:0x%08lx\tNextinst:0x%08x\n",\
@@ -243,10 +251,10 @@ uint8_t* guest_to_host(paddr_t paddr);
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
 
 #ifdef CONFIG_DIFFTEST
-
+/*
 static bool is_skip_ref = false;
 static int skip_dut_nr_inst = 0;
-
+*/
 void difftest_skip_ref() {
   is_skip_ref = true;
   skip_dut_nr_inst = 0;
@@ -260,37 +268,38 @@ void difftest_skip_dut(int nr_ref, int nr_dut) {
 }
 
 void init_difftest(char *ref_so_file, long img_size, int port) {
-  Log("--------------- start init_difftest -----------------\n");
+//  Log("--------------- start init_difftest -----------------\n");
   assert(ref_so_file != NULL);
   void *handle;
-  Log("--------------- Open SO file -----------------\n");
+//  Log("--------------- Open SO file -----------------\n");
   handle = dlopen(ref_so_file, RTLD_LAZY);
   assert(handle);
-  Log("--------------- Copy MEM -----------------\n");
+//  Log("--------------- Copy MEM -----------------\n");
   ref_difftest_memcpy = (void  (*)(paddr_t, void *, size_t, bool))dlsym(handle, "difftest_memcpy");
   assert(ref_difftest_memcpy);
-  Log("--------------- Copy Reg -----------------\n");
+//  Log("--------------- Copy Reg -----------------\n");
   ref_difftest_regcpy = (void  (*)(void *, bool))dlsym(handle, "difftest_regcpy");
   assert(ref_difftest_regcpy);
-  Log("--------------- Difftest exec -----------------\n");
+//  Log("--------------- Difftest exec -----------------\n");
   ref_difftest_exec = (void  (*)(uint64_t))dlsym(handle, "difftest_exec");
   assert(ref_difftest_exec);
 
-  Log("--------------- Init difftest -----------------\n");
+//  Log("--------------- Init difftest -----------------\n");
   void (*ref_difftest_init)(int) = (void  (*)(int))dlsym(handle, "difftest_init");
   assert(ref_difftest_init);
 
   Log("Differential testing: %s", ANSI_FMT("ON", ANSI_FG_GREEN));
+/*
   Log("The result of every instruction will be compared with %s. "
       "This will help you a lot for debugging, but also significantly reduce the performance. "
-      "If it is not necessary, you can turn it off in common.h.", ref_so_file);
+      "If it is not necessary, you can turn it off in common.h.", ref_so_file); */
 //      "If it is not necessary, you can turn it off in menuconfig.", ref_so_file);
 
-  Log("--------------- Init ref difftest -----------------");
+//  Log("--------------- Init ref difftest -----------------");
   ref_difftest_init(port);                                                                        // 初始化REF的DiffTest
-  Log("--------------- Init ref mem -----------------");
+//  Log("--------------- Init ref mem -----------------");
   ref_difftest_memcpy(RESET_VECTOR, guest_to_host(RESET_VECTOR), img_size, DIFFTEST_TO_REF);      // 将DUT的guest memory拷贝到REF中
-  Log("--------------- Init ref ref -----------------");
+//  Log("--------------- Init ref ref -----------------");
   ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);                                                     // 将DUT的寄存器状态拷贝到REF中.
 }
 
@@ -303,7 +312,8 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
 }
 
 void difftest_step(vaddr_t pc, vaddr_t npc) {
-  CPU_state ref_r;
+//  Log("--------- difftest_step --------------");
+  CPU_state ref_r;                                      // dut(npc)结构体
   if (skip_dut_nr_inst > 0) {
     ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);       // 获取REF的寄存器状态到 ref_f
     if (ref_r.pc == npc) {                              // DUT与REF pc一直
@@ -323,10 +333,10 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
     is_skip_ref = false;
     return;
   }
-  ref_difftest_exec(1);
-  ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
+  ref_difftest_exec(1);                                // 让nemu执行一次，与NPC指令执行处于相同指令状态
+  ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);        // 然后读出REF（nemu）中寄存器的值
 
-  checkregs(&ref_r, pc);
+  checkregs(&ref_r, pc);                               // REF（nemu）中的值与DUT（npc）进行比较
 }
 
 #else
@@ -338,17 +348,12 @@ int check_reg_idx(int idx) {
   return idx;
 }
 
-/*
-static inline const char* reg_name(int idx, int width) {
-  extern const char* regs[];
-  return regs[check_reg_idx(idx)];
-}
-*/
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
 //  Log("isa_difftest_checkregs\n");
     static int i;
     for(i = 0; i < 32; i ++) {
-      if(ref_r->gpr[check_reg_idx(i)] != cpu.gpr[i]){
+//      printf("%d:nemu[%08lx] != npc[%08lx]\n",i ,ref_r->gpr[check_reg_idx(i)] ,cpu_gpr[i]);
+      if(ref_r->gpr[check_reg_idx(i)] != cpu_gpr[i]){                                                         /*cpu 不是npc的寄存器*/
         return false;
       }
     }
@@ -424,7 +429,7 @@ static inline word_t host_read(void *addr, int len) {
     case 2: return *(uint16_t *)addr;
     case 4: return *(uint32_t *)addr;
     case 8: return *(uint64_t *)addr;
-    default: return 0;//MUXDEF(CONFIG_RT_CHECK, assert(0), return 0);
+    default: /*return 0;*/MUXDEF(CONFIG_RT_CHECK, assert(0), return 0);
   }
 }
 
