@@ -40,15 +40,8 @@ CSRC += $(shell find $(CPP_DIR) -name *.cpp)
 CSRC += $(shell find $(CPP_DIR) -name *.c)
 CSRC += $(shell find $(CPP_DIR) -name *.cc)
 
-#---------------------- INC_PATH --------------------------------------
-# 存放头文件路径
-#INC_PATH +=
-#INCLUDES = $(addprefix -I, $(INC_PATH))
-#CFLAGS  := -O2 -MMD -Wall -Werror $(INCLUDES) $(CFLAGS)
-#LDFLAGS := -O2 $(LDFLAGS)
 ########################################################################
 VERILATOR_INPUT =  $(VSRC) $(CSRC)
-#SO  = $(NPC_HOME)/tools/spike-diff/build/riscv64-spike-so
 SO = /home/zpn/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so
 
 GTK_DIR  = $(PLAYGROUND_DIR)/sim/dump.vcd
@@ -64,13 +57,14 @@ VERILATOR_FLAGS += -Os -x-assign 0
 VERILATOR_FLAGS += -LDFLAGS -ldl \
  -LDFLAGS -lreadline \
  -LDFLAGS $(shell llvm-config --libs)
-# -LDFLAGS -lLLVM-12 \
+# -LDFLAGS -d$(SO)
 # -LDFLAGS -pie
 # -lncurses
 # CFLAGS  链接时选项
 VERILATOR_FLAGS += -CFLAGS -I/usr/lib/llvm-12/include
 #VERILATOR_FLAGS += -CFLAGS -std=c++14
 
+#VERILATOR_FLAGS += -LDFLAGS -d$(SO)
 #VERILATOR_FLAGS += -CFLAGS -fPIE -CFLAGS $(shell llvm-config --cxxflags)
 ######################## chisel compile ###############################
 test:
@@ -109,8 +103,9 @@ run:
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
 	@echo $(SO)
 	@echo $(IMG)
-	./obj_dir/V$(VERILOG_NAME) $(IMG)	-d$(SO)
+#	./obj_dir/V$(VERILOG_NAME) $(IMG) --diff=$(SO)
 	
+	./obj_dir/V$(VERILOG_NAME) --diff=$(SO) --image=$(IMG)
 #	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 #	@echo "-------------------------- Open GTKwave ------------------------"
 #	gtkwave -f $(GTK_DIR)

@@ -34,4 +34,13 @@ typedef uint16_t ioaddr_t;
 
 #define PG_ALIGN __attribute((aligned(4096)))
 
+#define CHOOSE2nd(a, b, ...) b
+#define MUX_WITH_COMMA(contain_comma, a, b) CHOOSE2nd(contain_comma a, b)
+#define MUX_MACRO_PROPERTY(p, macro, a, b) MUX_WITH_COMMA(concat(p, macro), a, b)
+#define MUXDEF(macro, X, Y)  MUX_MACRO_PROPERTY(__P_DEF_, macro, X, Y)
+#define __IGNORE(...)
+#define __KEEP(...) __VA_ARGS__
+#define ISDEF(macro) MUXDEF(macro, 1, 0)
+#define IFDEF(macro, ...) MUXDEF(macro, __KEEP, __IGNORE)(__VA_ARGS__)
+
 #endif
