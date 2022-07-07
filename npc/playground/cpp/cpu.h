@@ -5,8 +5,8 @@
 
 void cpu_exec(uint64_t n);
 
-word_t pmem_read(paddr_t addr, int len);
-void pmem_write(paddr_t addr, int len, word_t data);
+word_t pmem_read_npc(paddr_t addr, int len);
+void pmem_write_npc(paddr_t addr, int len, word_t data);
 
 
 #endif

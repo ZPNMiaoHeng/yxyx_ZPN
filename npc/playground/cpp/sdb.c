@@ -21,8 +21,8 @@ extern "C" void set_gpr_ptr(const svOpenArrayHandle r) {
   cpu_gpr = (uint64_t *)(((VerilatedDpiOpenVar*)r)->datap());
 }
 
-word_t pmem_read(paddr_t addr, int len);
-void pmem_write(paddr_t addr, int len, word_t data);
+word_t pmem_read_npc(paddr_t addr, int len);
+void pmem_write_npc(paddr_t addr, int len, word_t data);
 
 void isa_reg_display();
 
@@ -98,7 +98,7 @@ static int cmd_x(char *args){
 //  printf("%d\t%x\n", num, addr);
   printf("i\tPC\t\tPmem\n");
   for(i=0; i<num; i++){
-    read_addr = pmem_read(addr, 8);
+    read_addr = pmem_read_npc(addr, 8);
     printf("%d\t0x%x\t0x%08x\n", i, addr, read_addr);
     addr = addr +4;
   }

@@ -36,7 +36,7 @@ class Decode extends Module {
     imm.io.inst    := io.inst
     imm.io.ExtOp   := con.io.ExtOp
     con.io.inst    := io.inst
-    nextpc.io.PC   := io.PC
+//    nextpc.io.PC   := io.PC
     nextpc.io.Branch := con.io.Branch
     nextpc.io.imm  := imm.io.imm
     nextpc.io.rs1  := regs.io.RData1

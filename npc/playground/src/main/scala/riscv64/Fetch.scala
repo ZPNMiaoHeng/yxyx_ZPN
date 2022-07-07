@@ -24,6 +24,43 @@ class Fetch extends Module {
       val pc     = Input(UInt(64.W))
     })
   }
+/*
+    class SInst extends BlackBox with HasBlackBoxInline {
+        val io = IO(new Bundle {
+            val raddr  = Input(UInt(64.W))
+            val inst  = Output(UInt(64.W))
+        })
+
+    setInline("SInst.v",
+                    """
+                    |module SInst(
+                    |  input  [63: 0] raddr,
+                    |
+                    |  output [63: 0] inst
+                    |);
+                    |   import "DPI-C" function void pmem_read_out(input longint raddr, output longint rdata);
+                    |   wire [63:0] rdata;
+                    |   always @(*) begin
+                    |     pmem_read_out(raddr, rdata);
+                    |   end
+                    |   assign inst = rdata;
+                    |endmodule
+                    """.stripMargin)
+}
+
+    val sInst = Module(new SInst)
+    sInst.io.raddr := io.pcIn
+
+  val ebreak = Module(new Ebreak)
+  val Debreak = Mux((sInst.io.inst === "h00100073".U), true.B, false.B)
+
+  ebreak.io.inst   := sInst.io.inst
+  ebreak.io.pc     := io.pcIn
+
+  io.pcOut   := Mux((io.instEn === 0.U && !Debreak), io.pcIn  , "h7fff_fffc".U)                                    // Mux(io.instEn, io.pcIn, pc)
+  io.inst    := Mux((io.instEn === 0.U && !Debreak), sInst.io.inst, 0.U)
+*/  
+
 
   val ebreak = Module(new Ebreak)
   val Debreak = Mux((io.instIn === "h00100073".U), true.B, false.B)

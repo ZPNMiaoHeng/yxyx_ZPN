@@ -24,7 +24,8 @@ void init_difftest(char *ref_so_file, long img_size, int port);
 void cpu_exec(uint64_t n);
 static void welcome();
 static long load_img();
-word_t pmem_read(paddr_t addr, int len);
+word_t pmem_read_npc(paddr_t addr, int len);
+void pmem_write_npc(paddr_t addr, int len, word_t data);
 static int parse_args(int argc, char *argv[]);
 void difftest_step(vaddr_t pc, vaddr_t npc);
 
@@ -35,6 +36,26 @@ uint64_t get_time();
 static bool is_skip_ref = false;
 static int skip_dut_nr_inst = 0;
 extern  uint64_t *cpu_gpr;
+
+extern "C" void pmem_read(long long raddr, long long *rdata) {
+// 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
+  static int i =0;  i ++; 
+  rdata = (long long *)pmem_read_npc((raddr & ~0x7ull), 8);
+  printf("%08llx\n", raddr & ~0x7ull);
+  printf("----------------pmem_read_out = %d --------", i);
+}
+
+extern "C" void pmem_write(long long waddr, long long wdata, char wmask) {
+  // 总是往地址为`waddr & ~0x7ull`的8字节按写掩码`wmask`写入`wdata`
+  // `wmask`中每比特表示`wdata`中1个字节的掩码,
+  // 如`wmask = 0x3` 0b11 代表只写入最低2个字节, 内存中的其它字节保持不变
+  static int i =0, len =0;  i ++; 
+  if(wmask == 0xff) {                                                       // sd
+    len = 8;
+  }
+
+  pmem_write_npc(waddr, len, wdata);
+}
 
 static const uint32_t img [] = {
     0x00000413,                  // 	li	s0,0
@@ -150,8 +171,10 @@ static void iRingBuf( char irp[128]){
 }
 #endif
 
+//extern rdata;
+
 static void exec_once (){
-      cpu.val = pmem_read(cpu.pc, 4);
+      cpu.val = pmem_read_npc(cpu.pc, 4);
       top->io_pc   = cpu.pc;
       top->io_inst = cpu.val;
       single_cycle();
@@ -193,8 +216,8 @@ void cpu_exec(uint64_t n) {
     if (npc_state.state != NPC_RUNNING) break;
     /*
     printf("%d:\tnpc_state:%d\tpc:0x%08x\tinst:0x%08x\t->\tNextpc:0x%08lx\tNextinst:0x%08x\n",\
-      i, npc_state.state, cpu.pc, pmem_read(cpu.pc, 4), \
-       top->io_NextPC, pmem_read(top->io_NextPC, 4));
+      i, npc_state.state, cpu.pc, pmem_read_npc(cpu.pc, 4), \
+       top->io_NextPC, pmem_read_npc(top->io_NextPC, 4));
     */
       cpu.pc = top->io_NextPC;
   }
@@ -443,12 +466,12 @@ static inline void host_write(void *addr, int len, word_t data) {
   }
 }
 
-word_t pmem_read(paddr_t addr, int len) {
+word_t pmem_read_npc(paddr_t addr, int len) {
   word_t ret = host_read(guest_to_host(addr), len);
   return ret;
 }
 
-void pmem_write(paddr_t addr, int len, word_t data) {
+void pmem_write_npc(paddr_t addr, int len, word_t data) {
   host_write(guest_to_host(addr), len, data);
 }
 

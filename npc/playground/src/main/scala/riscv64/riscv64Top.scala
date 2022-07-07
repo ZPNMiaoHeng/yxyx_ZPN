@@ -1,7 +1,7 @@
 
 import chisel3._ 
 import chisel3.util._
-//import chisel3.util.HasBlackBoxInline
+import chisel3.util.HasBlackBoxInline
 
 class riscv64Top extends Module {
     val io = IO(new Bundle{
@@ -46,8 +46,82 @@ class riscv64Top extends Module {
   ebreak.io.inst   := fetch.io.instIn
   ebreak.io.pc     := fetch.io.pcIn
 */
+/*
+    class SInst extends BlackBox with HasBlackBoxInline {
+        val io = IO(new Bundle {
+            val raddr  = Input(UInt(64.W))
+            val waddr  = Input(UInt(64.W))
+            val wdata  = Input(UInt(64.W))
+            val wmask  = Input(UInt(64.W))
+
+            val rdata  = Output(UInt(64.W))
+        })
+
+    setInline("SInst.v",
+                    """
+                    |module SInst(
+                    |  input  [63: 0] raddr,
+                    |  input  [63: 0] waddr,
+                    |  input  [63: 0] wdata,
+                    |  input  [63: 0] wmask,
+                    |
+                    |  output [63: 0] rdata
+                    |);
+                    |   import "DPI-C" function void pmem_read(
+                    |       input longint raddr, output longint rdata);
+                    |   import "DPI-C" function void pmem_write(
+                    |       input longint waddr, input longint wdata, input byte wmask);
+                    |   wire [63:0] rdata;
+                    |   always @(*) begin
+                    |     pmem_read(raddr, rdata);
+                    |     pmem_write(waddr, wdata, wmask);
+                    |   end
+                    | end
+                    |endmodule
+                    """.stripMargin)
+
+}
+
+    val sInst = Module(new SInst)
+
+    sInst.io.raddr := io.pc
+
+    sInst.io.waddr :=
+    sInst.io.wdata := 
+    sInst.io.wmask :=
+
+*/
+/*
+    class SInst extends BlackBox with HasBlackBoxInline {
+        val io = IO(new Bundle {
+            val raddr  = Input(UInt(64.W))
+            val inst  = Output(UInt(64.W))
+        })
+
+    setInline("SInst.v",
+                    """
+                    |module SInst(
+                    |  input  [63: 0] raddr,
+                    |
+                    |  output [63: 0] inst
+                    |);
+                    |   import "DPI-C" function void pmem_read(input longint raddr, output longint rdata);
+                    |   wire [63:0] rdata;
+                    |   always @(*) begin
+                    |     pmem_read(raddr, rdata);
+                    |   end
+                    |   assign inst = rdata;
+                    |endmodule
+                    """.stripMargin)
+
+}
+
+    val sInst = Module(new SInst)
+*/
+//    sInst.io.raddr := io.pc
 
     fetch.io.instEn := io.instEn
+//    fetch.io.instIn := sInst.io.inst                                            //    io.inst
     fetch.io.instIn := io.inst
     fetch.io.pcIn   := io.pc                                                    //decode.io.NextPC
 
