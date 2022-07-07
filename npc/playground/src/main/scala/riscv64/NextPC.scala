@@ -7,9 +7,10 @@ import chisel3.util._
 class NextPC extends Module {
   val io = IO(new Bundle {
     val PC     = Input(UInt(64.W))
-    val Branch = Input(UInt(3.W))
     val imm    = Input(UInt(64.W))
     val rs1    = Input(UInt(64.W))
+    val PCAsrc = Input(UInt(1.W))
+    val PCBsrc = Input(UInt(1.W))
 
     val NextPC = Output(UInt(64.W))
   })
@@ -20,6 +21,6 @@ class NextPC extends Module {
     (io.Branch === "b001".U) -> "b10".U,                                                // 无条件跳转PC目标: PC + imm
     (io.Branch === "b010".U) -> "b11".U                                                 // 无条件跳转寄存器目标: rs1 + imm 
   ))
-  io.NextPC := Mux(PCsrc(1) === 0.U, 4.U, io.imm) + Mux(PCsrc(0) === 0.U, io.PC, io.rs1)
+  io.NextPC := Mux(io.PCAsrc === 0.U, 4.U, io.imm) + Mux(io.PCBsrc === 0.U, io.PC, io.rs1)
   
 }

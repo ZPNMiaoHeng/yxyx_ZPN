@@ -5,10 +5,13 @@ import chisel3._
 
     class Execute extends Module {
         val io = IO(new Bundle {
-            val ALUCtr   = Input(UInt(4 .W))
-            val Asrc     = Input(UInt(64.W))
-            val Bsrc     = Input(UInt(64.W))
-            val result  = Output(UInt(64.W))
+            val ALUCtr = Input(UInt(4 .W))
+            val Asrc   = Input(UInt(64.W))
+            val Bsrc   = Input(UInt(64.W))
+
+            val result = Output(UInt(64.W))
+            val Less   = Output(UInt(1.W))
+            val Zero   = Output(UInt(1.W))
         })
 
         io.result := Mux(io.ALUCtr === "b0_000".U, io.Asrc  + io.Bsrc, 0.U)

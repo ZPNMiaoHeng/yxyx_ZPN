@@ -7,13 +7,13 @@ class regFile extends BlackBox with HasBlackBoxInline {
   val io = IO(new Bundle{
     val clk    = Input(Clock())
     val reset  = Input(Reset())
-    val RAddr1 = Input(UInt(5.W))
-    val RAddr2 = Input(UInt(5.W))
-    val WAddr  = Input(UInt(5.W))
-    val RegWr  = Input(Bool())
-    val WData  = Input(UInt(64.W))
-    val RData1 = Output(UInt(64.W))
-    val RData2 = Output(UInt(64.W))
+    val RAddr1 = Input(UInt(5.W))                           // Ra
+    val RAddr2 = Input(UInt(5.W))                           // Rb
+    val WAddr  = Input(UInt(5.W))                           // Rw
+    val RegWr  = Input(Bool())                              // RegWr
+    val WData  = Input(UInt(64.W))                          // busW
+    val RData1 = Output(UInt(64.W))                         // busA
+    val RData2 = Output(UInt(64.W))                         // busB
   })
 
 
