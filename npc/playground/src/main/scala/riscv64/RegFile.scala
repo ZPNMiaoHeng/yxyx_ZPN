@@ -3,7 +3,7 @@ import chisel3.util.HasBlackBoxInline
 /** 负责产生 RData1 RData2 
   * The reg module include 32 * 64 bit regs.
   */
-class regFile extends BlackBox with HasBlackBoxInline {
+class RegFile extends BlackBox with HasBlackBoxInline {
   val io = IO(new Bundle{
     val clk    = Input(Clock())
     val reset  = Input(Reset())
@@ -12,14 +12,15 @@ class regFile extends BlackBox with HasBlackBoxInline {
     val WAddr  = Input(UInt(5.W))                           // Rw
     val RegWr  = Input(Bool())                              // RegWr
     val WData  = Input(UInt(64.W))                          // busW
+    
     val RData1 = Output(UInt(64.W))                         // busA
     val RData2 = Output(UInt(64.W))                         // busB
   })
 
 
-  setInline("regFile.v",
+  setInline("RegFile.v",
               """
-              |module regFile #(ADDR_WIDTH = 5, DATA_WIDTH = 64) (
+              |module RegFile #(ADDR_WIDTH = 5, DATA_WIDTH = 64) (
               |  input                    clk    ,
               |  input                    reset  ,
               |  input  [ADDR_WIDTH-1 :0] RAddr1 ,

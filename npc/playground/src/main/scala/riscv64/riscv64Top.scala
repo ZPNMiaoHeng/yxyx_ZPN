@@ -10,20 +10,44 @@ class riscv64Top extends Module {
         val pc     = Input(UInt(64.W))
         
         val NextPC = Output(UInt(64.W))
-        val IRes = Output(UInt(64.W))
+//        val IRes = Output(UInt(64.W))
     })
 
     val fetch   = Module(new Fetch)
     val decode  = Module(new Decode)
-    val execute = Module(new Execute)
+    val alu     = Module(new ALU)
+    val dataMem = Module(new DataMem)
+    val MemtoReg = decode.io.MemtoReg
+    
+    fetch.io.InstEn := io.instEn
+    fetch.io.InstIn := io.inst
+    fetch.io.PcIn   := io.pc                                                    //decode.io.NextPC
+
+    decode.io.Inst  := fetch.io.Inst
+    decode.io.PC    := fetch.io.PcOut
+    decode.io.WData := /*alu.io.Result*/Mux(MemtoReg === 1.U, dataMem.io.DataOut, alu.io.Result)
+    decode.io.Less  := alu.io.Less
+    decode.io.Zero  := alu.io.Zero
+
+//    execute.io.pcOut := fetch.io.pcOut
+    alu.io.ALUCtr := decode.io.ALUCtr
+    alu.io.Asrc   := decode.io.Asrc
+    alu.io.Bsrc   := decode.io.Bsrc
+
+    dataMem.io.Addr   := alu.io.Result
+    dataMem.io.MemOP  := decode.io.MemOP
+    dataMem.io.DataIn := decode.io.DataIn
+    dataMem.io.MemWr  := decode.io.MemWr
+
+    io.NextPC := decode.io.NextPC
+
+}
 
 //  class Ebreak extends BlackBox/* with HasBlackBoxInline*/ {
 /*    val io = IO(new Bundle {
       val inst   = Input(UInt(64.W))
       val pc     = Input(UInt(64.W))
     })
-*/
-/*
     setInline("Ebreak.v",
                     """
                     |module Ebreak(
@@ -46,6 +70,7 @@ class riscv64Top extends Module {
   ebreak.io.inst   := fetch.io.instIn
   ebreak.io.pc     := fetch.io.pcIn
 */
+
 /*
     class SInst extends BlackBox with HasBlackBoxInline {
         val io = IO(new Bundle {
@@ -81,15 +106,6 @@ class riscv64Top extends Module {
                     """.stripMargin)
 
 }
-
-    val sInst = Module(new SInst)
-
-    sInst.io.raddr := io.pc
-
-    sInst.io.waddr :=
-    sInst.io.wdata := 
-    sInst.io.wmask :=
-
 */
 /*
     class SInst extends BlackBox with HasBlackBoxInline {
@@ -119,24 +135,3 @@ class riscv64Top extends Module {
     val sInst = Module(new SInst)
 */
 //    sInst.io.raddr := io.pc
-
-    fetch.io.instEn := io.instEn
-//    fetch.io.instIn := sInst.io.inst                                            //    io.inst
-    fetch.io.instIn := io.inst
-    fetch.io.pcIn   := io.pc                                                    //decode.io.NextPC
-
-    decode.io.inst  := fetch.io.inst
-    decode.io.WData := execute.io.result
-    decode.io.PC    := fetch.io.pcOut
-
-//    execute.io.pcOut := fetch.io.pcOut
-    execute.io.ALUCtr := decode.io.ALUCtr
-    execute.io.Asrc   := decode.io.Asrc
-    execute.io.Bsrc   := decode.io.Bsrc
-
-    io.NextPC := decode.io.NextPC
-    io.IRes := execute.io.result
-
-//        fetch.io <> io
-}
-

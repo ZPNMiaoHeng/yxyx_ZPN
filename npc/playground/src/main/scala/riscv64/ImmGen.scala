@@ -7,10 +7,10 @@ import chisel3.util._
   */
 class ImmGen extends Module {
   val io = IO(new Bundle {
-    val inst  = Input(UInt(64.W))
+    val Inst  = Input(UInt(64.W))
     val ExtOp = Input(UInt(3.W))
 
-    val imm   = Output(UInt(64.W))
+    val Imm   = Output(UInt(64.W))
   })
   /*
   switch(io.ExtOp) {
@@ -18,12 +18,12 @@ class ImmGen extends Module {
   }*/
   val immType = Wire(Vec(5, UInt(64.W)))
 
-  immType(0.U) := Fill(52, io.inst(31)) ## io.inst(31,20)
-  immType(1.U) := Fill(32, io.inst(31)) ## io.inst(31,12) ## 0.U(12.W)
-  immType(2.U) := Fill(52, io.inst(31)) ## io.inst(31,25) ## io.inst(11,7)
-  immType(3.U) := Fill(52, io.inst(31)) ## io.inst(31,31) ## io.inst(7,7) ## io.inst(30,25) ## io.inst(11,8) ## 0.U(1.W)
-  immType(4.U) := Fill(44, io.inst(31)) ## io.inst(31,31) ## io.inst(19,12) ## io.inst(20,20) ## io.inst(30,21) ## 0.U(1.W)
+  immType(0.U) := Fill(52, io.Inst(31)) ## io.Inst(31,20)
+  immType(1.U) := Fill(32, io.Inst(31)) ## io.Inst(31,12) ## 0.U(12.W)
+  immType(2.U) := Fill(52, io.Inst(31)) ## io.Inst(31,25) ## io.Inst(11,7)
+  immType(3.U) := Fill(52, io.Inst(31)) ## io.Inst(31,31) ## io.Inst(7,7) ## io.Inst(30,25) ## io.Inst(11,8) ## 0.U(1.W)
+  immType(4.U) := Fill(44, io.Inst(31)) ## io.Inst(31,31) ## io.Inst(19,12) ## io.Inst(20,20) ## io.Inst(30,21) ## 0.U(1.W)
 
-  io.imm := immType(io.ExtOp) 
+  io.Imm := immType(io.ExtOp) 
 
 }

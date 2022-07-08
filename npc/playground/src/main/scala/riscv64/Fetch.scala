@@ -10,12 +10,12 @@ import chisel3.util.HasBlackBoxInline
   */
 class Fetch extends Module {
   val io = IO(new Bundle {
-    val instEn = Input(UInt(1.W))
-    val instIn = Input(UInt(64.W))
-    val pcIn   = Input(UInt(64.W))                       // Finish a inst ,return PC +4
+    val InstEn = Input(UInt(1.W))
+    val InstIn = Input(UInt(64.W))
+    val PcIn   = Input(UInt(64.W))                       // Finish a inst ,return PC +4
 
-    val pcOut   = Output(UInt(64.W))
-    val inst = Output(UInt(64.W))
+    val PcOut   = Output(UInt(64.W))
+    val Inst = Output(UInt(64.W))
   })
 
   class Ebreak extends BlackBox {
@@ -61,14 +61,13 @@ class Fetch extends Module {
   io.inst    := Mux((io.instEn === 0.U && !Debreak), sInst.io.inst, 0.U)
 */  
 
-
   val ebreak = Module(new Ebreak)
-  val Debreak = Mux((io.instIn === "h00100073".U), true.B, false.B)
+  val Debreak = Mux((io.InstIn === "h00100073".U), true.B, false.B)
 
-  ebreak.io.inst   := io.instIn
-  ebreak.io.pc     := io.pcIn
+  ebreak.io.inst   := io.InstIn
+  ebreak.io.pc     := io.PcIn
 
-  io.pcOut   := Mux((io.instEn === 0.U && !Debreak), io.pcIn  , "h7fff_fffc".U)                                    // Mux(io.instEn, io.pcIn, pc)
-  io.inst    := Mux((io.instEn === 0.U && !Debreak), io.instIn, 0.U)
+  io.PcOut   := Mux((io.InstEn === 0.U && !Debreak), io.PcIn  , "h7fff_fffc".U)                                    // Mux(io.instEn, io.pcIn, pc)
+  io.Inst    := Mux((io.InstEn === 0.U && !Debreak), io.InstIn, 0.U)
   
 }
