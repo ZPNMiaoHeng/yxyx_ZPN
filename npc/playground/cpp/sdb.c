@@ -99,7 +99,7 @@ static int cmd_x(char *args){
   printf("i\tPC\t\tPmem\n");
   for(i=0; i<num; i++){
     read_addr = pmem_read_npc(addr, 8);
-    printf("%d\t0x%x\t0x%08x\n", i, addr, read_addr);
+    printf("%d\t0x%x\t%#8x\n", i, addr, read_addr);
     addr = addr +4;
   }
   
@@ -129,6 +129,12 @@ static struct {
 #define NR_CMD ARRLEN(cmd_table)
 
 void sdb_mainloop() {
+
+#ifdef CONFIG_BRANCH
+    cmd_c(NULL);
+    return;
+#endif
+
   printf("----------------start sdb----------------------------\n");
   for (char *str; (str = rl_gets()) != NULL; ) {
     char *str_end = str + strlen(str);
@@ -156,6 +162,6 @@ void isa_reg_display() {
   static int i;
   for(i=0; i<32; i ++) {
 //    cpu.gpr[i] = cpu_gpr[i];
-    printf("%s\tgpr[%d]\t=%#08lx\n", regs[i], i, cpu_gpr[i]);
+    printf("%s\tgpr[%d]\t=%#8lx\n", regs[i], i, cpu_gpr[i]);
   }
 }

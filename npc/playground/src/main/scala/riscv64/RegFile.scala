@@ -42,7 +42,7 @@ class RegFile extends BlackBox with HasBlackBoxInline {
               |        for(i = 1;i < ADDR_WIDTH;i = i + 1)
               |            rf[i] <= 64'b0;
               |    end
-              |    else if((WAddr != 5'b0) && RegWr == 1'b0)
+              |    else if((WAddr != 5'b0) && RegWr == 1'b1)
               |        rf[WAddr] <= WData;
               |  end
               | assign RData1 = (RAddr1 != 0) ? rf[RAddr1] : 64'b0;

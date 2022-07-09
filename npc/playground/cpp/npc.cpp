@@ -39,26 +39,30 @@ extern  uint64_t *cpu_gpr;
 
 extern "C" void pmem_read(long long raddr, long long *rdata) {
 // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
-  static int i =0;  i ++; 
-
-  rdata = (long long *)pmem_read_npc((raddr & ~0x7ull), 8);
-//  printf("pmemread raddr is %08llx,); 
-// rdata is %llx\n", raddr & ~0x7ull, rdata);
-  printf("----------------pmem_read_out = %d --------\n", i);
+//  static int i =0;  i ++; 
+  Log("pmem_read raddr is %#08llx\t%#08llx", raddr, (raddr & ~0x7));
+    *rdata = pmem_read_npc(raddr, 8);
+  Log("pmem_read_npc is %d\n", *rdata);
+//  printf("----------------pmem_read_out = %d --------\n", i);
 }
 
 extern "C" void pmem_write(long long waddr, long long wdata, char wmask) {
   // 总是往地址为`waddr & ~0x7ull`的8字节按写掩码`wmask`写入`wdata`
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3` 0b11 代表只写入最低2个字节, 内存中的其它字节保持不变
-  printf("pmemwrite waddr is %08llx\n", waddr);
-  static int i =0, len =0;  i ++; 
+//  Log("pmemwrite waddr is %#08llx, wdata is %#08llx ", waddr, wdata );
+//  Log("pmemwrite waddr wmask is %d\n", wmask);
+//  static int i =0, len =0;  i ++; 
+  /*
   if(wmask == 0x1) len = 1;
-    else if(wmask == 0x3) len = 2;
-    else if(wmask == 0xf) len = 4;
-    else if(wmask == 0xff)len = 8;
+    else if(wmask == 0x2) len = 2;
+    else if(wmask == 0x4) len = 4;
+    else if(wmask == 0x8) len = 8;
+  */
+//    else len = 0;
 
-//  pmem_write_npc(waddr, len, wdata);
+//  Log("Pmem_write len is %d\n", len);
+  pmem_write_npc(waddr, wmask, wdata);
 }
 
 static const uint32_t img [] = {
@@ -379,8 +383,8 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
 //  Log("isa_difftest_checkregs\n");
     static int i;
     for(i = 0; i < 32; i ++) {
-//      printf("%d:nemu[%08lx] != npc[%08lx]\n",i ,ref_r->gpr[check_reg_idx(i)] ,cpu_gpr[i]);
       if(ref_r->gpr[check_reg_idx(i)] != cpu_gpr[i]){                                                         /*cpu 不是npc的寄存器*/
+      Log("%d:nemu[%08lx] != npc[%08lx]\n",i ,ref_r->gpr[check_reg_idx(i)] ,cpu_gpr[i]);
         return false;
       }
     }
@@ -461,7 +465,7 @@ static inline word_t host_read(void *addr, int len) {
 }
 
 static inline void host_write(void *addr, int len, word_t data) {
-  printf("host_write_npc Start\n");
+//  Log("host_write_npc Start\n");
   switch (len) {
     case 1: *(uint8_t  *)addr = data; return;
     case 2: *(uint16_t *)addr = data; return;
@@ -469,18 +473,19 @@ static inline void host_write(void *addr, int len, word_t data) {
     case 8: *(uint64_t *)addr = data; return;
     default: assert(0);//IFDEF(CONFIG_RT_CHECK, default: assert(0));
   }
-  printf("host_write_npc End\n");
+//  Log("host_write_npc End\n");
 }
 
 word_t pmem_read_npc(paddr_t addr, int len) {
   word_t ret = host_read(guest_to_host(addr), len);
+  Log("ret is %#lx", ret);
   return ret;
 }
 
 void pmem_write_npc(paddr_t addr, int len, word_t data) {
-  printf("pmem_write_npc Start: len is %d ,data is %8x\n", len, data);
+//  printf("pmem_write_npc Start: len is %d ,data is %8x\n", len, data);
   host_write(guest_to_host(addr), len, data);
-  printf("pmem_write_npc End\n");
+//  printf("pmem_write_npc End\n");
 }
 
 int Judge_ebreak(uint64_t inst){

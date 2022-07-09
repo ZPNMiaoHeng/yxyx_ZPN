@@ -15,7 +15,7 @@ class ContrGen extends Module {
     val RegWr    = Output(UInt(1.W))
     val ExtOp    = Output(UInt(3.W))
 
-    val MemtoReg = Output(UInt(1.W))
+    val MemtoReg = Output(UInt(2.W))
     val MemWr    = Output(UInt(1.W))
     val MemOP    = Output(UInt(3.W))
   })
@@ -26,6 +26,7 @@ class ContrGen extends Module {
   val instAuipcEn  = Mux("b00101".U  === io.inst(6,2), true.B, false.B)        //U type special op
 
   val instAddiEn   = Mux("b000_00100".U === instOF, true.B, false.B)
+  val instAddiwEn  = Mux("b000_00110".U === instOF, true.B, false.B)
   val instSltiEn   = Mux("b010_00100".U === instOF, true.B, false.B)
   val instSltiuEn  = Mux("b011_00100".U === instOF, true.B, false.B)
   val instXoriEn   = Mux("b100_00100".U === instOF, true.B, false.B)
@@ -36,6 +37,7 @@ class ContrGen extends Module {
   val instSraiEn   = Mux("b101_00100".U === instOF, true.B, false.B)
   
   val instAddEn   = Mux("b000_01100".U === instOF, true.B, false.B)
+  val instAddwEn  = Mux("b000_01110".U === instOF, true.B, false.B)
   val instSubEn   = Mux("b000_01100".U === instOF, true.B, false.B)
   val instSllEn   = Mux("b001_01100".U === instOF, true.B, false.B)
   val instSltEn   = Mux("b010_01100".U === instOF, true.B, false.B)
@@ -63,6 +65,7 @@ class ContrGen extends Module {
   val instSdEn    = Mux("b011_01000".U === instOF, true.B, false.B)
   val instLbEn    = Mux("b000_00000".U === instOF, true.B, false.B)
   val instLhEn    = Mux("b001_00000".U === instOF, true.B, false.B)
+  val instLdEn    = Mux("b011_00000".U === instOF, true.B, false.B)
   val instLwEn    = Mux("b010_00000".U === instOF, true.B, false.B)
   val instLbuEn   = Mux("b100_00000".U === instOF, true.B, false.B)
   val instLhuEn   = Mux("b101_00000".U === instOF, true.B, false.B)
@@ -70,7 +73,7 @@ class ContrGen extends Module {
   io.ALUAsrc := Mux(instAuipcEn || instJalEn || instJalrEn, 1.U, 0.U)            // 0 -> rs1; 1 -> pc
   
   io.ALUBsrc := MuxCase("b01".U, 
-        Array((instAddEn || instSubEn || instSllEn || instSltEn || instSltuEn || instXorEn || instSrlEn || instSraEn || instOrEn || instAndEn
+        Array((instAddEn || instAddwEn || instSubEn || instSllEn || instSltEn || instSltuEn || instXorEn || instSrlEn || instSraEn || instOrEn || instAndEn
           || instBeqEn || instBneEn || instBltEn || instBgeEn || instBltuEn || instBgeuEn) -> "b00".U,
             (instJalrEn || instJalEn) -> "b10".U))                                          // 00 -> rs2; 01 -> imm; 10 -> 4
 
@@ -97,19 +100,23 @@ class ContrGen extends Module {
   io.RegWr  := Mux(instSdEn || instSbEn || instShEn || instSwEn || instBeqEn || instBneEn || instBltEn || instBltEn || instBgeEn || instBltuEn || instBgeuEn, 0.U, 1.U)                                         // 0.U -> 写回寄存器堆
   
   io.ExtOp := MuxCase("b111".U, Array(
-          (instAddiEn  || instSltiEn || instSltiuEn || instXoriEn || instOriEn || instAndiEn || instSlliEn || 
-              instSrliEn || instSraiEn || instJalrEn || instLbEn || instLhEn || instLwEn || instLbuEn || instLhuEn ) -> "b000".U,                        // I Type
+          (instAddiEn || instAddiwEn  || instSltiEn || instSltiuEn || instXoriEn || instOriEn || instAndiEn || instSlliEn || 
+              instSrliEn || instSraiEn || instJalrEn || instLbEn || instLhEn || instLwEn || instLdEn || instLbuEn || instLhuEn ) -> "b000".U,                        // I Type
           (instAuipcEn || instLuiEn)  -> "b001".U,                             // U Type
           (instSdEn || instSbEn || instSwEn || instShEn)-> "b010".U,                                               // S Type
           (instBeqEn || instBneEn || instBltEn || instBgeEn || instBltEn || instBgeuEn) -> "b011".U,     // B
           (instJalEn) -> "b100".U))                                             // J Type
 
-  io.MemtoReg := Mux(instLbEn || instLhEn || instLwEn || instLbuEn || instLhuEn, 1.U, 0.U)
-  io.MemWr    := Mux(instSbEn || instShEn || instSwEn, 1.U, 0.U)
+  io.MemtoReg := MuxCase("b00".U, Array(
+    (instLbEn || instLhEn || instLwEn || instLdEn || instLbuEn || instLhuEn) -> "b01".U,
+    (instAddwEn || instAddiwEn) -> "b10".U
+  ))
+  io.MemWr    := Mux(instSbEn || instShEn || instSwEn || instSdEn, 1.U, 0.U)
   io.MemOP    := MuxCase("b111".U,Array(
           (instLbEn || instSbEn) -> "b000".U,
           (instLhEn || instShEn) -> "b001".U,
           (instLwEn || instSwEn) -> "b010".U,
+          (instLdEn || instSdEn) -> "b011".U,
           instLbuEn              -> "b100".U,
           instLhuEn              -> "b101".U))
 

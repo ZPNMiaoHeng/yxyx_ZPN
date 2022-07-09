@@ -10,22 +10,36 @@ class riscv64Top extends Module {
         val pc     = Input(UInt(64.W))
         
         val NextPC = Output(UInt(64.W))
-//        val IRes = Output(UInt(64.W))
     })
 
     val fetch   = Module(new Fetch)
     val decode  = Module(new Decode)
     val alu     = Module(new ALU)
     val dataMem = Module(new DataMem)
+
     val MemtoReg = decode.io.MemtoReg
     
+    val WData = MuxCase(0.U, Array(
+        (MemtoReg === "b00".U) -> alu.io.Result,
+        (MemtoReg === "b01".U) -> dataMem.io.DataOut,
+        (MemtoReg === "b10".U) -> (Fill(32,alu.io.Result(31)) ## alu.io.Result(31, 0))
+    ))
+    
+//    val WData = Mux(MemtoReg(0) === 1.U, dataMem.io.DataOut, alu.io.Result)
+
     fetch.io.InstEn := io.instEn
     fetch.io.InstIn := io.inst
     fetch.io.PcIn   := io.pc                                                    //decode.io.NextPC
 
     decode.io.Inst  := fetch.io.Inst
     decode.io.PC    := fetch.io.PcOut
-    decode.io.WData := /*alu.io.Result*/Mux(MemtoReg === 1.U, dataMem.io.DataOut, alu.io.Result)
+    decode.io.WData := WData
+    //Mux(MemtoReg(0) === 1.U, dataMem.io.DataOut, alu.io.Result)
+    /* MuxCase(0.U, Array(
+        (MemtoReg === "b00".U) -> alu.io.Result,
+        (MemtoReg === "b01".U) -> dataMem.io.DataOut,
+        (MemtoReg === "b10".U) -> (Fill(32,alu.io.Result(31)) ## alu.io.Result(31, 0))
+    ))*/
     decode.io.Less  := alu.io.Less
     decode.io.Zero  := alu.io.Zero
 
@@ -34,10 +48,13 @@ class riscv64Top extends Module {
     alu.io.Asrc   := decode.io.Asrc
     alu.io.Bsrc   := decode.io.Bsrc
 
+    dataMem.io.clk    := clock
+    dataMem.io.reset  := reset
     dataMem.io.Addr   := alu.io.Result
     dataMem.io.MemOP  := decode.io.MemOP
     dataMem.io.DataIn := decode.io.DataIn
     dataMem.io.MemWr  := decode.io.MemWr
+    dataMem.io.MemtoReg := decode.io.MemtoReg
 
     io.NextPC := decode.io.NextPC
 

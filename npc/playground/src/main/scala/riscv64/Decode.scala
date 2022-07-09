@@ -21,7 +21,7 @@ class Decode extends Module {
         val Bsrc   = Output(UInt(64.W))
         val NextPC = Output(UInt(64.W))
         val DataIn = Output(UInt(64.W))    //存储到Mem数据
-        val MemtoReg = Output(UInt(1.W))
+        val MemtoReg = Output(UInt(2.W))
         val MemWr    = Output(UInt(1.W))
         val MemOP    = Output(UInt(3.W))
     })
