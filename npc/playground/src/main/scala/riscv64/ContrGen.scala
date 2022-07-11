@@ -18,6 +18,7 @@ class ContrGen extends Module {
     val MemtoReg = Output(UInt(2.W))
     val MemWr    = Output(UInt(1.W))
     val MemOP    = Output(UInt(3.W))
+//    val ResW     = Output(UInt(1.W))
   })
 
   val instOF = io.inst(14,12) ## io.inst(6,2)                                  // fun3 + op[6:2]
@@ -32,11 +33,11 @@ class ContrGen extends Module {
   val instOriEn    = 0.B // Mux("b110_00100".U === instOF, true.B, false.B)
   val instAndiEn   = 0.B // Mux("b111_00100".U === instOF, true.B, false.B)
   val instSlliEn   = 0.B // Mux("b001_00100".U === instOF && 0.U === io.inst(30), true.B, false.B)
-  val instSlliwEn  = Mux("b001_00110".U === instOF && 0.U === io.inst(30), true.B, false.B)
+  val instSlliwEn  = 0.B //Mux("b001_00110".U === instOF && 0.U === io.inst(30), true.B, false.B)
   val instSrliEn   = 0.B // Mux("b101_00100".U === instOF && 0.U === io.inst(30), true.B, false.B)
   val instSrliwEn  = 0.B // Mux("b101_00110".U === instOF && 0.U === io.inst(30), true.B, false.B)
   val instSraiEn   = 0.B // Mux("b101_00100".U === instOF && 1.U === io.inst(30), true.B, false.B)
-  val instSraiwEn  = Mux("b101_00110".U === instOF && 1.U === io.inst(30), true.B, false.B)
+  val instSraiwEn  = 0.B //Mux("b101_00110".U === instOF && 1.U === io.inst(30), true.B, false.B)
   val instAddEn    = 0.B // Mux("b000_01100".U === instOF && 0.U === io.inst(30), true.B, false.B)
   val instAddwEn   = Mux("b000_01110".U === instOF && 0.U === io.inst(30), true.B, false.B)
   val instSubEn    = Mux("b000_01100".U === instOF && 1.U === io.inst(30), true.B, false.B)
@@ -109,7 +110,15 @@ class ContrGen extends Module {
           (instSdEn || instSbEn || instSwEn || instShEn)-> "b010".U,                                               // S Type
           (instBeqEn || instBneEn || instBltEn || instBgeEn || instBltEn || instBgeuEn) -> "b011".U,     // B
           (instJalEn) -> "b100".U))                                             // J Type
+/*
+  io.MemtoReg := MuxCase("b00".U, Array(                                                                                              // alu.R -> Reg
+    (instLbEn || instLhEn || instLwEn || instLdEn || instLbuEn || instLhuEn)                -> "b01".U,                               // Mem   -> Reg
+    (instBeqEn || instBneEn || instBltEn || instBgeEn || instBltuEn || instBgeuEn)          -> "b11".U                                // 无用信号
+  ))
 
+  io.ResW     := Mux(instAddwEn || instAddiwEn || instSlliwEn || instSlliwEn || instSrliwEn || instSraiwEn, 1.U, 0.U)                 // 将Asrc/Bsrc 截断32位进行操作
+*/
+  
   io.MemtoReg := MuxCase("b00".U, Array(                                                                                              // alu.R -> Reg
     (instLbEn || instLhEn || instLwEn || instLdEn || instLbuEn || instLhuEn)                -> "b01".U,                               // Mem   -> Reg
     (instAddwEn || instAddiwEn || instSlliwEn || instSlliwEn || instSrliwEn || instSraiwEn) -> "b10".U,                               // alu.R截断32位，符号扩展 -> Reg

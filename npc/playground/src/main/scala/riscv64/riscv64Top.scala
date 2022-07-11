@@ -18,7 +18,7 @@ class riscv64Top extends Module {
     val dataMem = Module(new DataMem)
 
     val MemtoReg = decode.io.MemtoReg
-    val InstResW    = (Fill(32,alu.io.Result(63)) ## alu.io.Result(31, 0))
+    val InstResW    = (Fill(32,alu.io.Result(31)) ## alu.io.Result(31, 0))
     
     val WData = MuxCase(0.U, Array(
         (MemtoReg === "b00".U) -> alu.io.Result,
