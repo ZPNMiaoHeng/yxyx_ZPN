@@ -63,7 +63,7 @@ static void _eval_initial_loop(Vriscv64Top__Syms* __restrict vlSymsp) {
             Verilated::debug(1);
             __Vchange = Vriscv64Top___024root___change_request(&(vlSymsp->TOP));
             Verilated::debug(__Vsaved_debug);
-            VL_FATAL_MT("build/riscv64Top.v", 403, "",
+            VL_FATAL_MT("build/riscv64Top.v", 413, "",
                 "Verilated model didn't DC converge\n"
                 "- See https://verilator.org/warn/DIDNOTCONVERGE");
         } else {
@@ -94,7 +94,7 @@ void Vriscv64Top::eval_step() {
             Verilated::debug(1);
             __Vchange = Vriscv64Top___024root___change_request(&(vlSymsp->TOP));
             Verilated::debug(__Vsaved_debug);
-            VL_FATAL_MT("build/riscv64Top.v", 403, "",
+            VL_FATAL_MT("build/riscv64Top.v", 413, "",
                 "Verilated model didn't converge\n"
                 "- See https://verilator.org/warn/DIDNOTCONVERGE");
         } else {

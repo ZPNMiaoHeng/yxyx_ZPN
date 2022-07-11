@@ -26,9 +26,10 @@ class BShifter extends Module {
     src(48) ## src(49) ## src(50) ## src(51) ## src(52) ## src(53) ## src(54) ## src(55) ##
     src(56) ## src(57) ## src(58) ## src(59) ## src(60) ## src(61) ## src(62) ## src(63)
                   , src)
+  val Shamt    = io.Shamt(4, 0)
 
-  val ShiftRes = ShiftSrc >> io.Shamt
-  val SraMask  = ~("hffffffffffff".U >> io.Shamt)
+  val ShiftRes = ShiftSrc >> Shamt
+  val SraMask  = ~("hffffffffffff".U >> Shamt)
 
   val SrlRes   = ShiftRes
   val SraRes   = ( Fill(64, ShiftSrc(63)) & SraMask ) | ShiftRes

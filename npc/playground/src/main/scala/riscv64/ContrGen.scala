@@ -32,11 +32,11 @@ class ContrGen extends Module {
   val instOriEn    = 0.B // Mux("b110_00100".U === instOF, true.B, false.B)
   val instAndiEn   = 0.B // Mux("b111_00100".U === instOF, true.B, false.B)
   val instSlliEn   = 0.B // Mux("b001_00100".U === instOF && 0.U === io.inst(30), true.B, false.B)
-  val instSlliwEn  = 0.B // Mux("b001_00110".U === instOF && 0.U === io.inst(30), true.B, false.B)
+  val instSlliwEn  = Mux("b001_00110".U === instOF && 0.U === io.inst(30), true.B, false.B)
   val instSrliEn   = 0.B // Mux("b101_00100".U === instOF && 0.U === io.inst(30), true.B, false.B)
   val instSrliwEn  = 0.B // Mux("b101_00110".U === instOF && 0.U === io.inst(30), true.B, false.B)
   val instSraiEn   = 0.B // Mux("b101_00100".U === instOF && 1.U === io.inst(30), true.B, false.B)
-  val instSraiwEn  = 0.B // Mux("b101_00110".U === instOF && 1.U === io.inst(30), true.B, false.B)--------------
+  val instSraiwEn  = Mux("b101_00110".U === instOF && 1.U === io.inst(30), true.B, false.B)
   val instAddEn    = 0.B // Mux("b000_01100".U === instOF && 0.U === io.inst(30), true.B, false.B)
   val instAddwEn   = Mux("b000_01110".U === instOF && 0.U === io.inst(30), true.B, false.B)
   val instSubEn    = Mux("b000_01100".U === instOF && 1.U === io.inst(30), true.B, false.B)
@@ -62,7 +62,7 @@ class ContrGen extends Module {
   val instBltuEn   = 0.B // Mux("b110_11000".U === instOF, true.B, false.B)
   val instBgeuEn   = 0.B // Mux("b111_11000".U === instOF, true.B, false.B)-----------
 
-  val instSbEn     = 0.B // Mux("b000_01000".U === instOF, true.B, false.B)
+  val instSbEn     = Mux("b000_01000".U === instOF, true.B, false.B)
   val instShEn     = 0.B // Mux("b001_01000".U === instOF, true.B, false.B)
   val instSwEn     = Mux("b010_01000".U === instOF, true.B, false.B)
   val instSdEn     = Mux("b011_01000".U === instOF, true.B, false.B)
@@ -70,7 +70,7 @@ class ContrGen extends Module {
   val instLhEn     = 0.B // Mux("b001_00000".U === instOF, true.B, false.B)
   val instLdEn     = Mux("b011_00000".U === instOF, true.B, false.B)
   val instLwEn     = Mux("b010_00000".U === instOF, true.B, false.B)
-  val instLbuEn    = 0.B // Mux("b100_00000".U === instOF, true.B, false.B)
+  val instLbuEn    = Mux("b100_00000".U === instOF, true.B, false.B)
   val instLhuEn    = 0.B // Mux("b101_00000".U === instOF, true.B, false.B)
 
   io.ALUAsrc := Mux(instAuipcEn || instJalEn || instJalrEn, 1.U, 0.U)            // 0 -> rs1; 1 -> pc
