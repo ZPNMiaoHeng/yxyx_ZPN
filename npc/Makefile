@@ -26,11 +26,12 @@ endif
 #DIFINE
 # Default test file name is riscv64Top
 TOP 				  =	riscv64Top
+#TOP 				  =	ALU
 VERILOG_NAME  = $(TOP)
 #NVBOARD_DIR = $(NVBOARD_HOME)/example
 PLAYGROUND_DIR = $(NPC_HOME)/playground
 CPP_DIR = $(PLAYGROUND_DIR)/cpp/
-#CPP_DIR = $(PLAYGROUND_DIR)/cpp_addi
+#CPP_DIR = $(PLAYGROUND_DIR)/cpp_son_mondule/
 #######################################################################
 #---------------------- File ------------------------------------------
 VSRC += $(shell find ./build/ -name *.v)
@@ -39,7 +40,7 @@ VSRC += /home/zpn/ysyx-workbench/npc/playground/src/main/resources/vsrc/Ebreak.v
 CSRC += $(shell find $(CPP_DIR) -name *.cpp)
 CSRC += $(shell find $(CPP_DIR) -name *.c)
 CSRC += $(shell find $(CPP_DIR) -name *.cc)
-
+#CSRC += /home/zpn/ysyx-workbench/npc/playground/cpp_son_module/ALU.cpp
 ########################################################################
 VERILATOR_INPUT =  $(VSRC) $(CSRC)
 SO = /home/zpn/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so
@@ -114,7 +115,7 @@ clean: cleanB cleanO
 cleanB:
 	@-rm -rf $(BUILD_DIR)
 cleanO: 
-	@-rm -rf $(OBJ_DIR)
+	@-rm -rf $(OBJ_DIR) $(GTK_DIR)
 ######################################################################
 # Other targets
 

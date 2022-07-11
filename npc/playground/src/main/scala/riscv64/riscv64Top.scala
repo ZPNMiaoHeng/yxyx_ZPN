@@ -34,12 +34,6 @@ class riscv64Top extends Module {
     decode.io.Inst  := fetch.io.Inst
     decode.io.PC    := fetch.io.PcOut
     decode.io.WData := WData
-    //Mux(MemtoReg(0) === 1.U, dataMem.io.DataOut, alu.io.Result)
-    /* MuxCase(0.U, Array(
-        (MemtoReg === "b00".U) -> alu.io.Result,
-        (MemtoReg === "b01".U) -> dataMem.io.DataOut,
-        (MemtoReg === "b10".U) -> (Fill(32,alu.io.Result(31)) ## alu.io.Result(31, 0))
-    ))*/
     decode.io.Less  := alu.io.Less
     decode.io.Zero  := alu.io.Zero
 
@@ -48,8 +42,8 @@ class riscv64Top extends Module {
     alu.io.Asrc   := decode.io.Asrc
     alu.io.Bsrc   := decode.io.Bsrc
 
-    dataMem.io.clk    := clock
-    dataMem.io.reset  := reset
+//    dataMem.io.clk    := clock
+//    dataMem.io.reset  := reset
     dataMem.io.Addr   := alu.io.Result
     dataMem.io.MemOP  := decode.io.MemOP
     dataMem.io.DataIn := decode.io.DataIn
