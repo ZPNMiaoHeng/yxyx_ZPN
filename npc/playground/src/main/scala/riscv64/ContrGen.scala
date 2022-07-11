@@ -109,15 +109,17 @@ class ContrGen extends Module {
             (instJalr || instJal) -> "b10".U))                                          // 00 -> rs2; 01 -> imm; 10 -> 4
 
   io.ALUCtr  := MuxCase("b0000".U,Array(                                                                      // 加法器， 加法
-    (instSub )                                                            -> "b1000".U,               // 加法器， 减法
-    (instSlli || instSlliw || instSll )                                   -> "b001".U,                // 移位器， 左移
+    (instSub  || instSubw)                                                            -> "b1000".U,               // 加法器， 减法
+    (instSlli || instSlliw || instSll || instSllw)                                     -> "b001".U,                // 移位器， 左移
+
     (instSlti || instSlt || instBeq || instBne || instBlt || instBge)     -> "b0010".U,               // 做减法， 带符号小于置位结果输出， less按带符号结果设置
     (instSltiu || instSltu || instBltu || instBgeu)                       -> "b1010".U,               // 做减法， 无符号小于置位结果输出， less按无符号结果设置
+
     (instLui)                                                             -> "b011".U,                // ALU 输入的B结果直接输出
-    (instXori || instXor)                                                 -> "b100".U,                // 异或输出
-    (instSrli || instSrliw || instSrl)                                    -> "b0101".U,               // 移位器， 逻辑右移
-    (instSrai || instSraiw)                                                   -> "b1101".U,               // 移位器， 算术右移
-    (instXor || instOr)                                                       -> "b110".U,                // 逻辑或
+    (instXori || instXor)                                                     -> "b100".U,                // 异或输出
+    (instSrli || instSrliw || instSrl || instSrlw)                            -> "b0101".U,               // 移位器， 逻辑右移
+    (instSrai || instSraiw || instSra || instSraw)                            -> "b1101".U,               // 移位器， 算术右移
+    (instOri  || instOr)                                                      -> "b110".U,                // 逻辑或
     (instAndi || instAnd)                                                     -> "b111".U))                // 逻辑与
 
   io.Branch  := MuxCase("b000".U, Array( 
