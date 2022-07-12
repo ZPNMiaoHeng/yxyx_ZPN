@@ -11,55 +11,49 @@ import chisel3.util._
             val ALUCtr = Input(UInt(4.W))
             val Asrc   = Input(UInt(64.W))
             val Bsrc   = Input(UInt(64.W))
-            val MemtoReg = Input(UInt(22.W))
+            val MemtoReg = Input(UInt(2.W))
 
             val Result = Output(UInt(64.W))
             val Less   = Output(UInt(1.W))
             val Zero   = Output(UInt(1.W))
         })
-      val adder    = Module(new Adder)
-//      val bShifter = Module(new BShifter)
+      val in1 = io.Asrc
+      val in2 = io.Bsrc
+//      val shamt = Wire(UInt(6.W))
+//      val aluResult = Wire(UInt(64.W))
 
-      /** ALU a/b src chuli */
-
-//      val LR     = Mux((io.ALUCtr(2 ,0) === "b001".U), 1.U, 0.U)              // 1->L, 0->R
-//      val AL     = Mux((io.ALUCtr === "b1101".U),    1.U, 0.U)                // 1->A, 0->L
-//      val SubAdd = Mux((io.ALUCtr === "b1000".U || io.ALUCtr === "b0010".U || io.ALUCtr === "b1010".U), 1.U, 0.U)
-      val SubAdd = Mux((io.ALUCtr === "b1000".U), 1.U, 0.U)
-
-      adder.io.Asrc := io.Asrc
-      adder.io.Bsrc := io.Bsrc
-      adder.io.Cin  := SubAdd
-/*
-      bShifter.io.Din   := io.Asrc
-      bShifter.io.Shamt := io.Bsrc
-      bShifter.io.LR    := LR
-      bShifter.io.AL    := AL
-*/
-      val US     = Mux((io.ALUCtr === "b0010".U), 0.U, 1.U)             //符号数: 1-> U; 0->S
-
-      val shamt = Wire(UInt(6.W))
-      shamt := Mux(io.MemtoReg(1), io.Bsrc(4, 0).asUInt(), io.Bsrc(5, 0))
+   val shamt = Mux(io.MemtoReg(1), io.Bsrc(4, 0).asUInt(), io.Bsrc(5, 0))
   
-      val Less = Mux(US === 1.U, (adder.io.Carry ^ SubAdd), (adder.io.Overflow ^ adder.io.Result(63)))
-      val XorRes = io.Asrc ^ io.Bsrc
-      val OrRes  = io.Asrc | io.Bsrc
-      val AndRes = io.Asrc & io.Bsrc
-      val SL    = ((io.Asrc << shamt)(63, 0)).asUInt()
-      val SRL   = (io.Bsrc >> shamt).asUInt()
-      val SRA   = (io.Asrc.asSInt() >> shamt).asUInt()
+      val addRes = (in1 + in2).asUInt()
 
-    io.Result := MuxCase(0.U, Array(
-      (io.ALUCtr(2, 0) === "b000 ".U) -> adder.io.Result,                // 加法器， 做加法
-      (io.ALUCtr(2, 0) === "b001 ".U) -> SL,//bShifter.io.Dout,               // 选择移位器输出，左移
-      (io.ALUCtr(2, 0) === "b010 ".U) -> Less,                           // 做减法，选择带符号小于置位结果输出, Less按带符号结果设置  error
-      (io.ALUCtr(2, 0) === "b011 ".U) -> io.Bsrc,                        // 选择ALU输入B的结果直接输出
-      (io.ALUCtr(2, 0) === "b100 ".U) -> XorRes,                         // 异或输出
-      (io.ALUCtr       === "b0101".U) -> SRL,//bShifter.io.Dout,               // 移位器输出，逻辑右移
-      (io.ALUCtr       === "b1101".U) -> SRA,//bShifter.io.Dout,               // 移位器输出，算术右移
-      (io.ALUCtr(2, 0) === "b110 ".U) -> OrRes,                          // 逻辑或输出
-      (io.ALUCtr(2, 0) === "b111 ".U) -> AndRes                          // 逻辑与输出
-    ))
-    io.Less := Less
-    io.Zero := adder.io.Zero
+      val subRes = (in1 - in2).asUInt()
+      val xorRes = (in1 ^ in2).asUInt
+      val orRes  = (in1 | in2).asUInt
+      val andRes = (in1 & in2).asUInt
+      val sLRes    = ((in1 << shamt)(63, 0)).asUInt()
+      val sRLRes   = (in2 >> shamt).asUInt()
+      val sRARes   = (in1.asSInt() >> shamt).asUInt()
+/**
+      val sLTRes   = (in1.asSInt() < in2.asSInt()).asUInt()
+      val sLTURes  = (in1 < in2).asUInt()
+*/
+val aluResult = MuxCase(0.U, Array(
+       (io.ALUCtr       === "b0000".U) -> addRes,
+       (io.ALUCtr       === "b1000".U) -> subRes,
+
+       (io.ALUCtr       === "b0010".U) -> subRes,//sLTRes,  
+       (io.ALUCtr       === "b1010".U) -> subRes,//sLTURes,
+
+       (io.ALUCtr       === "b0101".U) -> sRLRes,  //(in2 >> ashamt).asUInt(),
+       (io.ALUCtr       === "b1101".U) -> sRARes,
+       (io.ALUCtr       === "b0001".U) -> sLRes,
+       (io.ALUCtr       === "b0011".U) -> in2 ,
+       (io.ALUCtr       === "b0100".U) -> xorRes,  
+       (io.ALUCtr       === "b0110".U) -> orRes,   
+       (io.ALUCtr       === "b0111".U) -> andRes)) 
+
+    io.Less := Mux(io.ALUCtr(3) === 1.U, sLTURes, sLTRes)
+
+    io.Zero := ~(subRes === 0.U)//~(aluResult === 0.U)
+    io.Result := aluResult
     }

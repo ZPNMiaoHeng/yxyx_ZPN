@@ -14,7 +14,7 @@ class ContrGen extends Module {
     val ALUBsrc  = Output(UInt( 2.W))
     val ALUCtr   = Output(UInt( 4.W))
     val Branch   = Output(UInt( 3.W))
-    val typeW    = Output(UInt( 1.W))
+//    val typeW    = Output(UInt( 1.W))
 
     val rAddr1En = Output(UInt(1.W))
     val rAddr2En = Output(UInt(1.W))

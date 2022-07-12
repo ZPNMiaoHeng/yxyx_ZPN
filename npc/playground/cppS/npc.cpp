@@ -3,6 +3,7 @@
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 static Vriscv64Top* top;
+
 uint64_t g_nr_guest_inst = -1;
 static uint64_t g_timer = 0;
 static char *diff_so_file = NULL;
@@ -115,7 +116,7 @@ int main(int argc, char *argv[]) {
     restart();
     long img_size = load_img();
 //    IFDEF(CONFIG_DIFFTEST,init_difftest(diff_so_file, img_size, difftest_port));
-    init_difftest(diff_so_file, img_size, difftest_port);
+//    init_difftest(diff_so_file, img_size, difftest_port);
     init_disasm("riscv64-pc-linux-gnu");
     welcome();
 
@@ -175,8 +176,6 @@ static void iRingBuf( char irp[128]){
 }
 #endif
 
-//extern rdata;
-
 static void exec_once (){
       cpu.val = pmem_read_npc(cpu.pc, 4);
       top->io_pc   = cpu.pc;
@@ -216,7 +215,9 @@ void cpu_exec(uint64_t n) {
 //    Log("cpu.pc=%08x,NextPC=%08lx, is_skip_ref is %d, skip_dut_nr_inst is %d",\
      cpu.pc, top->io_NextPC, is_skip_ref, skip_dut_nr_inst);
 //    IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, top->io_NextPC)); 
-    difftest_step(cpu.pc, top->io_NextPC);                                              // nemu需要执行一次指令与NPC匹配
+
+//    checkregs(&ref_r, pc);                               // REF（nemu）中的值与DUT（npc）进行比较
+//    difftest_step(cpu.pc, top->io_NextPC);                                              // nemu需要执行一次指令与NPC匹配
     if (npc_state.state != NPC_RUNNING) break;
     /*
     printf("%d:\tnpc_state:%d\tpc:0x%08x\tinst:0x%08x\t->\tNextpc:0x%08lx\tNextinst:0x%08x\n",\
@@ -279,10 +280,7 @@ uint8_t* guest_to_host(paddr_t paddr);
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc);
 
 #ifdef CONFIG_DIFFTEST
-/*
-static bool is_skip_ref = false;
-static int skip_dut_nr_inst = 0;
-*/
+
 void difftest_skip_ref() {
   is_skip_ref = true;
   skip_dut_nr_inst = 0;
@@ -296,23 +294,17 @@ void difftest_skip_dut(int nr_ref, int nr_dut) {
 }
 
 void init_difftest(char *ref_so_file, long img_size, int port) {
-//  Log("--------------- start init_difftest -----------------\n");
   assert(ref_so_file != NULL);
   void *handle;
-//  Log("--------------- Open SO file -----------------\n");
   handle = dlopen(ref_so_file, RTLD_LAZY);
   assert(handle);
-//  Log("--------------- Copy MEM -----------------\n");
   ref_difftest_memcpy = (void  (*)(paddr_t, void *, size_t, bool))dlsym(handle, "difftest_memcpy");
   assert(ref_difftest_memcpy);
-//  Log("--------------- Copy Reg -----------------\n");
   ref_difftest_regcpy = (void  (*)(void *, bool))dlsym(handle, "difftest_regcpy");
   assert(ref_difftest_regcpy);
-//  Log("--------------- Difftest exec -----------------\n");
   ref_difftest_exec = (void  (*)(uint64_t))dlsym(handle, "difftest_exec");
   assert(ref_difftest_exec);
 
-//  Log("--------------- Init difftest -----------------\n");
   void (*ref_difftest_init)(int) = (void  (*)(int))dlsym(handle, "difftest_init");
   assert(ref_difftest_init);
 
@@ -321,13 +313,9 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
   Log("The result of every instruction will be compared with %s. "
       "This will help you a lot for debugging, but also significantly reduce the performance. "
       "If it is not necessary, you can turn it off in common.h.", ref_so_file); 
-//      "If it is not necessary, you can turn it off in menuconfig.", ref_so_file);
 
-//  Log("--------------- Init ref difftest -----------------");
   ref_difftest_init(port);                                                                        // 初始化REF的DiffTest
-//  Log("--------------- Init ref mem -----------------");
   ref_difftest_memcpy(RESET_VECTOR, guest_to_host(RESET_VECTOR), img_size, DIFFTEST_TO_REF);      // 将DUT的guest memory拷贝到REF中
-//  Log("--------------- Init ref ref -----------------");
   ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);                                                     // 将DUT的寄存器状态拷贝到REF中.
 }
 
@@ -361,10 +349,11 @@ void difftest_step(vaddr_t pc, vaddr_t npc) {
     is_skip_ref = false;
     return;
   }
-  ref_difftest_exec(1);                                // 让nemu执行一次，与NPC指令执行处于相同指令状态
-  ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);        // 然后读出REF（nemu）中寄存器的值
 
+//  ref_difftest_exec(1);                                // 让nemu执行一次，与NPC指令执行处于相同指令状态
+  ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);        // 然后读出REF（nemu）中寄存器的值
   checkregs(&ref_r, pc);                               // REF（nemu）中的值与DUT（npc）进行比较
+  ref_difftest_exec(1);                                // 让nemu执行一次，与NPC指令执行处于相同指令状态
 }
 
 #else
@@ -390,27 +379,27 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
 //-------------------------------------Verilator clock--------------------------------------------------------------
 // Combinational logic Circuit 
 void step_and_dump_wave(){
-    tfp->dump(contextp->time());
     top->eval();
     contextp->timeInc(1);
+    tfp->dump(contextp->time());
 
 }
 
 // Sequential circuit 
 void single_cycle() {
-  tfp->dump(contextp->time());
+
   top->clock = 1; top->eval();
   contextp->timeInc(1);
-
   tfp->dump(contextp->time());
+  
   top->clock = 0; top->eval();
   contextp->timeInc(1);
-
+  tfp->dump(contextp->time());
 }
 
 void reset(int n) {
   top->reset = 1;
-  while (n -- > 0) single_cycle();
+  while (n -- > 0)  single_cycle();
   top->reset = 0;
 }
 

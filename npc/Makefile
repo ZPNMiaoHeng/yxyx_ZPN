@@ -106,7 +106,7 @@ run:
 #	@echo $(IMG)
 #	./obj_dir/V$(VERILOG_NAME) $(IMG) --diff=$(SO)
 	
-	./obj_dir/V$(VERILOG_NAME) --diff=$(SO) --image=$(IMG)
+	./obj_dir/V$(VERILOG_NAME)	 --diff=$(SO) --image=$(IMG)
 #	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 #	@echo "-------------------------- Open GTKwave ------------------------"
 #	gtkwave -f $(GTK_DIR)
