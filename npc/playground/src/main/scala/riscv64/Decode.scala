@@ -63,12 +63,18 @@ class Decode extends Module {
       "b01".U -> imm.io.Imm,
       "b10".U -> 4.U,
       "b11".U -> 0.U))                                                                                                               //op2R
-
-    val Asrc_t = Mux((con.io.MemtoReg === "b10".U), Asrc(31, 0), Asrc)                                                                       // 操作数是否需要截断：1-> 截断2
-    val Bsrc_t = Mux((con.io.MemtoReg === "b10".U), Bsrc(31, 0), Bsrc)
-    
-    io.Asrc     := Asrc_t
-    io.Bsrc     := Bsrc_t
+    // con.io.typeW -> MemtoReg(1)
+      /*
+      val aSrcT = Mux(con.io.typeW, Mux(con.io.ALUCtr === "b1101".U, 
+        Cat(Fill(32, Asrc(31)), Asrc(31, 0)), Cat(Fill(32, 0.U), Asrc(31, 0))),
+          Asrc)
+    */
+      val aSrcT = Mux(con.io.MemtoReg(1), Mux(con.io.ALUCtr === "b1101".U, 
+        Cat(Fill(32, Asrc(31)), Asrc(31, 0)), Cat(Fill(32, 0.U), Asrc(31, 0))),
+          Asrc)
+          
+    io.Asrc     := aSrcT
+    io.Bsrc     := Bsrc
     io.ALUCtr   := con.io.ALUCtr
     io.NextPC   := nextpc.io.NextPC
     io.DataIn   := regs.io.RData2
