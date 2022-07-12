@@ -58,11 +58,11 @@ class Decode extends Module {
     branchCond.io.Zero   := io.Zero
 
     val Asrc  = Mux(con.io.ALUAsrc === 0.U, regs.io.RData1, io.PC)                                                   //op1R
-    val Bsrc  = MuxCase(0.U, Array(
-      (con.io.ALUBsrc === "b00".U) -> regs.io.RData2,
-      (con.io.ALUBsrc === "b01".U) -> imm.io.Imm,
-      (con.io.ALUBsrc === "b10".U) -> 4.U
-    ))                                                                                                               //op2R
+    val Bsrc  = MuxLookup(con.io.ALUBsrc, 0.U, Array(
+      "b00".U -> regs.io.RData2,
+      "b01".U -> imm.io.Imm,
+      "b10".U -> 4.U,
+      "b11".U -> 0.U))                                                                                                               //op2R
 
     val Asrc_t = Mux((con.io.MemtoReg === "b10".U), Asrc(31, 0), Asrc)                                                                       // 操作数是否需要截断：1-> 截断2
     val Bsrc_t = Mux((con.io.MemtoReg === "b10".U), Bsrc(31, 0), Bsrc)

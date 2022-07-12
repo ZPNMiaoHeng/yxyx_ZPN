@@ -100,13 +100,19 @@ class ContrGen extends Module {
 // ebreak inst
   val Ebreak       = inst === EBREAK                   // Mux("b000_11100".U === instOF, true.B, false.B)
 
-  io.ALUAsrc := Mux(instAuipc || instJal || instJalr, 1.U, 0.U)            // 0 -> rs1; 1 -> pc
-  io.ALUBsrc := MuxCase("b01".U, 
-        Array((instAdd || instAddw || instSub || instSll || instSlt || instSltu || instXor || instSrl || instSra || instOr || instAnd
-          || instBeq || instBne || instBlt || instBge || instBltu || instBgeu) -> "b00".U,
-            (instJalr || instJal) -> "b10".U))                                          // 00 -> rs2; 01 -> imm; 10 -> 4
+  io.ALUAsrc := Mux(instAuipc || typeJ, 1.U, 0.U)                     /** 0 -> rs1; 1 -> pc */
 
- // val aluAdd =
+  io.ALUBsrc := MuxCase("b01".U, Array(
+    (typeR || typeB) -> "b00".U,
+    (typeJ) -> "b10".U))                                          // 00 -> rs2; 01 -> imm; 10 -> 4
+
+  /**
+  io.ALUBsrc := MuxCase("b11".U, Array(                               /** 00 -> rs2; 01 -> imm; 10 -> 4; 11 ->0 */
+    ( typeR || typeB) -> "b00".U,
+    ( typeJ         ) -> "b10".U,
+    ( typeI || typeU) -> "b01".U))
+*/
+  
   io.ALUCtr  := MuxCase("b0000".U,Array(                                                                  // 加法器， 加法
     (instSub  || instSubw)                                                    -> "b1000".U,               // 加法器， 减法
     (instSlli || instSlliw || instSll || instSllw)                            -> "b001".U ,                // 移位器， 左移
