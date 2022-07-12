@@ -32,14 +32,15 @@ class Decode extends Module {
     val nextpc     = Module(new NextPC)
     val branchCond = Module(new BranchCond)
 
-    regs.io.clk    := clock
-    regs.io.reset  := reset
-
-    regs.io.RAddr1 := io.Inst(19, 15)
-    regs.io.RAddr2 := io.Inst(24, 20)
-    regs.io.WAddr  := io.Inst(11, 7)
-    regs.io.RegWr  := con.io.RegWr
-    regs.io.WData  := io.WData
+    regs.io.clk         := clock
+    regs.io.reset       := reset
+    regs.io.rAddr1En    := con.io.rAddr1En
+    regs.io.rAddr2En    := con.io.rAddr2En
+    regs.io.RAddr1      := con.io.rAddr1
+    regs.io.RAddr2      := con.io.rAddr2
+    regs.io.WAddr       := con.io.wAddr
+    regs.io.RegWr       := con.io.RegWr
+    regs.io.WData       := io.WData
 
     imm.io.Inst    := io.Inst
     imm.io.ExtOp   := con.io.ExtOp

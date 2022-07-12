@@ -18,11 +18,11 @@ class ImmGen extends Module {
   }*/
   val immType = Wire(Vec(5, UInt(64.W)))
 
-  immType(0.U) := Fill(52, io.Inst(31)) ## io.Inst(31,20)
-  immType(1.U) := Fill(32, io.Inst(31)) ## io.Inst(31,12) ## 0.U(12.W)
-  immType(2.U) := Fill(52, io.Inst(31)) ## io.Inst(31,25) ## io.Inst(11,7)
-  immType(3.U) := Fill(52, io.Inst(31)) ## io.Inst(31,31) ## io.Inst(7,7) ## io.Inst(30,25) ## io.Inst(11,8) ## 0.U(1.W)
-  immType(4.U) := Fill(44, io.Inst(31)) ## io.Inst(31,31) ## io.Inst(19,12) ## io.Inst(20,20) ## io.Inst(30,21) ## 0.U(1.W)
+  immType(0.U) := Fill(52, io.Inst(31)) ## io.Inst(31,20)                                                                     // I
+  immType(1.U) := Fill(32, io.Inst(31)) ## io.Inst(31,12) ## 0.U(12.W)                                                        // U
+  immType(2.U) := Fill(52, io.Inst(31)) ## io.Inst(31,25) ## io.Inst(11,7)                                                    // S
+  immType(3.U) := Fill(52, io.Inst(31)) ## io.Inst(31)    ## io.Inst(7)     ## io.Inst(30,25) ## io.Inst(11,8)  ## 0.U(1.W)   /** B???? 43  ??? */
+  immType(4.U) := Fill(43, io.Inst(31)) ## io.Inst(31)    ## io.Inst(19,12) ## io.Inst(20)    ## io.Inst(30,21) ## 0.U(1.W)   // J
 
   io.Imm := immType(io.ExtOp) 
 

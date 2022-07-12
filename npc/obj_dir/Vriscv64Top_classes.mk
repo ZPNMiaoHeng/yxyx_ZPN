@@ -28,6 +28,7 @@ VM_CLASSES_FAST += \
 	Vriscv64Top \
 	Vriscv64Top___024root \
 	Vriscv64Top___024root__1 \
+	Vriscv64Top___024root__2 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \

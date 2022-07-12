@@ -1,20 +1,22 @@
-import chisel3._ 
-import chisel3.util.HasBlackBoxInline
+import chisel3._
+import chisel3.util._
 /** 负责产生 RData1 RData2 
   * The reg module include 32 * 64 bit regs.
   */
 class RegFile extends BlackBox with HasBlackBoxInline {
   val io = IO(new Bundle{
-    val clk    = Input(Clock())
-    val reset  = Input(Reset())
-    val RAddr1 = Input(UInt(5.W))                           // Ra
-    val RAddr2 = Input(UInt(5.W))                           // Rb
-    val WAddr  = Input(UInt(5.W))                           // Rw
-    val RegWr  = Input(Bool())                              // RegWr
-    val WData  = Input(UInt(64.W))                          // busW
+    val clk      = Input(Clock())
+    val reset    = Input(Reset())
+    val RAddr1   = Input(UInt(5.W))                           // Ra
+    val rAddr1En = Input(UInt(1.W))
+    val RAddr2   = Input(UInt(5.W))                           // Rb
+    val rAddr2En = Input(UInt(1.W))
+    val WAddr    = Input(UInt(5.W))                           // Rw
+    val RegWr    = Input(Bool())                              // RegWr
+    val WData    = Input(UInt(64.W))                          // busW
     
-    val RData1 = Output(UInt(64.W))                         // busA
-    val RData2 = Output(UInt(64.W))                         // busB
+    val RData1 = Output(UInt(64.W))                           // busA
+    val RData2 = Output(UInt(64.W))                           // busB
   })
 
 
@@ -24,7 +26,9 @@ class RegFile extends BlackBox with HasBlackBoxInline {
               |  input                    clk    ,
               |  input                    reset  ,
               |  input  [ADDR_WIDTH-1 :0] RAddr1 ,
+              |  input                    rAddr1En,
               |  input  [ADDR_WIDTH-1 :0] RAddr2 ,
+              |  input                    rAddr2En,
               |  input  [ADDR_WIDTH-1 :0] WAddr  ,
               |  input                    RegWr  ,
               |  input  [DATA_WIDTH-1 :0] WData  ,
@@ -45,9 +49,9 @@ class RegFile extends BlackBox with HasBlackBoxInline {
               |    else if((WAddr != 5'b0) && RegWr == 1'b1)
               |        rf[WAddr] <= WData;
               |  end
-              | assign RData1 = (RAddr1 != 0) ? rf[RAddr1] : 64'b0;
-              | assign RData2 = (RAddr2 != 0) ? rf[RAddr2] : 64'b0;
-              |endmodule              
+              | assign RData1 = (RAddr1 != 0 && rAddr1En == 1'b1) ? rf[RAddr1] : 64'b0;
+              | assign RData2 = (RAddr2 != 0 && rAddr2En == 1'b1) ? rf[RAddr2] : 64'b0;
+              |endmodule
               |
               |
               """.stripMargin)

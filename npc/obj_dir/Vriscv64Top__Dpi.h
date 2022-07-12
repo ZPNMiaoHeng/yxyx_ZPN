@@ -19,7 +19,7 @@ extern "C" {
     extern void pmem_read(long long raddr, long long* rdata, char PmemReadEn);
     // DPI import at build/DataMem.v:12:32
     extern void pmem_write(long long waddr, long long wdata, char wmask, char PmemWriteEn);
-    // DPI import at build/RegFile.v:14:32
+    // DPI import at build/RegFile.v:16:32
     extern void set_gpr_ptr(const svOpenArrayHandle a);
 
 #ifdef __cplusplus
