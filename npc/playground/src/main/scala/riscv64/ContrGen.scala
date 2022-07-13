@@ -80,10 +80,11 @@ class ContrGen extends Module {
   val instSrlw    = inst === SRLW    // ??
   val instSraw    = inst === SRAW    // ??
   val instMret    = inst === MRET    //  ??
+  val instRemw    = inst === REMW
   val typeR       = instAdd  || instSub  || instSll  || instSlt  || instSltu ||
                     instXor  || instSrl  || instSra  || instOr   || instAnd  ||
                     instAddw || instSubw || instSllw || instSrlw || instSraw ||
-                    instMret
+                    instMret || instRemw
 // B type 6
   val instBeq      = inst === BEQ
   val instBne      = inst === BNE
@@ -102,8 +103,8 @@ class ContrGen extends Module {
   val Ebreak       = inst === EBREAK                   // Mux("b000_11100".U === instOF, true.B, false.B)
 // type+w
   val typeW        = instAddw || instSubw || instSllw || instSlliw ||
-    instSraw || instSrlw ||instSrliw || instSraiw || instAddiw
-  io.typeW := typeW
+    instSraw || instSrlw ||instSrliw || instSraiw || instAddiw || instRemw
+//  io.typeW := typeW
 
   io.ALUAsrc := Mux(instAuipc || typeJ, 1.U, 0.U)                     /** 0 -> rs1; 1 -> pc */
 
@@ -130,19 +131,22 @@ class ContrGen extends Module {
     val aluSll  = (instSlli || instSlliw || instSll || instSllw)
     val aluSrl  = (instSrli || instSrliw || instSrl || instSrlw)
     val aluSra  = (instSrai || instSraiw || instSra || instSraw)
+    val aluRem  = instRemw     /** 求余 */
   /** mul and div */
 
   io.ALUCtr := MuxCase("b0000".U, Array(                                                                  // 加法器， 加法
     aluSub                                                                    -> "b1000".U,               // 加法器， 减法
-    aluSll                                                                    -> "b001".U ,                // 移位器， 左移
-    (instSlti || instSlt || instBeq || instBne || instBlt || instBge)         -> "b0010".U,            // 做减法， 带符号小于置位结果输出， less按带符号结果设置
+    aluSll                                                                    -> "b0001".U ,                // 移位器， 左移
+    (instSlti || instSlt || instBlt || instBge)                               -> "b0010".U,            // 做减法， 带符号小于置位结果输出， less按带符号结果设置
+    (instBeq || instBne)                                                      -> "b1001".U,                // 相等比较 去做减法
     (instSltiu || instSltu || instBltu || instBgeu)                           -> "b1010".U,               // 做减法， 无符号小于置位结果输出， less按无符号结果设置
-    (instLui)                                                                 -> "b011".U ,                // ALU 输入的B结果直接输出
-    aluXor                                                                    -> "b100".U ,                // 异或输出
+    (instLui)                                                                 -> "b0011".U,                // ALU 输入的B结果直接输出
+    aluRem                                                                    -> "b1011".U,                // 求余数字
+    aluXor                                                                    -> "b0100".U,                // 异或输出
     aluSrl                                                                    -> "b0101".U,               // 移位器， 逻辑右移
     aluSra                                                                    -> "b1101".U,               // 移位器， 算术右移
-    aluOr                                                                     -> "b110".U ,                // 逻辑或
-    aluAnd                                                                    -> "b111".U))
+    aluOr                                                                     -> "b0110".U ,                // 逻辑或
+    aluAnd                                                                    -> "b0111".U))
 
   io.Branch  := MuxCase("b000".U, Array( 
           (instJal)  -> "b001".U,
@@ -178,7 +182,8 @@ class ContrGen extends Module {
 */
   io.MemtoReg := MuxCase("b00".U, Array(                                                                                              // alu.R -> Reg
     (instLb || instLh || instLw || instLd || instLbu || instLhu)                -> "b01".U,                               // Mem   -> Reg
-    (instAddw || instAddiw || instSlliw || instSlliw || instSrliw || instSraiw) -> "b10".U,                               // alu.R截断32位，符号扩展 -> Reg
+//    (instAddw || instAddiw || instSlliw || instSlliw || instSrliw || instSraiw || instRemw) -> "b10".U,                               // alu.R截断32位，符号扩展 -> Reg
+    (typeW) -> "b10".U,
     (instBeq || instBne || instBlt || instBge || instBltu || instBgeu)          -> "b11".U                                // 无用信号
   ))
   io.MemWr    := Mux(instSb || instSh || instSw || instSd, 1.U, 0.U)

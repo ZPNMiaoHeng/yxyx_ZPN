@@ -31,8 +31,8 @@ typedef uint16_t ioaddr_t;
 #define CONFIG_ITRACE
 #define CONFIG_IRINGBUF
 
-//#define CONFIG_DIFFTEST
-//#define CONFIG_BRANCH
+#define CONFIG_DIFFTEST
+#define CONFIG_BRANCH
 
 #define PG_ALIGN __attribute((aligned(4096)))
 
