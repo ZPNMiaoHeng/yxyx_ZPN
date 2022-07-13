@@ -31,6 +31,7 @@ static int parse_args(int argc, char *argv[]);
 void difftest_step(vaddr_t pc, vaddr_t npc);
 
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 uint64_t get_time();
 
@@ -370,7 +371,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
     static int i;
     for(i = 0; i < 32; i ++) {
       if(ref_r->gpr[check_reg_idx(i)] != cpu_gpr[i]){                                                         /*cpu 不是npc的寄存器*/
-      Log("%d:nemu[%08lx] != npc[%08lx]\n",i ,ref_r->gpr[check_reg_idx(i)] ,cpu_gpr[i]);
+      Log("%d:nemu[%#16lx] != npc[%#16lx]\n",i ,ref_r->gpr[check_reg_idx(i)] ,cpu_gpr[i]);
         return false;
       }
     }
@@ -437,6 +438,15 @@ static long load_img() {
 }
 
 void init_mem() {
+//#ifdef CONFIG_MEM_RANDOM  
+  Log("-------init_mem----------");
+  uint32_t *p = (uint32_t *)pmem;
+  int i;
+  for (i = 0; i < (int) (CONFIG_MSIZE / sizeof(p[0])); i ++) {
+    p[i] = rand();
+//    printf("%d\n",rand());
+  }
+//#endif
     Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]",
       (paddr_t)CONFIG_MBASE, (paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1);
   assert(pmem);
@@ -458,7 +468,7 @@ static inline void host_write(void *addr, int len, word_t data) {
     case 1: *(uint8_t  *)addr = data; return;
     case 2: *(uint16_t *)addr = data; return;
     case 4: *(uint32_t *)addr = data; return;
-    case 8: *(uint64_t *)addr = data;  /* Log("host_write_npc 8 End\n");*/ return;
+    case 8:/**Log("host_write_npc 8 End-----%#lx,\n", data);*/ *(uint64_t *)addr = data; return;
     default: assert(0);//IFDEF(CONFIG_RT_CHECK, default: assert(0));
   }
 }

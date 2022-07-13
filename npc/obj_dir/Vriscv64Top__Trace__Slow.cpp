@@ -22,25 +22,25 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
     if (false && tracep && c) {}  // Prevent unused
     // Body
     {
-        tracep->declBit(c+220,"clock", false,-1);
-        tracep->declBit(c+221,"reset", false,-1);
-        tracep->declBit(c+222,"io_instEn", false,-1);
-        tracep->declQuad(c+223,"io_inst", false,-1, 63,0);
-        tracep->declQuad(c+225,"io_pc", false,-1, 63,0);
-        tracep->declQuad(c+227,"io_NextPC", false,-1, 63,0);
-        tracep->declBit(c+220,"riscv64Top clock", false,-1);
-        tracep->declBit(c+221,"riscv64Top reset", false,-1);
-        tracep->declBit(c+222,"riscv64Top io_instEn", false,-1);
-        tracep->declQuad(c+223,"riscv64Top io_inst", false,-1, 63,0);
-        tracep->declQuad(c+225,"riscv64Top io_pc", false,-1, 63,0);
-        tracep->declQuad(c+227,"riscv64Top io_NextPC", false,-1, 63,0);
-        tracep->declBit(c+222,"riscv64Top fetch_io_InstEn", false,-1);
-        tracep->declQuad(c+223,"riscv64Top fetch_io_InstIn", false,-1, 63,0);
-        tracep->declQuad(c+225,"riscv64Top fetch_io_PcIn", false,-1, 63,0);
+        tracep->declBit(c+234,"clock", false,-1);
+        tracep->declBit(c+235,"reset", false,-1);
+        tracep->declBit(c+236,"io_instEn", false,-1);
+        tracep->declQuad(c+237,"io_inst", false,-1, 63,0);
+        tracep->declQuad(c+239,"io_pc", false,-1, 63,0);
+        tracep->declQuad(c+241,"io_NextPC", false,-1, 63,0);
+        tracep->declBit(c+234,"riscv64Top clock", false,-1);
+        tracep->declBit(c+235,"riscv64Top reset", false,-1);
+        tracep->declBit(c+236,"riscv64Top io_instEn", false,-1);
+        tracep->declQuad(c+237,"riscv64Top io_inst", false,-1, 63,0);
+        tracep->declQuad(c+239,"riscv64Top io_pc", false,-1, 63,0);
+        tracep->declQuad(c+241,"riscv64Top io_NextPC", false,-1, 63,0);
+        tracep->declBit(c+236,"riscv64Top fetch_io_InstEn", false,-1);
+        tracep->declQuad(c+237,"riscv64Top fetch_io_InstIn", false,-1, 63,0);
+        tracep->declQuad(c+239,"riscv64Top fetch_io_PcIn", false,-1, 63,0);
         tracep->declQuad(c+1,"riscv64Top fetch_io_PcOut", false,-1, 63,0);
         tracep->declQuad(c+3,"riscv64Top fetch_io_Inst", false,-1, 63,0);
-        tracep->declBit(c+220,"riscv64Top decode_clock", false,-1);
-        tracep->declBit(c+221,"riscv64Top decode_reset", false,-1);
+        tracep->declBit(c+234,"riscv64Top decode_clock", false,-1);
+        tracep->declBit(c+235,"riscv64Top decode_reset", false,-1);
         tracep->declQuad(c+3,"riscv64Top decode_io_Inst", false,-1, 63,0);
         tracep->declQuad(c+5,"riscv64Top decode_io_WData", false,-1, 63,0);
         tracep->declQuad(c+1,"riscv64Top decode_io_PC", false,-1, 63,0);
@@ -68,18 +68,18 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declBus(c+18,"riscv64Top dataMem_MemtoReg", false,-1, 1,0);
         tracep->declQuad(c+23,"riscv64Top dataMem_DataOut", false,-1, 63,0);
         tracep->declQuad(c+25,"riscv64Top InstResW", false,-1, 63,0);
-        tracep->declBit(c+222,"riscv64Top fetch io_InstEn", false,-1);
-        tracep->declQuad(c+223,"riscv64Top fetch io_InstIn", false,-1, 63,0);
-        tracep->declQuad(c+225,"riscv64Top fetch io_PcIn", false,-1, 63,0);
+        tracep->declBit(c+236,"riscv64Top fetch io_InstEn", false,-1);
+        tracep->declQuad(c+237,"riscv64Top fetch io_InstIn", false,-1, 63,0);
+        tracep->declQuad(c+239,"riscv64Top fetch io_PcIn", false,-1, 63,0);
         tracep->declQuad(c+1,"riscv64Top fetch io_PcOut", false,-1, 63,0);
         tracep->declQuad(c+3,"riscv64Top fetch io_Inst", false,-1, 63,0);
-        tracep->declQuad(c+223,"riscv64Top fetch ebreak_inst", false,-1, 63,0);
-        tracep->declQuad(c+225,"riscv64Top fetch ebreak_pc", false,-1, 63,0);
-        tracep->declBit(c+229,"riscv64Top fetch Debreak", false,-1);
-        tracep->declQuad(c+223,"riscv64Top fetch ebreak inst", false,-1, 63,0);
-        tracep->declQuad(c+225,"riscv64Top fetch ebreak pc", false,-1, 63,0);
-        tracep->declBit(c+220,"riscv64Top decode clock", false,-1);
-        tracep->declBit(c+221,"riscv64Top decode reset", false,-1);
+        tracep->declQuad(c+237,"riscv64Top fetch ebreak_inst", false,-1, 63,0);
+        tracep->declQuad(c+239,"riscv64Top fetch ebreak_pc", false,-1, 63,0);
+        tracep->declBit(c+243,"riscv64Top fetch Debreak", false,-1);
+        tracep->declQuad(c+237,"riscv64Top fetch ebreak inst", false,-1, 63,0);
+        tracep->declQuad(c+239,"riscv64Top fetch ebreak pc", false,-1, 63,0);
+        tracep->declBit(c+234,"riscv64Top decode clock", false,-1);
+        tracep->declBit(c+235,"riscv64Top decode reset", false,-1);
         tracep->declQuad(c+3,"riscv64Top decode io_Inst", false,-1, 63,0);
         tracep->declQuad(c+5,"riscv64Top decode io_WData", false,-1, 63,0);
         tracep->declQuad(c+1,"riscv64Top decode io_PC", false,-1, 63,0);
@@ -93,8 +93,8 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declBus(c+18,"riscv64Top decode io_MemtoReg", false,-1, 1,0);
         tracep->declBit(c+19,"riscv64Top decode io_MemWr", false,-1);
         tracep->declBus(c+20,"riscv64Top decode io_MemOP", false,-1, 2,0);
-        tracep->declBit(c+220,"riscv64Top decode regs_clk", false,-1);
-        tracep->declBit(c+221,"riscv64Top decode regs_reset", false,-1);
+        tracep->declBit(c+234,"riscv64Top decode regs_clk", false,-1);
+        tracep->declBit(c+235,"riscv64Top decode regs_reset", false,-1);
         tracep->declBus(c+27,"riscv64Top decode regs_RAddr1", false,-1, 4,0);
         tracep->declBit(c+28,"riscv64Top decode regs_rAddr1En", false,-1);
         tracep->declBus(c+29,"riscv64Top decode regs_RAddr2", false,-1, 4,0);
@@ -136,10 +136,10 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declQuad(c+43,"riscv64Top decode Asrc", false,-1, 63,0);
         tracep->declBus(c+45,"riscv64Top decode aSrcT_hi", false,-1, 31,0);
         tracep->declBus(c+46,"riscv64Top decode aSrcT_lo", false,-1, 31,0);
-        tracep->declBus(c+230,"riscv64Top decode regs ADDR_WIDTH", false,-1, 31,0);
-        tracep->declBus(c+231,"riscv64Top decode regs DATA_WIDTH", false,-1, 31,0);
-        tracep->declBit(c+220,"riscv64Top decode regs clk", false,-1);
-        tracep->declBit(c+221,"riscv64Top decode regs reset", false,-1);
+        tracep->declBus(c+244,"riscv64Top decode regs ADDR_WIDTH", false,-1, 31,0);
+        tracep->declBus(c+245,"riscv64Top decode regs DATA_WIDTH", false,-1, 31,0);
+        tracep->declBit(c+234,"riscv64Top decode regs clk", false,-1);
+        tracep->declBit(c+235,"riscv64Top decode regs reset", false,-1);
         tracep->declBus(c+27,"riscv64Top decode regs RAddr1", false,-1, 4,0);
         tracep->declBit(c+28,"riscv64Top decode regs rAddr1En", false,-1);
         tracep->declBus(c+29,"riscv64Top decode regs RAddr2", false,-1, 4,0);
@@ -150,8 +150,8 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declQuad(c+33,"riscv64Top decode regs RData1", false,-1, 63,0);
         tracep->declQuad(c+16,"riscv64Top decode regs RData2", false,-1, 63,0);
         {int i; for (i=0; i<32; i++) {
-                tracep->declQuad(c+155+i*2,"riscv64Top decode regs rf", true,(i+0), 63,0);}}
-        tracep->declBus(c+219,"riscv64Top decode regs i", false,-1, 31,0);
+                tracep->declQuad(c+169+i*2,"riscv64Top decode regs rf", true,(i+0), 63,0);}}
+        tracep->declBus(c+233,"riscv64Top decode regs i", false,-1, 31,0);
         tracep->declQuad(c+3,"riscv64Top decode imm io_Inst", false,-1, 63,0);
         tracep->declBus(c+35,"riscv64Top decode imm io_ExtOp", false,-1, 2,0);
         tracep->declQuad(c+36,"riscv64Top decode imm io_Imm", false,-1, 63,0);
@@ -217,31 +217,37 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declBit(c+96,"riscv64Top decode con instSraw", false,-1);
         tracep->declBit(c+97,"riscv64Top decode con instMret", false,-1);
         tracep->declBit(c+98,"riscv64Top decode con aluRem", false,-1);
-        tracep->declBit(c+99,"riscv64Top decode con typeR", false,-1);
-        tracep->declBit(c+100,"riscv64Top decode con instBeq", false,-1);
-        tracep->declBit(c+101,"riscv64Top decode con instBne", false,-1);
-        tracep->declBit(c+102,"riscv64Top decode con instBlt", false,-1);
-        tracep->declBit(c+103,"riscv64Top decode con instBge", false,-1);
-        tracep->declBit(c+104,"riscv64Top decode con instBltu", false,-1);
-        tracep->declBit(c+105,"riscv64Top decode con instBgeu", false,-1);
-        tracep->declBit(c+106,"riscv64Top decode con typeB", false,-1);
-        tracep->declBit(c+107,"riscv64Top decode con instSb", false,-1);
-        tracep->declBit(c+108,"riscv64Top decode con instSh", false,-1);
-        tracep->declBit(c+109,"riscv64Top decode con instSw", false,-1);
-        tracep->declBit(c+110,"riscv64Top decode con instSd", false,-1);
-        tracep->declBit(c+111,"riscv64Top decode con typeS", false,-1);
-        tracep->declBit(c+112,"riscv64Top decode con Ebreak", false,-1);
-        tracep->declBit(c+113,"riscv64Top decode con typeW", false,-1);
-        tracep->declBit(c+114,"riscv64Top decode con aluSub", false,-1);
-        tracep->declBit(c+115,"riscv64Top decode con aluSlt", false,-1);
-        tracep->declBit(c+116,"riscv64Top decode con aluSltu", false,-1);
-        tracep->declBit(c+117,"riscv64Top decode con aluAnd", false,-1);
-        tracep->declBit(c+118,"riscv64Top decode con aluOr", false,-1);
-        tracep->declBit(c+119,"riscv64Top decode con aluXor", false,-1);
-        tracep->declBit(c+120,"riscv64Top decode con aluSll", false,-1);
-        tracep->declBit(c+121,"riscv64Top decode con aluSrl", false,-1);
-        tracep->declBit(c+122,"riscv64Top decode con aluSra", false,-1);
-        tracep->declBit(c+123,"riscv64Top decode con wRegEn", false,-1);
+        tracep->declBit(c+99,"riscv64Top decode con instDiv", false,-1);
+        tracep->declBit(c+100,"riscv64Top decode con instDivw", false,-1);
+        tracep->declBit(c+101,"riscv64Top decode con instMul", false,-1);
+        tracep->declBit(c+102,"riscv64Top decode con instMulw", false,-1);
+        tracep->declBit(c+103,"riscv64Top decode con typeR", false,-1);
+        tracep->declBit(c+104,"riscv64Top decode con instBeq", false,-1);
+        tracep->declBit(c+105,"riscv64Top decode con instBne", false,-1);
+        tracep->declBit(c+106,"riscv64Top decode con instBlt", false,-1);
+        tracep->declBit(c+107,"riscv64Top decode con instBge", false,-1);
+        tracep->declBit(c+108,"riscv64Top decode con instBltu", false,-1);
+        tracep->declBit(c+109,"riscv64Top decode con instBgeu", false,-1);
+        tracep->declBit(c+110,"riscv64Top decode con typeB", false,-1);
+        tracep->declBit(c+111,"riscv64Top decode con instSb", false,-1);
+        tracep->declBit(c+112,"riscv64Top decode con instSh", false,-1);
+        tracep->declBit(c+113,"riscv64Top decode con instSw", false,-1);
+        tracep->declBit(c+114,"riscv64Top decode con instSd", false,-1);
+        tracep->declBit(c+115,"riscv64Top decode con typeS", false,-1);
+        tracep->declBit(c+116,"riscv64Top decode con Ebreak", false,-1);
+        tracep->declBit(c+117,"riscv64Top decode con typeW", false,-1);
+        tracep->declBit(c+118,"riscv64Top decode con aluSub", false,-1);
+        tracep->declBit(c+119,"riscv64Top decode con aluSlt", false,-1);
+        tracep->declBit(c+120,"riscv64Top decode con aluSltu", false,-1);
+        tracep->declBit(c+121,"riscv64Top decode con aluAnd", false,-1);
+        tracep->declBit(c+122,"riscv64Top decode con aluOr", false,-1);
+        tracep->declBit(c+123,"riscv64Top decode con aluXor", false,-1);
+        tracep->declBit(c+124,"riscv64Top decode con aluSll", false,-1);
+        tracep->declBit(c+125,"riscv64Top decode con aluSrl", false,-1);
+        tracep->declBit(c+126,"riscv64Top decode con aluSra", false,-1);
+        tracep->declBit(c+127,"riscv64Top decode con aluDiv", false,-1);
+        tracep->declBit(c+128,"riscv64Top decode con aluMul", false,-1);
+        tracep->declBit(c+129,"riscv64Top decode con wRegEn", false,-1);
         tracep->declQuad(c+1,"riscv64Top decode nextpc io_PC", false,-1, 63,0);
         tracep->declQuad(c+36,"riscv64Top decode nextpc io_Imm", false,-1, 63,0);
         tracep->declQuad(c+33,"riscv64Top decode nextpc io_Rs1", false,-1, 63,0);
@@ -253,7 +259,7 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declBit(c+8,"riscv64Top decode branchCond io_Zero", false,-1);
         tracep->declBit(c+41,"riscv64Top decode branchCond io_PCAsrc", false,-1);
         tracep->declBit(c+42,"riscv64Top decode branchCond io_PCBsrc", false,-1);
-        tracep->declBus(c+124,"riscv64Top decode branchCond PCsrc", false,-1, 1,0);
+        tracep->declBus(c+130,"riscv64Top decode branchCond PCsrc", false,-1, 1,0);
         tracep->declBus(c+9,"riscv64Top alu io_ALUCtr", false,-1, 3,0);
         tracep->declQuad(c+10,"riscv64Top alu io_Asrc", false,-1, 63,0);
         tracep->declQuad(c+12,"riscv64Top alu io_Bsrc", false,-1, 63,0);
@@ -261,32 +267,34 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declQuad(c+21,"riscv64Top alu io_Result", false,-1, 63,0);
         tracep->declBit(c+7,"riscv64Top alu io_Less", false,-1);
         tracep->declBit(c+8,"riscv64Top alu io_Zero", false,-1);
-        tracep->declBus(c+125,"riscv64Top alu shamt", false,-1, 5,0);
-        tracep->declQuad(c+126,"riscv64Top alu addRes", false,-1, 63,0);
-        tracep->declQuad(c+128,"riscv64Top alu subRes", false,-1, 63,0);
-        tracep->declQuad(c+130,"riscv64Top alu xorRes", false,-1, 63,0);
-        tracep->declQuad(c+132,"riscv64Top alu orRes", false,-1, 63,0);
-        tracep->declQuad(c+134,"riscv64Top alu andRes", false,-1, 63,0);
-        tracep->declQuad(c+136,"riscv64Top alu sLRes", false,-1, 63,0);
-        tracep->declQuad(c+138,"riscv64Top alu sRLRes", false,-1, 63,0);
-        tracep->declQuad(c+140,"riscv64Top alu sRARes", false,-1, 63,0);
-        tracep->declBit(c+142,"riscv64Top alu sLTRes", false,-1);
-        tracep->declBit(c+143,"riscv64Top alu sLTURes", false,-1);
-        tracep->declQuad(c+144,"riscv64Top alu remwRes", false,-1, 63,0);
-        tracep->declQuad(c+146,"riscv64Top alu aluResult", false,-1, 63,0);
-        tracep->declBus(c+148,"riscv64Top alu io_Result_hi", false,-1, 31,0);
-        tracep->declBus(c+149,"riscv64Top alu io_Result_lo", false,-1, 31,0);
-        tracep->declBus(c+231,"riscv64Top dataMem Data_WIDTH", false,-1, 31,0);
+        tracep->declBus(c+131,"riscv64Top alu shamt", false,-1, 5,0);
+        tracep->declQuad(c+132,"riscv64Top alu addRes", false,-1, 63,0);
+        tracep->declQuad(c+134,"riscv64Top alu subRes", false,-1, 63,0);
+        tracep->declQuad(c+136,"riscv64Top alu xorRes", false,-1, 63,0);
+        tracep->declQuad(c+138,"riscv64Top alu orRes", false,-1, 63,0);
+        tracep->declQuad(c+140,"riscv64Top alu andRes", false,-1, 63,0);
+        tracep->declQuad(c+142,"riscv64Top alu sLRes", false,-1, 63,0);
+        tracep->declQuad(c+144,"riscv64Top alu sRLRes", false,-1, 63,0);
+        tracep->declQuad(c+146,"riscv64Top alu sRARes", false,-1, 63,0);
+        tracep->declBit(c+148,"riscv64Top alu sLTRes", false,-1);
+        tracep->declBit(c+149,"riscv64Top alu sLTURes", false,-1);
+        tracep->declQuad(c+150,"riscv64Top alu remwRes", false,-1, 63,0);
+        tracep->declQuad(c+152,"riscv64Top alu divRes", false,-1, 63,0);
+        tracep->declArray(c+154,"riscv64Top alu mulRes", false,-1, 127,0);
+        tracep->declArray(c+158,"riscv64Top alu aluResult", false,-1, 127,0);
+        tracep->declBus(c+162,"riscv64Top alu io_Result_hi", false,-1, 31,0);
+        tracep->declBus(c+163,"riscv64Top alu io_Result_lo", false,-1, 31,0);
+        tracep->declBus(c+245,"riscv64Top dataMem Data_WIDTH", false,-1, 31,0);
         tracep->declQuad(c+21,"riscv64Top dataMem Addr", false,-1, 63,0);
         tracep->declBus(c+20,"riscv64Top dataMem MemOP", false,-1, 2,0);
         tracep->declQuad(c+16,"riscv64Top dataMem DataIn", false,-1, 63,0);
         tracep->declBit(c+19,"riscv64Top dataMem MemWr", false,-1);
         tracep->declBus(c+18,"riscv64Top dataMem MemtoReg", false,-1, 1,0);
         tracep->declQuad(c+23,"riscv64Top dataMem DataOut", false,-1, 63,0);
-        tracep->declQuad(c+150,"riscv64Top dataMem rdata", false,-1, 63,0);
-        tracep->declBus(c+152,"riscv64Top dataMem wmask", false,-1, 7,0);
-        tracep->declBus(c+153,"riscv64Top dataMem PmemReadEn", false,-1, 7,0);
-        tracep->declBus(c+154,"riscv64Top dataMem PmemWriteEn", false,-1, 7,0);
+        tracep->declQuad(c+164,"riscv64Top dataMem rdata", false,-1, 63,0);
+        tracep->declBus(c+166,"riscv64Top dataMem wmask", false,-1, 7,0);
+        tracep->declBus(c+167,"riscv64Top dataMem PmemReadEn", false,-1, 7,0);
+        tracep->declBus(c+168,"riscv64Top dataMem PmemWriteEn", false,-1, 7,0);
     }
 }
 
@@ -327,7 +335,10 @@ void Vriscv64Top___024root__traceFullSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->fullQData(oldp+3,(vlSelf->riscv64Top__DOT__fetch_io_Inst),64);
         tracep->fullQData(oldp+5,(vlSelf->riscv64Top__DOT__decode_io_WData),64);
         tracep->fullBit(oldp+7,(vlSelf->riscv64Top__DOT__alu_io_Less));
-        tracep->fullBit(oldp+8,((0ULL == vlSelf->riscv64Top__DOT__alu__DOT__aluResult)));
+        tracep->fullBit(oldp+8,((0U == (((vlSelf->riscv64Top__DOT__alu__DOT__aluResult[0U] 
+                                          | vlSelf->riscv64Top__DOT__alu__DOT__aluResult[1U]) 
+                                         | vlSelf->riscv64Top__DOT__alu__DOT__aluResult[2U]) 
+                                        | vlSelf->riscv64Top__DOT__alu__DOT__aluResult[3U]))));
         tracep->fullCData(oldp+9,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_ALUCtr),4);
         tracep->fullQData(oldp+10,(vlSelf->riscv64Top__DOT__decode_io_Asrc),64);
         tracep->fullQData(oldp+12,(vlSelf->riscv64Top__DOT__decode_io_Bsrc),64);
@@ -336,7 +347,10 @@ void Vriscv64Top___024root__traceFullSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->fullCData(oldp+18,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_MemtoReg),2);
         tracep->fullBit(oldp+19,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_MemWr));
         tracep->fullCData(oldp+20,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_MemOP),3);
-        tracep->fullQData(oldp+21,(vlSelf->riscv64Top__DOT__alu_io_Result),64);
+        tracep->fullQData(oldp+21,((((QData)((IData)(
+                                                     vlSelf->riscv64Top__DOT__alu__DOT___io_Result_T_5[1U])) 
+                                     << 0x20U) | (QData)((IData)(
+                                                                 vlSelf->riscv64Top__DOT__alu__DOT___io_Result_T_5[0U])))),64);
         tracep->fullQData(oldp+23,(vlSelf->riscv64Top__DOT__dataMem_DataOut),64);
         tracep->fullQData(oldp+25,(vlSelf->riscv64Top__DOT__InstResW),64);
         tracep->fullCData(oldp+27,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_rAddr1),5);
@@ -451,110 +465,120 @@ void Vriscv64Top___024root__traceFullSub0(Vriscv64Top___024root* vlSelf, Verilat
                                   (0xffffffffULL & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
         tracep->fullBit(oldp+98,((0x200603bULL == (0xfe00707fULL 
                                                    & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
-        tracep->fullBit(oldp+99,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__typeR));
-        tracep->fullBit(oldp+100,((0x63ULL == (0x707fULL 
-                                               & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
-        tracep->fullBit(oldp+101,((0x1063ULL == (0x707fULL 
-                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
-        tracep->fullBit(oldp+102,((0x4063ULL == (0x707fULL 
-                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
-        tracep->fullBit(oldp+103,((0x5063ULL == (0x707fULL 
-                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
-        tracep->fullBit(oldp+104,((0x6063ULL == (0x707fULL 
-                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
-        tracep->fullBit(oldp+105,((0x7063ULL == (0x707fULL 
-                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
-        tracep->fullBit(oldp+106,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__typeB));
-        tracep->fullBit(oldp+107,((0x23ULL == (0x707fULL 
-                                               & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
-        tracep->fullBit(oldp+108,((0x1023ULL == (0x707fULL 
-                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
-        tracep->fullBit(oldp+109,((0x2023ULL == (0x707fULL 
-                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
-        tracep->fullBit(oldp+110,((0x3023ULL == (0x707fULL 
-                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
-        tracep->fullBit(oldp+111,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__typeS));
-        tracep->fullBit(oldp+112,((0x100073ULL == (0xffffffffULL 
+        tracep->fullBit(oldp+99,((0x2004033ULL == (0xfe00707fULL 
                                                    & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
-        tracep->fullBit(oldp+113,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__typeW));
-        tracep->fullBit(oldp+114,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluSub));
-        tracep->fullBit(oldp+115,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluSlt));
-        tracep->fullBit(oldp+116,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluSltu));
-        tracep->fullBit(oldp+117,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluAnd));
-        tracep->fullBit(oldp+118,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluOr));
-        tracep->fullBit(oldp+119,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluXor));
-        tracep->fullBit(oldp+120,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluSll));
-        tracep->fullBit(oldp+121,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluSrl));
-        tracep->fullBit(oldp+122,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluSra));
-        tracep->fullBit(oldp+123,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__wRegEn));
-        tracep->fullCData(oldp+124,(vlSelf->riscv64Top__DOT__decode__DOT__branchCond__DOT__PCsrc),2);
-        tracep->fullCData(oldp+125,(vlSelf->riscv64Top__DOT__alu__DOT__shamt),6);
-        tracep->fullQData(oldp+126,(vlSelf->riscv64Top__DOT__alu__DOT__addRes),64);
-        tracep->fullQData(oldp+128,(vlSelf->riscv64Top__DOT__alu__DOT__subRes),64);
-        tracep->fullQData(oldp+130,(vlSelf->riscv64Top__DOT__alu__DOT__xorRes),64);
-        tracep->fullQData(oldp+132,(vlSelf->riscv64Top__DOT__alu__DOT__orRes),64);
-        tracep->fullQData(oldp+134,(vlSelf->riscv64Top__DOT__alu__DOT__andRes),64);
-        tracep->fullQData(oldp+136,((((QData)((IData)(
+        tracep->fullBit(oldp+100,((0x200403bULL == 
+                                   (0xfe00707fULL & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+101,((0x2000033ULL == 
+                                   (0xfe00707fULL & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+102,((0x200003bULL == 
+                                   (0xfe00707fULL & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+103,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__typeR));
+        tracep->fullBit(oldp+104,((0x63ULL == (0x707fULL 
+                                               & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+105,((0x1063ULL == (0x707fULL 
+                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+106,((0x4063ULL == (0x707fULL 
+                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+107,((0x5063ULL == (0x707fULL 
+                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+108,((0x6063ULL == (0x707fULL 
+                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+109,((0x7063ULL == (0x707fULL 
+                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+110,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__typeB));
+        tracep->fullBit(oldp+111,((0x23ULL == (0x707fULL 
+                                               & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+112,((0x1023ULL == (0x707fULL 
+                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+113,((0x2023ULL == (0x707fULL 
+                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+114,((0x3023ULL == (0x707fULL 
+                                                 & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+115,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__typeS));
+        tracep->fullBit(oldp+116,((0x100073ULL == (0xffffffffULL 
+                                                   & vlSelf->riscv64Top__DOT__fetch_io_Inst))));
+        tracep->fullBit(oldp+117,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__typeW));
+        tracep->fullBit(oldp+118,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluSub));
+        tracep->fullBit(oldp+119,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluSlt));
+        tracep->fullBit(oldp+120,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluSltu));
+        tracep->fullBit(oldp+121,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluAnd));
+        tracep->fullBit(oldp+122,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluOr));
+        tracep->fullBit(oldp+123,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluXor));
+        tracep->fullBit(oldp+124,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluSll));
+        tracep->fullBit(oldp+125,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluSrl));
+        tracep->fullBit(oldp+126,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluSra));
+        tracep->fullBit(oldp+127,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluDiv));
+        tracep->fullBit(oldp+128,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__aluMul));
+        tracep->fullBit(oldp+129,(vlSelf->riscv64Top__DOT__decode__DOT__con__DOT__wRegEn));
+        tracep->fullCData(oldp+130,(vlSelf->riscv64Top__DOT__decode__DOT__branchCond__DOT__PCsrc),2);
+        tracep->fullCData(oldp+131,(vlSelf->riscv64Top__DOT__alu__DOT__shamt),6);
+        tracep->fullQData(oldp+132,(vlSelf->riscv64Top__DOT__alu__DOT__addRes),64);
+        tracep->fullQData(oldp+134,(vlSelf->riscv64Top__DOT__alu__DOT__subRes),64);
+        tracep->fullQData(oldp+136,(vlSelf->riscv64Top__DOT__alu__DOT__xorRes),64);
+        tracep->fullQData(oldp+138,(vlSelf->riscv64Top__DOT__alu__DOT__orRes),64);
+        tracep->fullQData(oldp+140,(vlSelf->riscv64Top__DOT__alu__DOT__andRes),64);
+        tracep->fullQData(oldp+142,((((QData)((IData)(
                                                       vlSelf->riscv64Top__DOT__alu__DOT___sLRes_T[1U])) 
                                       << 0x20U) | (QData)((IData)(
                                                                   vlSelf->riscv64Top__DOT__alu__DOT___sLRes_T[0U])))),64);
-        tracep->fullQData(oldp+138,(vlSelf->riscv64Top__DOT__alu__DOT__sRLRes),64);
-        tracep->fullQData(oldp+140,(vlSelf->riscv64Top__DOT__alu__DOT__sRARes),64);
-        tracep->fullBit(oldp+142,(vlSelf->riscv64Top__DOT__alu__DOT__sLTRes));
-        tracep->fullBit(oldp+143,(vlSelf->riscv64Top__DOT__alu__DOT__sLTURes));
-        tracep->fullQData(oldp+144,(vlSelf->riscv64Top__DOT__alu__DOT__remwRes),64);
-        tracep->fullQData(oldp+146,(vlSelf->riscv64Top__DOT__alu__DOT__aluResult),64);
-        tracep->fullIData(oldp+148,(((1U & (IData)(
-                                                   (vlSelf->riscv64Top__DOT__alu__DOT__aluResult 
-                                                    >> 0x1fU)))
-                                      ? 0xffffffffU
+        tracep->fullQData(oldp+144,(vlSelf->riscv64Top__DOT__alu__DOT__sRLRes),64);
+        tracep->fullQData(oldp+146,(vlSelf->riscv64Top__DOT__alu__DOT__sRARes),64);
+        tracep->fullBit(oldp+148,(vlSelf->riscv64Top__DOT__alu__DOT__sLTRes));
+        tracep->fullBit(oldp+149,(vlSelf->riscv64Top__DOT__alu__DOT__sLTURes));
+        tracep->fullQData(oldp+150,(vlSelf->riscv64Top__DOT__alu__DOT__remwRes),64);
+        tracep->fullQData(oldp+152,(vlSelf->riscv64Top__DOT__alu__DOT__divRes),64);
+        tracep->fullWData(oldp+154,(vlSelf->riscv64Top__DOT__alu__DOT__mulRes),128);
+        tracep->fullWData(oldp+158,(vlSelf->riscv64Top__DOT__alu__DOT__aluResult),128);
+        tracep->fullIData(oldp+162,(((vlSelf->riscv64Top__DOT__alu__DOT__aluResult[0U] 
+                                      >> 0x1fU) ? 0xffffffffU
                                       : 0U)),32);
-        tracep->fullIData(oldp+149,((IData)(vlSelf->riscv64Top__DOT__alu__DOT__aluResult)),32);
-        tracep->fullQData(oldp+150,(vlSelf->riscv64Top__DOT__dataMem__DOT__rdata),64);
-        tracep->fullCData(oldp+152,(vlSelf->riscv64Top__DOT__dataMem__DOT__wmask),8);
-        tracep->fullCData(oldp+153,(vlSelf->riscv64Top__DOT__dataMem__DOT__PmemReadEn),8);
-        tracep->fullCData(oldp+154,(vlSelf->riscv64Top__DOT__dataMem__DOT__PmemWriteEn),8);
-        tracep->fullQData(oldp+155,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[0]),64);
-        tracep->fullQData(oldp+157,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[1]),64);
-        tracep->fullQData(oldp+159,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[2]),64);
-        tracep->fullQData(oldp+161,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[3]),64);
-        tracep->fullQData(oldp+163,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[4]),64);
-        tracep->fullQData(oldp+165,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[5]),64);
-        tracep->fullQData(oldp+167,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[6]),64);
-        tracep->fullQData(oldp+169,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[7]),64);
-        tracep->fullQData(oldp+171,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[8]),64);
-        tracep->fullQData(oldp+173,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[9]),64);
-        tracep->fullQData(oldp+175,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[10]),64);
-        tracep->fullQData(oldp+177,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[11]),64);
-        tracep->fullQData(oldp+179,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[12]),64);
-        tracep->fullQData(oldp+181,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[13]),64);
-        tracep->fullQData(oldp+183,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[14]),64);
-        tracep->fullQData(oldp+185,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[15]),64);
-        tracep->fullQData(oldp+187,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[16]),64);
-        tracep->fullQData(oldp+189,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[17]),64);
-        tracep->fullQData(oldp+191,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[18]),64);
-        tracep->fullQData(oldp+193,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[19]),64);
-        tracep->fullQData(oldp+195,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[20]),64);
-        tracep->fullQData(oldp+197,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[21]),64);
-        tracep->fullQData(oldp+199,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[22]),64);
-        tracep->fullQData(oldp+201,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[23]),64);
-        tracep->fullQData(oldp+203,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[24]),64);
-        tracep->fullQData(oldp+205,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[25]),64);
-        tracep->fullQData(oldp+207,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[26]),64);
-        tracep->fullQData(oldp+209,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[27]),64);
-        tracep->fullQData(oldp+211,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[28]),64);
-        tracep->fullQData(oldp+213,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[29]),64);
-        tracep->fullQData(oldp+215,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[30]),64);
-        tracep->fullQData(oldp+217,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[31]),64);
-        tracep->fullIData(oldp+219,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__i),32);
-        tracep->fullBit(oldp+220,(vlSelf->clock));
-        tracep->fullBit(oldp+221,(vlSelf->reset));
-        tracep->fullBit(oldp+222,(vlSelf->io_instEn));
-        tracep->fullQData(oldp+223,(vlSelf->io_inst),64);
-        tracep->fullQData(oldp+225,(vlSelf->io_pc),64);
-        tracep->fullQData(oldp+227,(vlSelf->io_NextPC),64);
-        tracep->fullBit(oldp+229,((0x100073ULL == vlSelf->io_inst)));
-        tracep->fullIData(oldp+230,(5U),32);
-        tracep->fullIData(oldp+231,(0x40U),32);
+        tracep->fullIData(oldp+163,(vlSelf->riscv64Top__DOT__alu__DOT__aluResult[0U]),32);
+        tracep->fullQData(oldp+164,(vlSelf->riscv64Top__DOT__dataMem__DOT__rdata),64);
+        tracep->fullCData(oldp+166,(vlSelf->riscv64Top__DOT__dataMem__DOT__wmask),8);
+        tracep->fullCData(oldp+167,(vlSelf->riscv64Top__DOT__dataMem__DOT__PmemReadEn),8);
+        tracep->fullCData(oldp+168,(vlSelf->riscv64Top__DOT__dataMem__DOT__PmemWriteEn),8);
+        tracep->fullQData(oldp+169,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[0]),64);
+        tracep->fullQData(oldp+171,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[1]),64);
+        tracep->fullQData(oldp+173,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[2]),64);
+        tracep->fullQData(oldp+175,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[3]),64);
+        tracep->fullQData(oldp+177,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[4]),64);
+        tracep->fullQData(oldp+179,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[5]),64);
+        tracep->fullQData(oldp+181,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[6]),64);
+        tracep->fullQData(oldp+183,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[7]),64);
+        tracep->fullQData(oldp+185,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[8]),64);
+        tracep->fullQData(oldp+187,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[9]),64);
+        tracep->fullQData(oldp+189,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[10]),64);
+        tracep->fullQData(oldp+191,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[11]),64);
+        tracep->fullQData(oldp+193,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[12]),64);
+        tracep->fullQData(oldp+195,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[13]),64);
+        tracep->fullQData(oldp+197,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[14]),64);
+        tracep->fullQData(oldp+199,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[15]),64);
+        tracep->fullQData(oldp+201,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[16]),64);
+        tracep->fullQData(oldp+203,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[17]),64);
+        tracep->fullQData(oldp+205,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[18]),64);
+        tracep->fullQData(oldp+207,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[19]),64);
+        tracep->fullQData(oldp+209,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[20]),64);
+        tracep->fullQData(oldp+211,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[21]),64);
+        tracep->fullQData(oldp+213,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[22]),64);
+        tracep->fullQData(oldp+215,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[23]),64);
+        tracep->fullQData(oldp+217,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[24]),64);
+        tracep->fullQData(oldp+219,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[25]),64);
+        tracep->fullQData(oldp+221,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[26]),64);
+        tracep->fullQData(oldp+223,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[27]),64);
+        tracep->fullQData(oldp+225,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[28]),64);
+        tracep->fullQData(oldp+227,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[29]),64);
+        tracep->fullQData(oldp+229,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[30]),64);
+        tracep->fullQData(oldp+231,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__rf[31]),64);
+        tracep->fullIData(oldp+233,(vlSelf->riscv64Top__DOT__decode__DOT__regs__DOT__i),32);
+        tracep->fullBit(oldp+234,(vlSelf->clock));
+        tracep->fullBit(oldp+235,(vlSelf->reset));
+        tracep->fullBit(oldp+236,(vlSelf->io_instEn));
+        tracep->fullQData(oldp+237,(vlSelf->io_inst),64);
+        tracep->fullQData(oldp+239,(vlSelf->io_pc),64);
+        tracep->fullQData(oldp+241,(vlSelf->io_NextPC),64);
+        tracep->fullBit(oldp+243,((0x100073ULL == vlSelf->io_inst)));
+        tracep->fullIData(oldp+244,(5U),32);
+        tracep->fullIData(oldp+245,(0x40U),32);
     }
 }

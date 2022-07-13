@@ -31,11 +31,13 @@ import chisel3.util._
       val orRes  = (in1 | in2).asUInt
       val andRes = (in1 & in2).asUInt
       val sLRes    = ((in1 << shamt)(63, 0)).asUInt()
-      val sRLRes   = (in2 >> shamt).asUInt()
+      val sRLRes   = (in1 >> shamt).asUInt()
       val sRARes   = (in1.asSInt() >> shamt).asUInt()
       val sLTRes   = (in1.asSInt() < in2.asSInt()).asUInt()
       val sLTURes  = (in1 < in2).asUInt()
       val remwRes  = (in1.asSInt % in2.asSInt).asUInt
+      val divRes   = (in1 / in2).asUInt
+      val mulRes   = (in1 * in2).asUInt
 /**
 val aluResult = MuxCase(0.U, Array(
        (io.ALUCtr       === "b0000".U) -> addRes,
@@ -56,7 +58,8 @@ val aluResult = MuxCase(0.U, Array(
       val aluResult = MuxLookup(io.ALUCtr, 0.U, 
        Array(
        ("b0000".U) -> addRes,
-       ("b1000".U | "b1001".U) -> subRes,
+       ("b1000".U) -> subRes,
+       ("b1001".U) -> subRes,
 
        ("b0010".U) -> sLTRes,
        ("b1010".U) -> sLTURes,
@@ -67,8 +70,13 @@ val aluResult = MuxCase(0.U, Array(
        ("b0001".U) -> sLRes,
        ("b0011".U) -> in2 ,
        ("b1011".U) -> remwRes,
-       ("b0100".U) -> xorRes,  
-       ("b0110".U) -> orRes,   
+       
+       ("b0100".U) -> xorRes,
+       ("b1100".U) -> divRes,
+       
+       ("b0110".U) -> orRes,
+       ("b1110".U) -> mulRes,
+       
        ("b0111".U) -> andRes))
 
     io.Less := Mux(io.ALUCtr(3) === 1.U, sLTURes, sLTRes)
