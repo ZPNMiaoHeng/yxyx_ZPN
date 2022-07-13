@@ -6,10 +6,10 @@ import chisel3.util.HasBlackBoxInline
 class riscv64Top extends Module {
     val io = IO(new Bundle{
         val instEn = Input(UInt(1.W))
-        val inst   = Input(UInt(64.W))
-        val pc     = Input(UInt(64.W))
+        val inst   = Input(UInt(32.W))
+        val pc     = Input(UInt(32.W))
         
-        val NextPC = Output(UInt(64.W))
+        val NextPC = Output(UInt(32.W))
     })
 
     val fetch   = Module(new Fetch)

@@ -10,16 +10,16 @@ import chisel3.util._
   */
 class Decode extends Module {
     val io = IO(new Bundle {
-        val Inst   = Input(UInt(64.W))
+        val Inst   = Input(UInt(32.W))
         val WData  = Input(UInt(64.W))
-        val PC     = Input(UInt(64.W))
+        val PC     = Input(UInt(32.W))
         val Less   = Input(UInt(1.W))
         val Zero   = Input(UInt(1.W))
 
         val ALUCtr = Output(UInt(4.W))
         val Asrc   = Output(UInt(64.W))
         val Bsrc   = Output(UInt(64.W))
-        val NextPC = Output(UInt(64.W))
+        val NextPC = Output(UInt(32.W))
         val DataIn = Output(UInt(64.W))    //存储到Mem数据
         val MemtoReg = Output(UInt(2.W))
         val MemWr    = Output(UInt(1.W))

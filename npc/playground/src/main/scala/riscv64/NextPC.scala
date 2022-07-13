@@ -6,13 +6,13 @@ import chisel3.util._
   */
 class NextPC extends Module {
   val io = IO(new Bundle {
-    val PC     = Input(UInt(64.W))
+    val PC     = Input(UInt(32.W))
     val Imm    = Input(UInt(64.W))
     val Rs1    = Input(UInt(64.W))
     val PCAsrc = Input(UInt(1.W))
     val PCBsrc = Input(UInt(1.W))
 
-    val NextPC = Output(UInt(64.W))
+    val NextPC = Output(UInt(32.W))
   })
 
 //  val PCsrc  = Wire(UInt(2.W))

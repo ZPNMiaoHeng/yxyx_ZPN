@@ -8,7 +8,7 @@ import Instructions._
   */
 class ContrGen extends Module {
   val io = IO(new Bundle {
-    val inst = Input(UInt(64.W))
+    val inst = Input(UInt(32.W))
 
     val ALUAsrc  = Output(UInt( 1.W))
     val ALUBsrc  = Output(UInt( 2.W))

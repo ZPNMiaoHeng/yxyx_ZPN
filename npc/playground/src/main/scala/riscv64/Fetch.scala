@@ -11,17 +11,17 @@ import chisel3.util.HasBlackBoxInline
 class Fetch extends Module {
   val io = IO(new Bundle {
     val InstEn = Input(UInt(1.W))
-    val InstIn = Input(UInt(64.W))
-    val PcIn   = Input(UInt(64.W))                       // Finish a inst ,return PC +4
+    val InstIn = Input(UInt(32.W))
+    val PcIn   = Input(UInt(32.W))                       // Finish a inst ,return PC +4
 
-    val PcOut   = Output(UInt(64.W))
-    val Inst = Output(UInt(64.W))
+    val PcOut  = Output(UInt(32.W))
+    val Inst   = Output(UInt(32.W))
   })
 
   class Ebreak extends BlackBox {
     val io = IO(new Bundle {
-      val inst   = Input(UInt(64.W))
-      val pc     = Input(UInt(64.W))
+      val inst   = Input(UInt(32.W))
+      val pc     = Input(UInt(32.W))
     })
   }
 /*
