@@ -5,33 +5,84 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
+char buffer [32];
+void itoa(const int n, char* buf);
+char* inttohex(int n) {
+  static int i = 0;
+    if(n < 16) {
+      if (n < 10)         //当前数转换成字符放入字符串 
+        buffer[i] = n + '0';
+      else {
+        buffer[i] = n - 10 + 'A';
+        buffer[i+1] = '\0';  //字符串结束标志 
+      }
+    }
+    else {
+      inttohex(n/16);   //递归调用 
+      i++;                 //字符串索引+1 
+      n %= 16;            //计算当前值
+      if(n < 10)         //当前数转换成字符放入字符串 
+          buffer[i] = n +  '0' ;
+      else
+          buffer[i] = n - 10 +  'A' ;
+    }
+    return  (buffer);
+}
+
 int printf(const char *fmt, ...) {
-  int count = 0;                                                    //返回值：输入字符串大小
-  int  n;
+
+  static int count = 0 ,n ;
+  char buf[65];
+  char *s=buf;
+  memset(buf, 0, sizeof(buf));
   va_list ap;
 	va_start(ap, fmt);
-
+  
 	while (*fmt != '\0'){
-		char ret = *fmt;
-    if (ret == '%'){
+    if (*fmt == '%'){
 			switch (*++fmt){
+        case 'c': {
+          putch('C');
+          char *pc = va_arg(ap, char*);
+          putch(*pc);
+          count++;
+        }
 			  case 'd':{
           n = va_arg(ap, int);                                     //将检测的 %d -> n
-            putch(n);
-            n++;
+          itoa(n,buf);
+          while (*s){
+            putch(*s);
+            s++;
             count++;
-          return count;
+          }
+          break;
 			  }
 			  case 's':{
-						char *pc = va_arg(ap, char *);
-						while (*pc){
-							putch(*pc);
-							pc++;
-              count++;
-						}
-            return count;
+					char *pc = va_arg(ap, char *);
+					while (*pc){
+						putch(*pc);
+						pc++;
+            count++;
+					}
+          break;
 			  }
-			default: return -1; 
+        case 'X': ;case 'x':{
+          n = va_arg(ap, int);                                     //将检测的 %d -> n
+          char *pc = inttohex(n);
+          while(*pc) {
+            putch(*pc);
+            pc++;
+            count++;
+          }
+          break;
+        }
+        case '0': 
+          putch('0');
+          break;
+        case '2':
+          putch('2');
+          break;
+			default: putch('G');return -1; 
 			}
 		}
 		else {
@@ -42,7 +93,8 @@ int printf(const char *fmt, ...) {
 	}
 	va_end(ap);
   return count;
-//    panic("Not implemented");
+
+//  panic("Not implemented");
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
