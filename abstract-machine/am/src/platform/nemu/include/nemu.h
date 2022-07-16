@@ -21,7 +21,7 @@
 #else
 # define DEVICE_BASE 0xa0000000
 #endif
-
+// I/O pmem site
 #define MMIO_BASE 0xa0000000
 
 #define SERIAL_PORT     (DEVICE_BASE + 0x00003f8)

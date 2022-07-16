@@ -1,6 +1,11 @@
 #include <device/map.h>
 #include <device/alarm.h>
 #include <utils.h>
+/**
+ * i8253计时器初始化时会分别注册0x48处长度为8个字节的端口, 
+ * 以及0xa0000048处长度为8字节的MMIO空间, 它们都会映射到RTC寄存器. 
+ * 
+ */
 
 static uint32_t *rtc_port_base = NULL;
 

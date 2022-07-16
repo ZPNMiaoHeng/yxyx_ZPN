@@ -11,7 +11,9 @@ AM_DEVREG( 1, UART_CONFIG,  RD, bool present);
 AM_DEVREG( 2, UART_TX,      WR, char data);
 AM_DEVREG( 3, UART_RX,      RD, char data);
 AM_DEVREG( 4, TIMER_CONFIG, RD, bool present, has_rtc);
+// Real Time Clock
 AM_DEVREG( 5, TIMER_RTC,    RD, int year, month, day, hour, minute, second);
+// AM系统启动时间, 可读出系统启动后的微秒数.
 AM_DEVREG( 6, TIMER_UPTIME, RD, uint64_t us);
 AM_DEVREG( 7, INPUT_CONFIG, RD, bool present);
 AM_DEVREG( 8, INPUT_KEYBRD, RD, bool keydown; int keycode);

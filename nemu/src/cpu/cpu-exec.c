@@ -3,13 +3,14 @@
 #include <cpu/difftest.h>
 #include <locale.h>
 
+void device_update();
+
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
  * You can modify this value as you want.
  */
 #define MAX_INST_TO_PRINT 10
-//#define SEGMENT -----------------------------------------------------------------------
 
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;

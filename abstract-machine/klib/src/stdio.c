@@ -6,16 +6,43 @@
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 int printf(const char *fmt, ...) {
-/*
-  int i; 
-  char buf[256]; 
+  int count = 0;                                                    //返回值：输入字符串大小
+  int  n;
+  va_list ap;
+	va_start(ap, fmt);
 
-  va_list arg = (va_list)((char*)(&fmt) + 4); 
-  i = sprintf(buf, fmt, arg); 
-  write(buf, i); 
-  return i; 
-  */
-  panic("Not implemented");
+	while (*fmt != '\0'){
+		char ret = *fmt;
+    if (ret == '%'){
+			switch (*++fmt){
+			  case 'd':{
+          n = va_arg(ap, int);                                     //将检测的 %d -> n
+            putch(n);
+            n++;
+            count++;
+          return count;
+			  }
+			  case 's':{
+						char *pc = va_arg(ap, char *);
+						while (*pc){
+							putch(*pc);
+							pc++;
+              count++;
+						}
+            return count;
+			  }
+			default: return -1; 
+			}
+		}
+		else {
+			putch(*fmt);
+		}
+		fmt++;
+    count ++;
+	}
+	va_end(ap);
+  return count;
+//    panic("Not implemented");
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
