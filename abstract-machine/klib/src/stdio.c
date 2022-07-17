@@ -5,17 +5,13 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-char buffer [32];
-void itoa(const int n, char* buf);
-
 static int
 mini_itoa(long value, unsigned int radix, int uppercase, int unsig,char *buffer) {
-  /* radix->, */
+
   char  *pbuffer = buffer;
   int negative = 0;
   int i, len;
 
-  /* No support for unusual radixes. */
   if (radix > 16) return 0;
 
   if (value < 0 && !unsig) {
@@ -23,7 +19,6 @@ mini_itoa(long value, unsigned int radix, int uppercase, int unsig,char *buffer)
     value = -value;
   }
 
-  /* This builds the string back to front ... */
   do {
     int digit = value % radix;
     *(pbuffer++) = (digit < 10 ? '0' + digit : (uppercase ? 'A' : 'a') + digit - 10);
@@ -35,8 +30,6 @@ mini_itoa(long value, unsigned int radix, int uppercase, int unsig,char *buffer)
 
   *(pbuffer) = '\0';
 
-  /* ... now we reverse it (could do it recursively but will
-   * conserve the stack space) */
   len = (pbuffer - buffer);
   for (i = 0; i < len / 2; i++) {
     char j = buffer[i];
@@ -62,10 +55,9 @@ void itoa(const int n, char* buf){
 
 
 int printf(const char *fmt, ...) {
-
   static int count = 0 ,n ;
-  char buf[65];
-  char *s=buf;
+  char buf[24];
+  char *s = buf;
   char ch;
   memset(buf, 0, sizeof(buf));
   va_list ap;
@@ -73,10 +65,9 @@ int printf(const char *fmt, ...) {
   
 	while (*fmt != '\0'){
     if (*fmt == '%'){
-      
 			switch (*++fmt){
         case 'c': {
-          putch('C');
+//          putch('C');
           ch = (char)(va_arg(ap, int));
           putch(ch);
           count++;
@@ -183,6 +174,8 @@ int sprintf(char *out, const char *fmt, ...) {
   va_end(ap);
   return count;
 }
+
+
 
 int snprintf(char *out, size_t n, const char *fmt, ...) {
   panic("Not implemented");
