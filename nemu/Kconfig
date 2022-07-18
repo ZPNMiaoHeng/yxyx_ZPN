@@ -176,6 +176,16 @@ config FTRACE_COND
   string "Only trace function when the condition is true"
   default "true"
 
+config DTRACE
+  depends on TRACE && TARGET_NATIVE_ELF && ENGINE_INTERPRETER
+  bool "Enable device trace"
+  default n
+
+config FTRACE_COND
+  depends on DTRACE
+  string "Only trace function when the condition is true"
+  default "true"
+
 config DIFFTEST
   depends on TARGET_NATIVE_ELF
   bool "Enable differential testing"
