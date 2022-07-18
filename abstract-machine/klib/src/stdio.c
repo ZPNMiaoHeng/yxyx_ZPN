@@ -102,12 +102,12 @@ int printf(const char *fmt, ...) {
           break;
         }
         case '0': 
-          putch('0G');
+          putch('0');
           break;
         case '2':
-          putch('2G');
+          putch('2');
           break;
-			default: putch('AG');return -1; 
+			default: putch('G');return -1; 
 			}
 		}
 		else {
