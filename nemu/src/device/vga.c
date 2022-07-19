@@ -79,5 +79,5 @@ void init_vga() {
   add_mmio_map("vmem", CONFIG_FB_ADDR, vmem, screen_size(), NULL);        // vmem ??NULL??
 //  IFDEF(CONFIG_VGA_SHOW_SCREEN, printf("vmem: %d, w:%d, h:%d\n", screen_size(), screen_width(), screen_height()));  
   IFDEF(CONFIG_VGA_SHOW_SCREEN, init_screen());
-  IFDEF(CONFIG_VGA_SHOW_SCREEN, memset(vmem, 1, screen_size()));
+  IFDEF(CONFIG_VGA_SHOW_SCREEN, memset(vmem, 0, screen_size()));
 }

@@ -41,7 +41,7 @@ uint8_t* new_space(int size) {
   // page aligned;
   size = (size + (PAGE_SIZE - 1)) & ~PAGE_MASK;
   p_space += size;
-  assert(p_space - io_space < IO_SPACE_MAX);
+  assert(p_space - io_space < IO_SPACE_MAX);              // why ???
   return p;
 }
 
@@ -60,7 +60,7 @@ static void invoke_callback(io_callback_t c, paddr_t offset, int len, bool is_wr
 }
 
 void init_map() {
-  io_space = malloc(IO_SPACE_MAX);
+  io_space = malloc(IO_SPACE_MAX);     // I/O map space is 2MB
   assert(io_space);
   p_space = io_space;
 }
@@ -69,8 +69,8 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
   assert(len >= 1 && len <= 8);
   IFDEF(CONFIG_DTRACE,dTrace(map, addr));
   check_bound(map, addr);
-  paddr_t offset = addr - map->low;
-  invoke_callback(map->callback, offset, len, false); // prepare data to read -> 
+  paddr_t offset = addr - map->low;                                   // low -> device map low address
+  invoke_callback(map->callback, offset, len, false);                 // prepare data to read -> 
   
   word_t ret = host_read(map->space + offset, len);
   return ret;

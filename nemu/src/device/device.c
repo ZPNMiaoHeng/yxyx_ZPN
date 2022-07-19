@@ -50,7 +50,7 @@ void device_update() {
   }
 #endif
 }
-
+/** ?? */
 void sdl_clear_event_queue() {
 #ifndef CONFIG_TARGET_AM
   SDL_Event event;
