@@ -92,17 +92,21 @@ static int cmd_info(char *args){
 static int cmd_x(char *args){
 //  printf("------------------------------------Enter   cmd_x   -------------------------------\n");
   int num, i;
-  word_t addr;
+  word_t addr=0;
   word_t read_addr;
   sscanf(args,"%d %x", &num, &addr);
+  
+  if(!(addr >= 0x80000000 && addr <= 0x88000000)){
+    printf("Addr is error!\n");
+    return 0;
+  }
 //  printf("%d\t%x\n", num, addr);
   printf("i\tPC\t\tPmem\n");
   for(i=0; i<num; i++){
     read_addr = pmem_read_npc(addr, 8);
-    printf("%d\t%#x\t%#016lx\n", i, addr, read_addr);
+    printf("%d\t%#x\t%#018x\n", i, addr, read_addr);
     addr = addr +4;
   }
-  
   return 0;
 }
 
@@ -131,8 +135,8 @@ static struct {
 void sdb_mainloop() {
 
 //#ifdef CONFIG_BRANCH
-    cmd_c(NULL);
-    return;
+//    cmd_c(NULL);
+//    return;
 //#endif
 
   printf("----------------start sdb----------------------------\n");

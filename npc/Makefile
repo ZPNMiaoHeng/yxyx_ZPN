@@ -58,15 +58,8 @@ VERILATOR_FLAGS += -Os -x-assign 0
 VERILATOR_FLAGS += -LDFLAGS -ldl \
  -LDFLAGS -lreadline \
  -LDFLAGS $(shell llvm-config --libs)
-# -LDFLAGS -d$(SO)
-# -LDFLAGS -pie
-# -lncurses
-# CFLAGS  链接时选项
 VERILATOR_FLAGS += -CFLAGS -I/usr/lib/llvm-12/include
-#VERILATOR_FLAGS += -CFLAGS -std=c++14
 
-#VERILATOR_FLAGS += -LDFLAGS -d$(SO)
-#VERILATOR_FLAGS += -CFLAGS -fPIE -CFLAGS $(shell llvm-config --cxxflags)
 ######################## chisel compile ###############################
 test:
 	mill -i __.test
@@ -104,8 +97,8 @@ run:
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
 #	@echo $(SO)
 #	@echo $(IMG)
-#	./obj_dir/V$(VERILOG_NAME) $(IMG) --diff=$(SO)
 	
+#	LD_PRELOAD=/usr/lib64/libasan.so.4 
 	./obj_dir/V$(VERILOG_NAME)	 --diff=$(SO) --image=$(IMG)
 #	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 #	@echo "-------------------------- Open GTKwave ------------------------"
