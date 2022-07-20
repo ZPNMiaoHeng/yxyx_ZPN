@@ -17,7 +17,7 @@ void init_alarm();
 
 void send_key(uint8_t, bool);
 void vga_update_screen();
-
+/** update the screen,connection nemu*/
 void device_update() {
   static uint64_t last = 0;
   uint64_t now = get_time();

@@ -41,7 +41,7 @@ uint8_t* new_space(int size) {
   // page aligned;
   size = (size + (PAGE_SIZE - 1)) & ~PAGE_MASK;
   p_space += size;
-  assert(p_space - io_space < IO_SPACE_MAX);              // why ???
+  assert(p_space - io_space < IO_SPACE_MAX);              // I/O space at least 2MB;
   return p;
 }
 
@@ -69,8 +69,9 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
   assert(len >= 1 && len <= 8);
   IFDEF(CONFIG_DTRACE,dTrace(map, addr));
   check_bound(map, addr);
+
   paddr_t offset = addr - map->low;                                   // low -> device map low address
-  invoke_callback(map->callback, offset, len, false);                 // prepare data to read -> 
+  invoke_callback(map->callback, offset, len, false);                 // invoke callback function!!!! Need to judge map->device
   
   word_t ret = host_read(map->space + offset, len);
   return ret;

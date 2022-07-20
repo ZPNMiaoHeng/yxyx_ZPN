@@ -5,15 +5,6 @@
 #define SYNC_ADDR (VGACTL_ADDR + 4)
 
 void __am_gpu_init() {
-//  printf("__am_gpu_init\n");
-/*
-  int i;
-  int w = 400;
-  int h = 300;
-  uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
-  for (i = 0; i < w * h; i ++) fb[i] = i;
-  outl(SYNC_ADDR, 1);
-*/
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
@@ -36,17 +27,6 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   int w = ctl->w, h = ctl->h;     // w =12 h =9
     if (w == 0 || h == 0) return;
   uint32_t *p = (ctl->pixels);
-
-/*
-  static int32_t block = 0;
-  if(x < 400 && y < 300 ){
-    block ++;
-    if(block == (32*32+1))
-      block = 1;
-//    printf("This is %d\t=%d\t*%d\t blocks of pixels\n", block, x, y);
-  }
-*/
-
   uint32_t *fb0 = (uint32_t *)(uintptr_t)FB_ADDR;
       for(int j=0; j < h; j++) {
         for(int i=0; i < w ; i++) {

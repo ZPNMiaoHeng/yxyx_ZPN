@@ -17,19 +17,15 @@ void add_mmio_map(const char *name, paddr_t addr, void *space, uint32_t len, io_
     .space = space, .callback = callback };
   Log("Add mmio map '%s' at [" FMT_PADDR ", " FMT_PADDR "]",
       maps[nr_map].name, maps[nr_map].low, maps[nr_map].high);
-
   nr_map ++;
+//  printf("nr_map is %d\n",nr_map);
 }
 
 /* bus interface */
 word_t mmio_read(paddr_t addr, int len) {
-//  IFDEF(CONFIG_DTRACE,dTrace(map, addr));
-//  dTrace(map, addr);
   return map_read(addr, len, fetch_mmio_map(addr));
 }
 
 void mmio_write(paddr_t addr, int len, word_t data) {
-//  IFDEF(CONFIG_DTRACE,dTrace(map, addr));
-//  dTrace(map, addr);
   map_write(addr, len, data, fetch_mmio_map(addr));
 }
