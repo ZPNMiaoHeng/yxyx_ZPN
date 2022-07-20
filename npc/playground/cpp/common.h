@@ -7,7 +7,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-typedef uint32_t word_t;
+typedef uint64_t word_t;
 typedef int64_t  sword_t;
 #define FMT_WORD "0x%016x"
 #define FMT_HWORD "0x%08x"

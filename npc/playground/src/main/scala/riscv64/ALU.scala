@@ -12,6 +12,7 @@ import chisel3.util._
             val Asrc   = Input(UInt(64.W))
             val Bsrc   = Input(UInt(64.W))
             val MemtoReg = Input(UInt(2.W))
+//            val Branch = Input(UInt(3.W))
 
             val Result = Output(UInt(64.W))
             val Less   = Output(UInt(1.W))
@@ -33,8 +34,10 @@ import chisel3.util._
       val sLRes    = ((in1 << shamt)(63, 0)).asUInt()
       val sRLRes   = (in1 >> shamt).asUInt()
       val sRARes   = (in1.asSInt() >> shamt).asUInt()
+
       val sLTRes   = (in1.asSInt() < in2.asSInt()).asUInt()
       val sLTURes  = (in1 < in2).asUInt()
+      
       val remwRes  = (in1.asSInt % in2.asSInt).asUInt
       val divRes   = (in1 / in2).asUInt
       val mulRes   = (in1 * in2).asUInt
@@ -61,7 +64,7 @@ val aluResult = MuxCase(0.U, Array(
        ("b1000".U) -> subRes,
        ("b1001".U) -> subRes,
 
-       ("b0010".U) -> sLTRes,
+       ("b0010".U) -> sLTRes,                // <<
        ("b1010".U) -> sLTURes,
        
        ("b0101".U) -> sRLRes,  //(in2 >> ashamt).asUInt(),
@@ -79,8 +82,9 @@ val aluResult = MuxCase(0.U, Array(
        
        ("b0111".U) -> andRes))
 
-    io.Less := Mux(io.ALUCtr(3) === 1.U, sLTURes, sLTRes)
-
+   val less = Mux(io.ALUCtr(3) === 1.U, sLTURes, sLTRes)
+//    io.Less := Mux(io.Branch === "b111".U, (less) ,!less)
+   io.Less := less
     //io.Zero := ~(subRes === 0.U)
     io.Zero := (aluResult === 0.U)
     io.Result := Mux(io.MemtoReg(1) === 1.U, Cat(Fill(32, aluResult(31)), aluResult(31, 0)), aluResult)

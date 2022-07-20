@@ -43,6 +43,7 @@ class riscv64Top extends Module {
     alu.io.Asrc   := decode.io.Asrc
     alu.io.Bsrc   := decode.io.Bsrc
     alu.io.MemtoReg := decode.io.MemtoReg
+//    alu.io.Branch := decode.io.Branch
 
 //    dataMem.io.clk    := clock
 //    dataMem.io.reset  := reset

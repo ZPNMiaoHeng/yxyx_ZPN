@@ -141,8 +141,10 @@ static void statistic() {
 #define NUMBERIC_FMT "%ld"
   Log("host time spent = " NUMBERIC_FMT " us", g_timer);
   Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
-  if (g_timer > 0) Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
-  else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
+  if (g_timer > 0)
+    Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
+  else 
+    Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
 
 void assert_fail_msg() {
@@ -218,7 +220,8 @@ void cpu_exec(uint64_t n) {
 //    IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, top->io_NextPC)); 
 
 //    checkregs(&ref_r, pc);                               // REF（nemu）中的值与DUT（npc）进行比较
-    difftest_step(cpu.pc, top->io_NextPC);                                              // nemu需要执行一次指令与NPC匹配
+//    IFDEF(CONFIG_DIFFTEST, 
+    difftest_step(cpu.pc, top->io_NextPC);                  // nemu需要执行一次指令与NPC匹配
     if (npc_state.state != NPC_RUNNING) break;
     /*
     printf("%d:\tnpc_state:%d\tpc:0x%08x\tinst:0x%08x\t->\tNextpc:0x%08lx\tNextinst:0x%08x\n",\
@@ -270,7 +273,6 @@ void ebreak_D(){
 //  Log("------------ NPC ebreak_D :%d----------------\n",i);
   npc_state.state = NPC_END;
 }
-
 
 //------------------------------------- Difftest      --------------------------------------------------------------
 void (*ref_difftest_memcpy)(paddr_t addr, void *buf, size_t n, bool direction) = NULL;
@@ -425,6 +427,7 @@ static long load_img() {
   }
   FILE *fp ;
   fp = fopen(img_file, "rb");
+  Assert(fp, "Can not open '%s'", img_file);
 
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
@@ -457,7 +460,7 @@ static inline word_t host_read(void *addr, int len) {
     case 1: return *(uint8_t  *)addr;
     case 2: return *(uint16_t *)addr;
     case 4: return *(uint32_t *)addr;
-    case 8: return *(uint64_t *)addr;
+    case 8: /*printf("len = 8\n");*/return *(uint64_t *)addr;
     default: /*return 0;*/MUXDEF(CONFIG_RT_CHECK, assert(0), return 0);
   }
 }
@@ -474,7 +477,9 @@ static inline void host_write(void *addr, int len, word_t data) {
 }
 
 word_t pmem_read_npc(paddr_t addr, int len) {
+//  printf("pmem_read_npc: addr=%lx len=%d\n", addr, len); 
   word_t ret = host_read(guest_to_host(addr), len);
+  
   return ret;
 }
 

@@ -24,6 +24,7 @@ class Decode extends Module {
         val MemtoReg = Output(UInt(2.W))
         val MemWr    = Output(UInt(1.W))
         val MemOP    = Output(UInt(3.W))
+//        val Branch   = Output(UInt(3.W))
     })
 
     val regs       = Module(new RegFile)
@@ -81,4 +82,5 @@ class Decode extends Module {
     io.MemtoReg := con.io.MemtoReg
     io.MemWr    := con.io.MemWr
     io.MemOP    := con.io.MemOP
+//    io.Branch   := con.io.Branch
 }

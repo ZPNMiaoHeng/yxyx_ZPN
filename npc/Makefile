@@ -97,9 +97,7 @@ run:
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
 #	@echo $(SO)
 #	@echo $(IMG)
-	
-#	LD_PRELOAD=/usr/lib64/libasan.so.4 
-	./obj_dir/V$(VERILOG_NAME)	 --diff=$(SO) --image=$(IMG)
+	./obj_dir/V$(VERILOG_NAME) --diff=$(SO) --image=$(IMG)
 #	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 #	@echo "-------------------------- Open GTKwave ------------------------"
 #	gtkwave -f $(GTK_DIR)
