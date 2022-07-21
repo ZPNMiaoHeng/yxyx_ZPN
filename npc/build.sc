@@ -6,6 +6,7 @@ import mill.scalalib.TestModule.Utest
 // support BSP
 import mill.bsp._
 
+//object chiselModule extends ScalaModule with ScalafmtModule { m =>
 object playground extends ScalaModule with ScalafmtModule { m =>
   override def scalaVersion = "2.12.13"
   override def scalacOptions = Seq(

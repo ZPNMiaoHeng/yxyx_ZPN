@@ -12,7 +12,8 @@ trait HasZpnCoreParameter {
   val XLEN = 64
   val HasExtension = true
   val HasDiv = true
+  val VAddrBits = 32
 }
 
 abstract class ZpnCoreModule extends Module with HasZpnCoreParameter
-abstract class ZpnCoreBundle extends Module with HasZpnCoreParameter
+abstract class ZpnCoreBundle extends Bundle with HasZpnCoreParameter

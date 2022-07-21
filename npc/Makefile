@@ -1,8 +1,8 @@
 _default:
 ######################################################################
+# DESCRIPTION: riscv64-npc rewrite + TopMain
+#------------ Vesion 4.1.1------------
 #
-# DESCRIPTION: 简单修改npc，但还没有实现编译链接2
-#------------ Vesion 3.3.3------------
 ######################################################################
 # Check for sanity to avoid later confusion
 ifneq ($(words $(CURDIR)),1)
@@ -26,7 +26,6 @@ endif
 #DIFINE
 # Default test file name is riscv64Top
 TOP 				  =	riscv64Top
-#TOP 				  =	ALU
 VERILOG_NAME  = $(TOP)
 #NVBOARD_DIR = $(NVBOARD_HOME)/example
 PLAYGROUND_DIR = $(NPC_HOME)/playground
@@ -51,7 +50,8 @@ OBJ_DIR = ./obj_dir
 #######################################################################
 # Verliater option-- Generate C++ in executable form and coverage analysis               
 VERILATOR_FLAGS += --cc --exe -Wall --trace --coverage \
-	--build --top-module $(VERILOG_NAME)
+	--build 
+# --top-module $(VERILOG_NAME)
 # Optimize                                 
 VERILATOR_FLAGS += -Os -x-assign 0
 # LDFLAGS 编译时选项
@@ -64,13 +64,13 @@ VERILATOR_FLAGS += -CFLAGS -I/usr/lib/llvm-12/include
 test:
 	mill -i __.test
 
-verilog:
+verilog: 
 	$(call git_commit, "generate verilog")
 	mkdir -p $(BUILD_DIR)
-	mill -i __.test.runMain Elaborate -td $(BUILD_DIR)
+	mill -i __.test.runMain Elaborate TopModule=$(VERILOG_NAME) -td $(BUILD_DIR)
 
 help:
-	mill -i __.test.runMain Elaborate --help
+	mill -i __.test.runMain top.TopMain --help
 
 compile:
 	mill -i __.compile

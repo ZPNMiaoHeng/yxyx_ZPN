@@ -1,4 +1,4 @@
-package nutcore
+package zpncore
 
 import chisel3._
 import chisel3.util._
@@ -31,6 +31,7 @@ object RV32MInstr extends HasInstrType with HasZpnCoreParameter {
     REMU           -> List(InstrR, FuType.mdu, MDUOpType.remu)
   )
   val table = mulTable ++ divTable
+
 }
 
 object RV64MInstr extends HasInstrType with HasZpnCoreParameter {
@@ -50,8 +51,9 @@ object RV64MInstr extends HasInstrType with HasZpnCoreParameter {
     REMUW          -> List(InstrR, FuType.mdu, MDUOpType.remuw)
   )
   val table = mulTable ++ divTable
+
 }
 
 object RVMInstr extends HasZpnCoreParameter {
-  val table = RV32MInstr.table ++ RV64MInstr.table
+//  val table = // RV32MInstr.table ++ RV64MInstr.table
 }

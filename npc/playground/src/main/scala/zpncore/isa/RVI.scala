@@ -146,10 +146,12 @@ object RV64IInstr extends HasInstrType {
     LWU            -> List(InstrI, FuType.lsu, LSUOpType.lwu),
     LD             -> List(InstrI, FuType.lsu, LSUOpType.ld ),
     SD             -> List(InstrS, FuType.lsu, LSUOpType.sd)
+
   )
 }
 /** RVIInstr table!!! */
 object RVIInstr extends HasZpnCoreParameter {
-  val table = RV32I_ALUInstr.table ++ RV32I_BRUInstr.table ++ 
-    RV32I_LSUInstr.table ++ RV64IInstr.table
+  val table = RV32I_ALUInstr.table ++ //RV32I_BRUInstr.table ++ 
+    //RV32I_LSUInstr.table ++ 
+    RV64IInstr.table
 }
