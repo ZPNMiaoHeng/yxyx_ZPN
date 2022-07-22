@@ -70,8 +70,8 @@ class Decode extends Module {
         Cat(Fill(32, Asrc(31)), Asrc(31, 0)), Cat(Fill(32, 0.U), Asrc(31, 0))),
           Asrc)
     */
-      val aSrcT = Mux(con.io.MemtoReg(1), Mux(con.io.ALUCtr === "b1101".U, 
-        Cat(Fill(32, Asrc(31)), Asrc(31, 0)), Cat(Fill(32, 0.U), Asrc(31, 0))),
+      val aSrcT = Mux(con.io.MemtoReg(1), (Mux(con.io.ALUCtr === "b1101".U, 
+        Cat(Fill(32, Asrc(31)), Asrc(31, 0)), Cat(Fill(32, 0.U), Asrc(31, 0)))),
           Asrc)
           
     io.Asrc     := aSrcT

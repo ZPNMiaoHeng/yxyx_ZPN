@@ -1,89 +1,74 @@
-
-//package zpncore
-
-import chisel3._
+import chisel3._ 
 import chisel3.util._
-//import chisel3.util.experimental.BoringUtils
+/**
+ * Execute operate include add/sub/Slt/Sltu/Xor/Or/And/Sll/Srl/Sra
+ * Improve: 1. Add module improve;  2. Shifter Module
+ * Module improve: Sub->Add module
+ */
 
-import utils._
-import zpncore._
+    class ALU extends Module {
+        val io = IO(new Bundle {
+            val ALUCtr = Input(UInt(4.W))
+            val Asrc   = Input(UInt(64.W))
+            val Bsrc   = Input(UInt(64.W))
+            val MemtoReg = Input(UInt(2.W))
+//            val Branch = Input(UInt(3.W))
 
-object ALUOpType {
-  def add  = "b1000000".U
-  def sll  = "b0000001".U
-  def slt  = "b0000010".U
-  def sltu = "b0000011".U
-  def xor  = "b0000100".U
-  def srl  = "b0000101".U
-  def or   = "b0000110".U
-  def and  = "b0000111".U
-  def sub  = "b0001000".U
-  def sra  = "b0001101".U
+            val Result = Output(UInt(64.W))
+            val Less   = Output(UInt(1.W))
+            val Zero   = Output(UInt(1.W))
+        })
+      val in1 = io.Asrc
+      val in2 = io.Bsrc
+//      val shamt = Wire(UInt(6.W))
+//      val aluResult = Wire(UInt(64.W))
 
-  def addw = "b1100000".U
-  def subw = "b0101000".U
-  def sllw = "b0100001".U
-  def srlw = "b0100101".U
-  def sraw = "b0101101".U
-
-  def isWordOp(func: UInt) = func(5)
-
-  def jal  = "b1011000".U
-  def jalr = "b1011010".U
-  def beq  = "b0010000".U
-  def bne  = "b0010001".U
-  def blt  = "b0010100".U
-  def bge  = "b0010101".U
-  def bltu = "b0010110".U
-  def bgeu = "b0010111".U
-
-  def isAdd(func: UInt) = func(6)                                      // judgement addop
-  def pcPlus2(func: UInt) = func(5)
-  def isBru(func: UInt) = func(4)
-  def isBranch(func: UInt) = !func(3)
-  def isJump(func: UInt) = isBru(func) && !isBranch(func)
-  def getBranchType(func: UInt) = func(2, 1)                           // 00-> =; 01->blt/bge; 02->bltu/bgeu
-  def isBranchInvert(func: UInt) = func(0)                             // ??
-}
-class ALUIO extends FunctionUnitIO {}
-
-class ALU extends ZpnCoreModule {
-  val io = IO(new ALUIO)
-
-  val (src1, src2, func) = (io.in.src1, io.in.src2, io.in.func)
-  def access(src1: UInt, src2: UInt, func: UInt): UInt = {
-    this.src1 := src1
-    this.src2 := src2
-    this.func := func
-    io.out
-  }
-
-  val isAdderSub = !ALUOpType.isAdd(func)
-  val adderRes = (src1 +& (src2 ^ Fill(XLEN, isAdderSub))) + isAdderSub
-
-  val xorRes = src1 ^ src2
-  val sltu = !adderRes(XLEN)
-//  val slt = xorRes(XLEN-1) ^ sltu
-  val slt = (src1.asSInt() < src2.asSInt()).asUInt()
-
-  /** By func to choose src1 */
-  val shsrc1 = LookupTreeDefault(func, src1(XLEN-1,0), List(
-    ALUOpType.srlw -> ZeroExt(src1(31,0), XLEN),
-    ALUOpType.sraw -> SignExt(src1(31,0), XLEN)
-  ))
-  val shamt = Mux(ALUOpType.isWordOp(func), src2(4, 0), src2(5, 0))
+   val shamt = Mux(io.MemtoReg(1), io.Bsrc(4, 0).asUInt(), io.Bsrc(5, 0))
   
-  val res = LookupTreeDefault(func(3, 0), adderRes, List(
-    ALUOpType.sll  -> ((shsrc1  << shamt)(XLEN-1, 0)),
-    ALUOpType.slt  -> ZeroExt(slt , XLEN),
-    ALUOpType.sltu -> ZeroExt(sltu, XLEN),
-    ALUOpType.xor  -> xorRes,//(src1  ^  src2),
-    ALUOpType.srl  -> (shsrc1  >> shamt),
-    ALUOpType.or   -> (src1  |  src2),
-    ALUOpType.and  -> (src1  &  src2),
-    ALUOpType.sra  -> ((shsrc1.asSInt >> shamt).asUInt)
-  ))
-  val aluRes = Mux(ALUOpType.isWordOp(func), SignExt(res(31,0), 64), res)
+      val addRes = (in1 + in2).asUInt()
 
-  io.out := aluRes
-}
+      val subRes = (in1 - in2).asUInt()
+      val xorRes = (in1 ^ in2).asUInt
+      val orRes  = (in1 | in2).asUInt
+      val andRes = (in1 & in2).asUInt
+      val sLRes    = ((in1 << shamt)(63, 0)).asUInt()
+      val sRLRes   = (in1 >> shamt).asUInt()
+      val sRARes   = (in1.asSInt() >> shamt).asUInt()
+
+      val sLTRes   = (in1.asSInt() < in2.asSInt()).asUInt()
+      val sLTURes  = (in1 < in2).asUInt()
+      
+      val remwRes  = (in1.asSInt % in2.asSInt).asUInt
+      val divRes   = (in1 / in2).asUInt
+      val mulRes   = (in1 * in2).asUInt
+
+      val aluResult = MuxLookup(io.ALUCtr, 0.U, 
+       Array(
+       ("b0000".U) -> addRes,
+       ("b1000".U) -> subRes,
+       ("b1001".U) -> subRes,
+
+       ("b0010".U) -> sLTRes,                // <<
+       ("b1010".U) -> sLTURes,
+       
+       ("b0101".U) -> sRLRes,  //(in2 >> ashamt).asUInt(),
+       ("b1101".U) -> sRARes,
+       
+       ("b0001".U) -> sLRes,
+       ("b0011".U) -> in2 ,
+       ("b1011".U) -> remwRes,
+       
+       ("b0100".U) -> xorRes,
+       ("b1100".U) -> divRes,
+       
+       ("b0110".U) -> orRes,
+       ("b1110".U) -> mulRes,
+       
+       ("b0111".U) -> andRes))
+
+   val less = Mux(io.ALUCtr(3) === 1.U, sLTURes, sLTRes)
+   io.Less := less
+    //io.Zero := ~(subRes === 0.U)
+    io.Zero := (aluResult === 0.U)
+    io.Result := Mux(io.MemtoReg(1) === 1.U, Cat(Fill(32, aluResult(31)), aluResult(31, 0)), aluResult)
+    }

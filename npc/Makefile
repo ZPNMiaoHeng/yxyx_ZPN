@@ -50,8 +50,7 @@ OBJ_DIR = ./obj_dir
 #######################################################################
 # Verliater option-- Generate C++ in executable form and coverage analysis               
 VERILATOR_FLAGS += --cc --exe -Wall --trace --coverage \
-	--build 
-# --top-module $(VERILOG_NAME)
+	--build --top-module $(VERILOG_NAME)
 # Optimize                                 
 VERILATOR_FLAGS += -Os -x-assign 0
 # LDFLAGS 编译时选项
