@@ -23,7 +23,6 @@ VL_MODULE(Vriscv64Top___024root) {
     VL_IN8(clock,0,0);
     VL_IN8(reset,0,0);
     VL_IN8(io_instEn,0,0);
-    VL_IN(io_inst,31,0);
     VL_IN(io_pc,31,0);
     VL_OUT(io_NextPC,31,0);
 
@@ -31,6 +30,7 @@ VL_MODULE(Vriscv64Top___024root) {
     // Anonymous structures to workaround compiler member-count bugs
     struct {
         CData/*0:0*/ riscv64Top__DOT__alu_io_Less;
+        CData/*7:0*/ riscv64Top__DOT__fetch__DOT__sInst__DOT__pmemReadEn;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT__con_io_ALUAsrc;
         CData/*1:0*/ riscv64Top__DOT__decode__DOT__con_io_ALUBsrc;
         CData/*3:0*/ riscv64Top__DOT__decode__DOT__con_io_ALUCtr;
@@ -83,6 +83,8 @@ VL_MODULE(Vriscv64Top___024root) {
         QData/*63:0*/ riscv64Top__DOT__decode_io_Bsrc;
         QData/*63:0*/ riscv64Top__DOT__dataMem_DataOut;
         QData/*63:0*/ riscv64Top__DOT__InstResW;
+        QData/*63:0*/ riscv64Top__DOT__fetch__DOT__sInst__DOT__rdata;
+        QData/*63:0*/ riscv64Top__DOT__fetch__DOT__sInst__DOT__pcIn;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs_RData1;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs_RData2;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm_io_Imm;
@@ -91,11 +93,11 @@ VL_MODULE(Vriscv64Top___024root) {
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT__immType_1;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT__immType_2;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT__immType_4;
+    };
+    struct {
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__nextpc__DOT___io_NextPC_T_5;
         QData/*63:0*/ riscv64Top__DOT__alu__DOT__addRes;
         QData/*63:0*/ riscv64Top__DOT__alu__DOT__subRes;
-    };
-    struct {
         QData/*63:0*/ riscv64Top__DOT__alu__DOT__xorRes;
         QData/*63:0*/ riscv64Top__DOT__alu__DOT__orRes;
         QData/*63:0*/ riscv64Top__DOT__alu__DOT__andRes;
@@ -120,6 +122,7 @@ VL_MODULE(Vriscv64Top___024root) {
         CData/*0:0*/ riscv64Top__DOT____Vtogcov__decode_io_MemWr;
         CData/*2:0*/ riscv64Top__DOT____Vtogcov__decode_io_MemOP;
         CData/*0:0*/ riscv64Top__DOT__fetch__DOT____Vtogcov__Debreak;
+        CData/*7:0*/ riscv64Top__DOT__fetch__DOT__sInst__DOT____Vtogcov__pmemReadEn;
         CData/*4:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__regs_RAddr1;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__regs_rAddr1En;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__regs_rAddr2En;
@@ -173,9 +176,9 @@ VL_MODULE(Vriscv64Top___024root) {
         CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instSraw;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instMret;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__aluRem;
-        CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instDiv;
     };
     struct {
+        CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instDiv;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instDivw;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instMul;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instMulw;
@@ -215,12 +218,12 @@ VL_MODULE(Vriscv64Top___024root) {
         CData/*7:0*/ riscv64Top__DOT__dataMem__DOT____Vtogcov__PmemReadEn;
         CData/*7:0*/ riscv64Top__DOT__dataMem__DOT____Vtogcov__PmemWriteEn;
         CData/*0:0*/ __Vclklast__TOP__clock;
-        IData/*31:0*/ riscv64Top__DOT____Vtogcov__io_inst;
         IData/*31:0*/ riscv64Top__DOT____Vtogcov__io_pc;
         IData/*31:0*/ riscv64Top__DOT____Vtogcov__io_NextPC;
         IData/*31:0*/ riscv64Top__DOT____Vtogcov__fetch_io_PcOut;
         IData/*31:0*/ riscv64Top__DOT____Vtogcov__fetch_io_Inst;
         IData/*31:0*/ riscv64Top__DOT____Vtogcov__decode_io_NextPC;
+        IData/*31:0*/ riscv64Top__DOT__fetch__DOT____Vtogcov__sInst_inst;
         IData/*31:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__aSrcT_hi;
         VlWide<4>/*127:0*/ riscv64Top__DOT__alu__DOT____Vtogcov__mulRes;
         VlWide<4>/*127:0*/ riscv64Top__DOT__alu__DOT____Vtogcov__aluResult;
@@ -232,16 +235,18 @@ VL_MODULE(Vriscv64Top___024root) {
         QData/*63:0*/ riscv64Top__DOT____Vtogcov__alu_io_Result;
         QData/*63:0*/ riscv64Top__DOT____Vtogcov__dataMem_DataOut;
         QData/*63:0*/ riscv64Top__DOT____Vtogcov__InstResW;
+        QData/*63:0*/ riscv64Top__DOT__fetch__DOT__sInst__DOT____Vtogcov__rdata;
+        QData/*63:0*/ riscv64Top__DOT__fetch__DOT__sInst__DOT____Vtogcov__pcIn;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__regs_RData1;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__imm_io_Inst;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__imm_io_Imm;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__Asrc;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_0;
+    };
+    struct {
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_1;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_2;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_4;
-    };
-    struct {
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT____Vtogcov__immType_3;
         QData/*63:0*/ riscv64Top__DOT__alu__DOT____Vtogcov__addRes;
         QData/*63:0*/ riscv64Top__DOT__alu__DOT____Vtogcov__subRes;
@@ -254,7 +259,8 @@ VL_MODULE(Vriscv64Top___024root) {
         QData/*63:0*/ riscv64Top__DOT__alu__DOT____Vtogcov__remwRes;
         QData/*63:0*/ riscv64Top__DOT__alu__DOT____Vtogcov__divRes;
         QData/*63:0*/ riscv64Top__DOT__dataMem__DOT____Vtogcov__rdata;
-        QData/*63:0*/ __Vtask_riscv64Top__DOT__dataMem__DOT__pmem_read__3__rdata;
+        QData/*63:0*/ __Vtask_riscv64Top__DOT__fetch__DOT__sInst__DOT__pmem_read__0__rdata;
+        QData/*63:0*/ __Vtask_riscv64Top__DOT__dataMem__DOT__pmem_read__4__rdata;
         VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
     };
 

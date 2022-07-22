@@ -1,3 +1,4 @@
+
 #include <am.h>
 #include <klib.h>
 #include <klib-macros.h>
@@ -43,68 +44,19 @@ mini_itoa(long value, unsigned int radix, int uppercase, int unsig,char *buffer)
 }
 
 void itoa(const int n, char* buf){
-//  int i;
   mini_itoa(n, 10, 1, 0, buf);
-
-/*
-  if(n < 10 ){
-    buf[0] = n + '0';
-    buf[1] = '\0';
-  } else {
-    itoa(n/10, buf);
-    for (i=0; buf[i]!='\0'; i++);
-    buf[i] = (n%10) + '0';
-    buf[i+1] = '\0';
-  }
-  */
 }
 
 void xtoa(const int n, char* buf){
   mini_itoa(n, 16, 1, 0, buf);
-/*
-  int i;
-  if(n < 16 ){
-    buf[0] = n + '0';
-    buf[1] = '\0';
-  } else {
-    itoa(n/16, buf);
-    for (i=0; buf[i]!='\0'; i++);
-    buf[i] = (n%16) + '0';
-    buf[i+1] = '\0';
-  }
-  */
 }
 
 void litoa(const int n, char* buf){
     mini_itoa(n, 10, 1, 1, buf);
-/*
-  int i;
-  if(n < 10 ){
-    buf[0] = n + '0';
-    buf[1] = '\0';
-  } else {
-    itoa(n/10, buf);
-    for (i=0; buf[i]!='\0'; i++);
-    buf[i] = (n%10) + '0';
-    buf[i+1] = '\0';
-  }
-*/
 }
 
 void lxtoa(const int n, char* buf){
   mini_itoa(n, 16, 1, 0, buf);
-/*
-  int i;
-  if(n < 10 ){
-    buf[0] = n + '0';
-    buf[1] = '\0';
-  } else {
-    itoa(n/10, buf);
-    for (i=0; buf[i]!='\0'; i++);
-    buf[i] = (n%10) + '0';
-    buf[i+1] = '\0';
-  }
-  */
 }
 
 
@@ -171,6 +123,13 @@ int printf(const char *fmt, ...) {
           s += strlen(buf);
           num += strlen(buf);
           break;
+        case 'c':
+          n = va_arg(ap, int);
+          itoa(n, buf);
+					memcpy(s, buf, 1);
+       //   s += strlen(str);
+          num ++; //= strlen(str);
+          break;
         case 'l':
           ch = *(fmt++);
           switch (ch)
@@ -231,9 +190,7 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
 
 #endif
 
-
-
-/**
+/*
 #include <am.h>
 #include <klib.h>
 #include <klib-macros.h>

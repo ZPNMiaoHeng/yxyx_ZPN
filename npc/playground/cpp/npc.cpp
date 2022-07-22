@@ -41,7 +41,7 @@ extern  uint64_t *cpu_gpr;
 
 extern "C" void pmem_read(long long raddr, long long *rdata, char PmemReadEn) {
 //  Log("pmem_read is %#lx", PmemReadEn);
-  if(PmemReadEn == 0xffffffff){
+  if(PmemReadEn == 0xffffffff){                                // Load inst
 //  Log("pmem_read_npc raddr is %#08llx", raddr);
     *rdata = pmem_read_npc(raddr, 8);
 //  Log("pmem_read_npc rdata is %lld\n", *rdata);
@@ -88,7 +88,7 @@ CPU_state cpu = {};
 static void restart() {
   cpu.pc = RESET_VECTOR;                                                           /* Set the initial program counter. */
   cpu.gpr[0] = 0;                                                                  /* The zero register is always 0. */
-  Log("restart npc:pc->0x8000_0000");
+  Log("restart npc:pc->%#lx", cpu.pc);
 }
 
 static int parse_args(int argc, char *argv[]) {
@@ -181,8 +181,9 @@ static void iRingBuf( char irp[128]){
 
 static void exec_once (){
       cpu.val = pmem_read_npc(cpu.pc, 4);
+//      printf("---------------cpu.pc = %#x----------------------\n", cpu.pc);
       top->io_pc   = cpu.pc;
-      top->io_inst = cpu.val;
+//      top->io_inst = cpu.val;
       single_cycle();
       g_nr_guest_inst ++;
 
@@ -190,6 +191,7 @@ static void exec_once (){
   char *p = cpu.logbuf;
   static int i;
   p += snprintf(p, sizeof(cpu.logbuf), FMT_HWORD ":", cpu.pc);
+
   uint8_t *inst = (uint8_t *)&cpu.val;
   for (i = 3; i >= 0; i --) {
     p += snprintf(p, 4, " %02x", inst[i]);
@@ -401,18 +403,21 @@ void single_cycle() {
 }
 
 void reset(int n) {
+//  printf("reset\n");
   top->reset = 1;
   while (n -- > 0)  single_cycle();
   top->reset = 0;
 }
 
 void sim_init(){
+//    printf("sim_init\n"); 
     contextp = new VerilatedContext;
     tfp = new VerilatedVcdC;
     top = new Vriscv64Top;
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
     tfp->open("../npc/playground/sim/dump.vcd");
+    top->io_pc = 0x80000000;
 }
 
 void sim_exit(){
@@ -479,7 +484,7 @@ static inline void host_write(void *addr, int len, word_t data) {
 word_t pmem_read_npc(paddr_t addr, int len) {
 //  printf("pmem_read_npc: addr=%lx len=%d\n", addr, len); 
   word_t ret = host_read(guest_to_host(addr), len);
-  
+//  printf("%x\n", ret);
   return ret;
 }
 

@@ -34,7 +34,7 @@ CPP_DIR = $(PLAYGROUND_DIR)/cpp/
 #######################################################################
 #---------------------- File ------------------------------------------
 VSRC += $(shell find ./build/ -name *.v)
-VSRC += /home/zpn/ysyx-workbench/npc/playground/src/main/resources/vsrc/Ebreak.v
+VSRC += $(shell find ./playground/src/main/resources/vsrc/ -name *.v)
 #---------------------- CSRC ------------------------------------------
 CSRC += $(shell find $(CPP_DIR) -name *.cpp)
 CSRC += $(shell find $(CPP_DIR) -name *.c)

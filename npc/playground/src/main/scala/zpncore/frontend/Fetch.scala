@@ -11,7 +11,7 @@ import chisel3.util.HasBlackBoxInline
 class Fetch extends Module {
   val io = IO(new Bundle {
     val InstEn = Input(UInt(1.W))
-    val InstIn = Input(UInt(32.W))
+ //   val InstIn = Input(UInt(32.W))
     val PcIn   = Input(UInt(32.W))                       // Finish a inst ,return PC +4
 
     val PcOut  = Output(UInt(32.W))
@@ -24,43 +24,27 @@ class Fetch extends Module {
       val pc     = Input(UInt(32.W))
     })
   }
-/*
-    class SInst extends BlackBox with HasBlackBoxInline {
-        val io = IO(new Bundle {
-            val raddr  = Input(UInt(64.W))
-            val inst  = Output(UInt(64.W))
-        })
 
-    setInline("SInst.v",
-                    """
-                    |module SInst(
-                    |  input  [63: 0] raddr,
-                    |
-                    |  output [63: 0] inst
-                    |);
-                    |   import "DPI-C" function void pmem_read_out(input longint raddr, output longint rdata);
-                    |   wire [63:0] rdata;
-                    |   always @(*) begin
-                    |     pmem_read_out(raddr, rdata);
-                    |   end
-                    |   assign inst = rdata;
-                    |endmodule
-                    """.stripMargin)
-}
+  class SInst extends BlackBox {
+      val io = IO(new Bundle {
+        val pc  = Input(UInt(32.W))
+        val inst  = Output(UInt(32.W))
+    })
+  }
 
-    val sInst = Module(new SInst)
-    sInst.io.raddr := io.pcIn
+  val sInst   = Module(new SInst)
+  val ebreak  = Module(new Ebreak)
 
-  val ebreak = Module(new Ebreak)
   val Debreak = Mux((sInst.io.inst === "h00100073".U), true.B, false.B)
+//  val 
 
+  sInst.io.pc      := io.PcIn
   ebreak.io.inst   := sInst.io.inst
-  ebreak.io.pc     := io.pcIn
+  ebreak.io.pc     := io.PcIn
 
-  io.pcOut   := Mux((io.instEn === 0.U && !Debreak), io.pcIn  , "h7fff_fffc".U)                                    // Mux(io.instEn, io.pcIn, pc)
-  io.inst    := Mux((io.instEn === 0.U && !Debreak), sInst.io.inst, 0.U)
-*/  
-
+  io.PcOut   := Mux((io.InstEn === 0.U && !Debreak), io.PcIn  , "h7fff_fffc".U)                                    // Mux(io.instEn, io.pcIn, pc)
+  io.Inst    := Mux((io.InstEn === 0.U && !Debreak), sInst.io.inst, 0.U)
+/*
   val ebreak = Module(new Ebreak)
   val Debreak = Mux((io.InstIn === "h00100073".U), true.B, false.B)
 
@@ -69,5 +53,5 @@ class Fetch extends Module {
 
   io.PcOut   := Mux((io.InstEn === 0.U && !Debreak), io.PcIn  , "h7fff_fffc".U)                                    // Mux(io.instEn, io.pcIn, pc)
   io.Inst    := Mux((io.InstEn === 0.U && !Debreak), io.InstIn, 0.U)
-  
+*/  
 }

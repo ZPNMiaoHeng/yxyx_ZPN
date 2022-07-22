@@ -13,10 +13,10 @@ extern "C" {
 
 
     // DPI IMPORTS
-    // DPI import at /home/zpn/ysyx-workbench/npc/playground/src/main/resources/vsrc/Ebreak.v:6:32
+    // DPI import at playground/src/main/resources/vsrc/Ebreak.v:6:32
     extern void ebreak_D();
-    // DPI import at build/DataMem.v:11:32
-    extern void pmem_read(long long raddr, long long* rdata, char PmemReadEn);
+    // DPI import at playground/src/main/resources/vsrc/SInst.v:6:32
+    extern void pmem_read(long long raddr, long long* rdata, char pmemReadEn);
     // DPI import at build/DataMem.v:12:32
     extern void pmem_write(long long waddr, long long wdata, char wmask, char PmemWriteEn);
     // DPI import at build/RegFile.v:16:32

@@ -6,7 +6,7 @@ import chisel3.util.HasBlackBoxInline
 class riscv64Top extends Module {
     val io = IO(new Bundle{
         val instEn = Input(UInt(1.W))
-        val inst   = Input(UInt(32.W))
+//        val inst   = Input(UInt(32.W))
         val pc     = Input(UInt(32.W))
         
         val NextPC = Output(UInt(32.W))
@@ -29,7 +29,7 @@ class riscv64Top extends Module {
 //    val WData = Mux(MemtoReg(0) === 1.U, dataMem.io.DataOut, alu.io.Result)
 
     fetch.io.InstEn := io.instEn
-    fetch.io.InstIn := io.inst
+//    fetch.io.InstIn := io.inst
     fetch.io.PcIn   := io.pc                                                    //decode.io.NextPC
 
     decode.io.Inst  := fetch.io.Inst
