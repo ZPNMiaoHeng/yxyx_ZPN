@@ -1,9 +1,3 @@
-/**
-  * @param name -> RegFile!
-  * First Achieve by DPI-C and Blackbox verilog
-  *
-  */
-
 import chisel3._
 import chisel3.util._
 /** 负责产生 RData1 RData2 
