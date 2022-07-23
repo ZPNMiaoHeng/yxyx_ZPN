@@ -135,8 +135,8 @@ static struct {
 void sdb_mainloop() {
 
 //#ifdef CONFIG_BRANCH
-//    cmd_c(NULL);
-//    return;
+    cmd_c(NULL);
+    return;
 //#endif
 
   printf("----------------start sdb----------------------------\n");

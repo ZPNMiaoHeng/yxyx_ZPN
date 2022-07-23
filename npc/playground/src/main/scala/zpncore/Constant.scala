@@ -20,3 +20,13 @@ trait Constant {
 
   val RW_DATA_WIDTH = 128
 }
+
+trait AxiParameters {
+  val AxiAddrWidth = 32
+  val AxiDataWidth = 64
+  val AxiIdWidth = 4
+  val AxiUseWidth = 1
+}
+
+object Constant extends Constant with AxiParameters {  }
+//object AxiParameters extends AxiParameters { }
