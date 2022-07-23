@@ -10,20 +10,21 @@ import chisel3.util.HasBlackBoxInline
   */
 
 class Fetch extends Module {
+/*
   val io = IO(new Bundle {
     val fetch = Flipped(new CoreInst)
   })
-/*
+*/
   val io = IO(new Bundle {
     val PcIn   = Input(UInt(32.W))                       // Finish a inst ,return PC +4
     val Inst   = Output(UInt(32.W))
   })
   val PcIn = io.PcIn
   val Inst = io.Inst
-  val valid = ((PcIn >= "h8000_0000".U) && (PcIn <= "h8800_0000".U))
-*/
-  val PcIn = io.fetch.inst_addr
-  val Inst = io.fetch.inst_read
+//  val valid = ((PcIn >= "h8000_0000".U) && (PcIn <= "h8800_0000".U))
+
+//  val PcIn =  io.PcIn//io.fetch.inst_addr
+//  val Inst =  io.Inst//io.fetch.inst_read
   
 //  val Debreak = Mux((sInst.io.inst === "h00100073".U), true.B, false.B)
   
@@ -33,7 +34,7 @@ class Fetch extends Module {
       val pc     = Input(UInt(32.W))
     })
   }
-/*
+
   class SInst extends BlackBox {
       val io = IO(new Bundle {
         val pc  = Input(UInt(32.W))
@@ -42,10 +43,8 @@ class Fetch extends Module {
   }
 
   val sInst = Module(new SInst)
-*/
-
-
   val ebreak = Module(new Ebreak)
+/** 
   val axi = Module(new AxiLite2Axi)
 
   io.fetch <> axi.io.imem
@@ -55,7 +54,7 @@ class Fetch extends Module {
   axi.io.out.ar.size :=
   axi.io.out.ar.len :=
 //  axi.io.out.r <>
-
+*/
 /*
   axi.io.imem.bits.valid := valid
   axi.io.imem.bits.inst_addr := PcIn
@@ -66,7 +65,7 @@ class Fetch extends Module {
 
   ebreak.io.pc     := PcIn
   ebreak.io.inst   := sInst.io.inst
-
+  Inst := sInst.io.inst
 //  Inst := Mux(!Debreak, sInst.io.inst, 0.U)
 
 

@@ -23,6 +23,15 @@ class AxiLite2Axi extends Module {
   val r_idle :: r_inst_addr :: r_inst_read :: r_inst_done :: Nil = Enum(4)
   val r_state = RegInit(r_idle)
 
+
+
+    // ------------------State Machine------------------TODO
+    
+    // 写通道状态切换
+    
+
+    // 读通道状态切换
+    
   switch (r_state) {
     is(r_idle) {
       when(inst_ren) { 
@@ -43,6 +52,8 @@ class AxiLite2Axi extends Module {
       r_state := r_idle
     }
   }
+
+    // ------------------Write Transaction------------------
 
   val axi_addr = Mux(r_state === r_inst_addr, in1.inst_addr & "hffff_ffff0".U(32.W), 0.U)
 

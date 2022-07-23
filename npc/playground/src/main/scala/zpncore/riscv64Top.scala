@@ -27,12 +27,15 @@ class riscv64Top extends Module {
 //    val WData = Mux(MemtoReg(0) === 1.U, dataMem.io.DataOut, alu.io.Result)
     val pc = io.pc
 
-    fetch.io.fetch.inst_addr := pc
-    fetch.io.fetch.inst_valid := ((pc >= "h8000_0000".U) && (pc <= "h8800_0000".U))
+    fetch.io.PcIn := pc
+//    fetch.io.fetch.inst_addr := pc
+//    fetch.io.fetch.inst_valid := ((pc >= "h8000_0000".U) && (pc <= "h8800_0000".U))
 
-    val inst_ready = fetch.io.fetch.inst_ready
-    decode.io.Inst  := fetch.io.fetch.inst_read     //fetch.io.Inst
-//    decode.io.PC    := io.pc                      //    fetch.io.PcOut
+
+//    val inst_ready = fetch.io.fetch.inst_ready
+//    decode.io.Inst  := fetch.io.fetch.inst_read     //fetch.io.Inst
+    decode.io.Inst  := fetch.io.Inst
+    decode.io.PC    := io.pc                      //    fetch.io.PcOut
     decode.io.WData := WData
     decode.io.Less  := alu.io.Less
     decode.io.Zero  := alu.io.Zero
