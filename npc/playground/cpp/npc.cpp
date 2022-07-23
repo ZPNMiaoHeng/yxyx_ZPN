@@ -30,9 +30,29 @@ void pmem_write_npc(paddr_t addr, int len, word_t data);
 static int parse_args(int argc, char *argv[]);
 void difftest_step(vaddr_t pc, vaddr_t npc);
 
-static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+//----------------------------------------------------------------
+//static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+axi4_mem<64,64,4> mem(4096*1024*1024);
+// load_file is function
+axi4_ptr<64,64,4> mem_ptr;
 
-uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+mem_ptr.awready = &(top->axi_aw_ready_i);
+mem_ptr.awvalid = &(top->axi_aw_valid_o);
+mem_ptr.awaddr  = &(top->axi_aw_addr_o);
+mem_ptr.awid    = &(top->axi_aw_id_o);
+mem_ptr.awlen   = &(top->axi_aw_len_o);
+mem_ptr.awsize  = &(top->axi_aw_size_o);
+mem_ptr.awbrust = &(top->axi_aw_burst_o);
+
+connect_wire(mem_ptr);                               // connect_wire m
+assert(mem_ptr.check());
+axit_ref<64,64,4> mem_ref(mem_ptr);
+printf("\033[1;31m check complete\033[0m\n");
+//----------------------------------------------------------------
+
+//uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+uint8_t* guest_to_host(paddr_t paddr) { return mem + paddr - CONFIG_MBASE; }
+
 uint64_t get_time();
 
 static bool is_skip_ref = false;
@@ -105,7 +125,7 @@ static int parse_args(int argc, char *argv[]) {
       case 'i': img_file = optarg; Log("Load img_file = %s", img_file); break;
       default:
         return 0;
-    }
+    }            
   }
   return 0;
 }
@@ -430,6 +450,7 @@ static long load_img() {
     Log("No image is given. Use the default build-in image.");
     return 4096; // built-in image size
   }
+/*  
   FILE *fp ;
   fp = fopen(img_file, "rb");
   Assert(fp, "Can not open '%s'", img_file);
@@ -443,12 +464,16 @@ static long load_img() {
 
   fclose(fp);
   return size;
+*/
+  mem.load_binary(bin_file, 0x80000000);
+  return 2048;
 }
 
 void init_mem() {
 //#ifdef CONFIG_MEM_RANDOM  
   Log("-------init_mem----------");
-  uint32_t *p = (uint32_t *)pmem;
+//  uint32_t *p = (uint32_t *)pmem;
+  uint32_t *p = (uint32_t *)mem;
   int i;
   for (i = 0; i < (int) (CONFIG_MSIZE / sizeof(p[0])); i ++) {
     p[i] = rand();
@@ -457,7 +482,8 @@ void init_mem() {
 //#endif
     Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]",
       (paddr_t)CONFIG_MBASE, (paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1);
-  assert(pmem);
+//  assert(pmem);
+  assert(mem);
 }
 
 static inline word_t host_read(void *addr, int len) {
