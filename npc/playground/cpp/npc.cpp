@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
 
     sim_init();
     reset(1);
-    top->io_instEn = 0; 
+//    top->io_instEn = 0; 
     sdb_mainloop();
     sim_exit();
 

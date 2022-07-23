@@ -5,8 +5,6 @@ import chisel3.util.HasBlackBoxInline
 
 class riscv64Top extends Module {
     val io = IO(new Bundle{
-        val instEn = Input(UInt(1.W))
-//        val inst   = Input(UInt(32.W))
         val pc     = Input(UInt(32.W))
         
         val NextPC = Output(UInt(32.W))
@@ -27,13 +25,14 @@ class riscv64Top extends Module {
     ))
     
 //    val WData = Mux(MemtoReg(0) === 1.U, dataMem.io.DataOut, alu.io.Result)
+    val pc = io.pc
 
-    fetch.io.InstEn := io.instEn
-//    fetch.io.InstIn := io.inst
-    fetch.io.PcIn   := io.pc                                                    //decode.io.NextPC
+    fetch.io.fetch.inst_addr := pc
+    fetch.io.fetch.inst_valid := ((pc >= "h8000_0000".U) && (pc <= "h8800_0000".U))
 
-    decode.io.Inst  := fetch.io.Inst
-    decode.io.PC    := fetch.io.PcOut
+    val inst_ready = fetch.io.fetch.inst_ready
+    decode.io.Inst  := fetch.io.fetch.inst_read     //fetch.io.Inst
+//    decode.io.PC    := io.pc                      //    fetch.io.PcOut
     decode.io.WData := WData
     decode.io.Less  := alu.io.Less
     decode.io.Zero  := alu.io.Zero
@@ -45,8 +44,6 @@ class riscv64Top extends Module {
     alu.io.MemtoReg := decode.io.MemtoReg
 //    alu.io.Branch := decode.io.Branch
 
-//    dataMem.io.clk    := clock
-//    dataMem.io.reset  := reset
     dataMem.io.Addr   := alu.io.Result
     dataMem.io.MemOP  := decode.io.MemOP
     dataMem.io.DataIn := decode.io.DataIn

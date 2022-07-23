@@ -29,4 +29,6 @@ trait AxiParameters {
 }
 
 object Constant extends Constant with AxiParameters {  }
-//object AxiParameters extends AxiParameters { }
+
+abstract class ZpnCoreModule extends Module with Constant with AxiParameters
+abstract class ZpnCoreBundle extends Bundle with Constant with AxiParameters

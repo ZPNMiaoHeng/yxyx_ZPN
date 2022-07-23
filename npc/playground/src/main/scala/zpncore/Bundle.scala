@@ -7,7 +7,7 @@ class INSTIO extends Bundle with AxiParameters {
   val inst_valid  = Output(Bool())
   val inst_ready  = Input(Bool())
 
-  val inst_addr   = Output(UInt(AxiAddrWidth.W))   
+  val inst_addr   = Output(UInt(AxiAddrWidth.W))         // pc
 }
 class AxiInst extends INSTIO with AxiParameters {
   val inst_read   = Input(UInt(RW_DATA_WIDTH.W))
@@ -16,7 +16,11 @@ class AxiInst extends INSTIO with AxiParameters {
 class CoreInst extends INSTIO with AxiParameters {
   val inst_read   = Input(UInt(32.W))
 }
-
+/*
+class CoreIO extends ZpnCoreBundle {
+  val imem = Flipped(new CoreInst)
+}
+*/
 class AxiLiteA extends Bundle with AxiParameters {
   val addr = Output(UInt(AxiAddrWidth.W))
 }
@@ -24,7 +28,7 @@ class AxiLiteA extends Bundle with AxiParameters {
 class AxiA extends AxiLiteA {
   val len = Output(UInt(8.W))                              // len: transfer length
   val size = Output(UInt(3.W))                             // size: transfer size
-  val burst = Output(UInt(2.W))
+//  val burst = Output(UInt(2.W))
 }
 
 class AxiLiteR extends Bundle with AxiParameters {

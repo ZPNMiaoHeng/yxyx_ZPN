@@ -31,7 +31,6 @@ class Vriscv64Top VL_NOT_FINAL {
     // propagate new values into/out from the Verilated model.
     VL_IN8(&clock,0,0);
     VL_IN8(&reset,0,0);
-    VL_IN8(&io_instEn,0,0);
     VL_IN(&io_pc,31,0);
     VL_OUT(&io_NextPC,31,0);
 

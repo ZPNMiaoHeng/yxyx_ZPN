@@ -31,7 +31,7 @@ class Vriscv64Top__Syms final : public VerilatedSyms {
     Vriscv64Top___024root          TOP;
 
     // COVERAGE
-    uint32_t __Vcoverage[2504];
+    uint32_t __Vcoverage[2471];
 
     // CONSTRUCTORS
     Vriscv64Top__Syms(VerilatedContext* contextp, const char* namep, Vriscv64Top* modelp);

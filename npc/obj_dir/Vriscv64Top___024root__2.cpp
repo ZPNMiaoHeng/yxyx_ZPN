@@ -57,7 +57,5 @@ void Vriscv64Top___024root___eval_debug_assertions(Vriscv64Top___024root* vlSelf
         Verilated::overWidthError("clock");}
     if (VL_UNLIKELY((vlSelf->reset & 0xfeU))) {
         Verilated::overWidthError("reset");}
-    if (VL_UNLIKELY((vlSelf->io_instEn & 0xfeU))) {
-        Verilated::overWidthError("io_instEn");}
 }
 #endif  // VL_DEBUG
