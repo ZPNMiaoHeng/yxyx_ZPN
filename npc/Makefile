@@ -68,6 +68,11 @@ verilog:
 	mkdir -p $(BUILD_DIR)
 	mill -i __.test.runMain Elaborate TopModule=$(VERILOG_NAME) -td $(BUILD_DIR)
 
+verilogTrace: 
+	$(call git_commit, "generate verilog")
+	mkdir -p $(BUILD_DIR)
+	mill -i __.test.runMain Elaborate TopModule=$(VERILOG_NAME) -td $(BUILD_DIR) --full-stacktrace
+
 help:
 	mill -i __.test.runMain top.TopMain --help
 
@@ -118,6 +123,6 @@ show-config:
 
 #######################################################################
 # Table
-.PHONY : run test verilog help compile bsp reformat checkformat clean sim
+.PHONY : run test verilog help compile bsp reformat checkformat clean sim verilogTrace
 #######################################################################
 include $(NPC_HOME)/../Makefile

@@ -4,16 +4,23 @@ import chisel3.util._
 import chisel3.util.HasBlackBoxInline
 
 class riscv64Top extends Module {
+//    val io = IO(new TopIO)
+    val io = IO(new Bundle {
+        val out = new AxiIO
+        val pc = new PcIO
+    })
+/*
     val io = IO(new Bundle{
         val pc     = Input(UInt(32.W))
-        
         val NextPC = Output(UInt(32.W))
     })
-
+*/
     val fetch   = Module(new Fetch)
     val decode  = Module(new Decode)
     val alu     = Module(new ALU)
     val dataMem = Module(new DataMem)
+    val axi     = Module(new Axi)
+    io.out <> axi.io.out
 
     val MemtoReg = decode.io.MemtoReg
     val InstResW    = (Fill(32,alu.io.Result(31)) ## alu.io.Result(31, 0))
@@ -25,17 +32,15 @@ class riscv64Top extends Module {
     ))
     
 //    val WData = Mux(MemtoReg(0) === 1.U, dataMem.io.DataOut, alu.io.Result)
-    val pc = io.pc
+    val pc = io.pc.PC
+    val nextPC = io.pc.nextPC
 
     fetch.io.PcIn := pc
-//    fetch.io.fetch.inst_addr := pc
-//    fetch.io.fetch.inst_valid := ((pc >= "h8000_0000".U) && (pc <= "h8800_0000".U))
 
+//    decode.io.Inst  := io.axi.r_data_i
 
-//    val inst_ready = fetch.io.fetch.inst_ready
-//    decode.io.Inst  := fetch.io.fetch.inst_read     //fetch.io.Inst
     decode.io.Inst  := fetch.io.Inst
-    decode.io.PC    := io.pc                      //    fetch.io.PcOut
+    decode.io.PC    := pc
     decode.io.WData := WData
     decode.io.Less  := alu.io.Less
     decode.io.Zero  := alu.io.Zero
@@ -45,7 +50,6 @@ class riscv64Top extends Module {
     alu.io.Asrc   := decode.io.Asrc
     alu.io.Bsrc   := decode.io.Bsrc
     alu.io.MemtoReg := decode.io.MemtoReg
-//    alu.io.Branch := decode.io.Branch
 
     dataMem.io.Addr   := alu.io.Result
     dataMem.io.MemOP  := decode.io.MemOP
@@ -53,7 +57,7 @@ class riscv64Top extends Module {
     dataMem.io.MemWr  := decode.io.MemWr
     dataMem.io.MemtoReg := decode.io.MemtoReg
 
-    io.NextPC := decode.io.NextPC
+    nextPC := decode.io.NextPC
 
 }
 

@@ -31,9 +31,9 @@ static int parse_args(int argc, char *argv[]);
 void difftest_step(vaddr_t pc, vaddr_t npc);
 
 //----------------------------------------------------------------
-//static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+//----------------------------------------------------------------
 axi4_mem<64,64,4> mem(4096*1024*1024);
-// load_file is function
 axi4_ptr<64,64,4> mem_ptr;
 
 mem_ptr.awready = &(top->axi_aw_ready_i);
@@ -48,10 +48,11 @@ connect_wire(mem_ptr);                               // connect_wire m
 assert(mem_ptr.check());
 axit_ref<64,64,4> mem_ref(mem_ptr);
 printf("\033[1;31m check complete\033[0m\n");
+
 //----------------------------------------------------------------
 
-//uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
-uint8_t* guest_to_host(paddr_t paddr) { return mem + paddr - CONFIG_MBASE; }
+uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+//uint8_t* guest_to_host(paddr_t paddr) { return mem + paddr - CONFIG_MBASE; }
 
 uint64_t get_time();
 
@@ -444,13 +445,14 @@ void sim_exit(){
     step_and_dump_wave();
     tfp->close();
 }
-
+//----------------------------------------------------------------
+// image store to pmem and mem
 static long load_img() {
   if (img_file == NULL) {
     Log("No image is given. Use the default build-in image.");
     return 4096; // built-in image size
   }
-/*  
+  
   FILE *fp ;
   fp = fopen(img_file, "rb");
   Assert(fp, "Can not open '%s'", img_file);
@@ -464,26 +466,24 @@ static long load_img() {
 
   fclose(fp);
   return size;
-*/
+
   mem.load_binary(bin_file, 0x80000000);
   return 2048;
 }
 
 void init_mem() {
-//#ifdef CONFIG_MEM_RANDOM  
   Log("-------init_mem----------");
-//  uint32_t *p = (uint32_t *)pmem;
-  uint32_t *p = (uint32_t *)mem;
+  uint32_t *p = (uint32_t *)pmem;
+//  uint32_t *q = (uint32_t *)mem;
   int i;
   for (i = 0; i < (int) (CONFIG_MSIZE / sizeof(p[0])); i ++) {
     p[i] = rand();
 //    printf("%d\n",rand());
   }
-//#endif
     Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]",
       (paddr_t)CONFIG_MBASE, (paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1);
-//  assert(pmem);
-  assert(mem);
+  assert(pmem);
+//  assert(mem);
 }
 
 static inline word_t host_read(void *addr, int len) {

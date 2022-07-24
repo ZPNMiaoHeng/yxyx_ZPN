@@ -3,9 +3,10 @@ import chisel3.util._
 
 import Constant._
 
-class AxiLite2Axi extends Module {
+class Axi/*Lite2Axi*/ extends Module {
   val io = IO(new Bundle {
     val out = new AxiIO
+    /* connect to cache*/
     val imem = Flipped(new AxiInst)
   })
 
@@ -22,8 +23,6 @@ class AxiLite2Axi extends Module {
 
   val r_idle :: r_inst_addr :: r_inst_read :: r_inst_done :: Nil = Enum(4)
   val r_state = RegInit(r_idle)
-
-
 
     // ------------------State Machine------------------TODO
     
@@ -63,7 +62,6 @@ class AxiLite2Axi extends Module {
   out.ar.bits.size := "b11".U
 
   out.r.ready := true.B
-
 
   /* AXI <-> IF */
   in1.inst_valid := r_state === r_inst_done

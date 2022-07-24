@@ -29,12 +29,12 @@ trait AxiParameters {
   val AxiAddrWidth = 32
   val AxiIdWidth = 4
   val AxiStrbWidth = AxiDataWidth / 8
-  val AxiUseWidth = 1
+  val AxiUserWidth = 1
 
 
 // Burst types
-  val AXI_BURST_TYPE_FIXED                              =   "b00   ".U            //突发类型  FIFO
-  val AXI_BURST_TYPE_INCR                               =   "b01   ".U            //ram  
+  val AXI_BURST_TYPE_FIXED                              =   "b00".U            //突发类型  FIFO
+  val AXI_BURST_TYPE_INCR                               =   "b01".U            //ram  
   val AXI_BURST_TYPE_WRAP                               =   "b10".U
 // Access permissions
   val AXI_PROT_UNPRIVILEGED_ACCESS                      =   "b000".U
@@ -70,7 +70,7 @@ trait AxiParameters {
   val AXI_AWCACHE_WRITE_BACK_WRITE_ALLOCATE             =   "b1111".U
   val AXI_AWCACHE_WRITE_BACK_READ_AND_WRITE_ALLOCATE    =   "b1111".U
 
-  val AXI_SIZE_BYTES_1                                  =   "b000  ".U              //突发宽度一个数据的宽度
+  val AXI_SIZE_BYTES_1                                  =   "b000".U              //突发宽度一个数据的宽度
   val AXI_SIZE_BYTES_2                                  =   "b001".U
   val AXI_SIZE_BYTES_4                                  =   "b010".U
   val AXI_SIZE_BYTES_8                                  =   "b011".U

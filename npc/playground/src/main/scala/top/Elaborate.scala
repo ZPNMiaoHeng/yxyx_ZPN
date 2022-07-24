@@ -17,7 +17,7 @@ object Elaborate extends App {
 
     val top = parseArgs("TopModule", args)
 
-//  (new chisel3.stage.ChiselStage).execute(args, Seq(chisel3.stage.ChiselGeneratorAnnotation(() => new riscv64Top())))
+//  (new ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new top())))
 //  (new chisel3.stage.ChiselStage).execute(args, Seq(chisel3.stage.ChiselGeneratorAnnotation(() => new Fetch())))
 //  (new chisel3.stage.ChiselStage).execute(args, Seq(chisel3.stage.ChiselGeneratorAnnotation(() => new regFile())))
 //  (new chisel3.stage.ChiselStage).execute(args, Seq(chisel3.stage.ChiselGeneratorAnnotation(() => new Decode())))
@@ -34,6 +34,9 @@ object Elaborate extends App {
   } else if(top == "Fetch") {
     (new ChiselStage).execute(args, Seq(
       ChiselGeneratorAnnotation(() => new Fetch())))
+  } else if(top == "Axi") {
+    (new ChiselStage).execute(args, Seq(
+      ChiselGeneratorAnnotation(() => new Axi())))
   }
 //  (new chisel3.stage.ChiselStage).execute(args, Seq(chisel3.stage.ChiselGeneratorAnnotation(() => new Adder())))
 }
