@@ -54,7 +54,7 @@ class RegFile extends BlackBox with HasBlackBoxInline {
               |endmodule
               |
               |
-              """.stripMargin)
+""".stripMargin)
 }
 
 /*

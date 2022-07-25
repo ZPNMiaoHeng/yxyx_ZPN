@@ -9,18 +9,16 @@ class riscv64Top extends Module {
         val out = new AxiIO
         val pc = new PcIO
     })
-/*
-    val io = IO(new Bundle{
-        val pc     = Input(UInt(32.W))
-        val NextPC = Output(UInt(32.W))
-    })
-*/
+
     val fetch   = Module(new Fetch)
     val decode  = Module(new Decode)
     val alu     = Module(new ALU)
     val dataMem = Module(new DataMem)
     val axi     = Module(new Axi)
-    io.out <> axi.io.out
+
+    io.out.r <> axi.out.r
+    io.out.ar <> axi.out.ar
+    axi.in1 <> fetch.axi
 
     val MemtoReg = decode.io.MemtoReg
     val InstResW    = (Fill(32,alu.io.Result(31)) ## alu.io.Result(31, 0))
@@ -36,6 +34,8 @@ class riscv64Top extends Module {
     val nextPC = io.pc.nextPC
 
     fetch.io.PcIn := pc
+//    fetch.io.inst_read :=
+//    fetch.io.inst_ready :=
 
 //    decode.io.Inst  := io.axi.r_data_i
 

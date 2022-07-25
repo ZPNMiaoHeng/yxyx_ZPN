@@ -1,5 +1,19 @@
 #include "npc.h"
 
+#include "verilated.h"
+#include "Vriscv64Top.h"
+
+#include "axi4.hpp"
+#include "axi4_mem.hpp"
+#include "axi4_xbar.hpp"
+#include "mmio_mem.hpp"
+#include "uartlite.hpp"
+
+#include <iostream>
+#include <termios.h>
+#include <unistd.h>
+#include <thread>
+
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 static Vriscv64Top* top;
@@ -12,6 +26,7 @@ static int difftest_port = 1234;
 
 void step_and_dump_wave(); 
 void single_cycle();
+void single_cycle_mem();
 void reset(int n);
 void sim_init();
 void sim_exit();
@@ -30,12 +45,8 @@ void pmem_write_npc(paddr_t addr, int len, word_t data);
 static int parse_args(int argc, char *argv[]);
 void difftest_step(vaddr_t pc, vaddr_t npc);
 
-//----------------------------------------------------------------
-static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
-//----------------------------------------------------------------
-axi4_mem<64,64,4> mem(4096*1024*1024);
-axi4_ptr<64,64,4> mem_ptr;
-
+void connect_wire(axi4_ptr <64,64,4> &mem_ptr, Vriscv64Top *top) {
+/* aw
 mem_ptr.awready = &(top->axi_aw_ready_i);
 mem_ptr.awvalid = &(top->axi_aw_valid_o);
 mem_ptr.awaddr  = &(top->axi_aw_addr_o);
@@ -43,11 +54,31 @@ mem_ptr.awid    = &(top->axi_aw_id_o);
 mem_ptr.awlen   = &(top->axi_aw_len_o);
 mem_ptr.awsize  = &(top->axi_aw_size_o);
 mem_ptr.awbrust = &(top->axi_aw_burst_o);
+*/
+// ar
+mem_ptr.arready = &(top->io_out_ar_ready);
+mem_ptr.arvalid = &(top->io_out_ar_valid);
+mem_ptr.araddr  = &(top->io_out_ar_bits_addr);
+//mem_ptr.arid    = &(top->io_our_r_id_o);
+mem_ptr.arlen   = &(top->io_out_ar_bits_len);
+mem_ptr.arsize  = &(top->io_out_ar_bits_size);
+//mem_ptr.arbrust = &(top->io_our_ar_burst_o);
+// r
+mem_ptr.rready  = &(top->io_out_r_ready);
+mem_ptr.rvalid  = &(top->io_out_r_valid);
+//mem_ptr.rid     = &(top->io_our_r_id_o);
+mem_ptr.rdata   = &(top->io_out_r_bits_data);
+mem_ptr.rresp   = &(top->io_out_r_bits_resp);
+mem_ptr.rlast   = &(top->io_out_r_bits_last);
+}
 
-connect_wire(mem_ptr);                               // connect_wire m
-assert(mem_ptr.check());
-axit_ref<64,64,4> mem_ref(mem_ptr);
-printf("\033[1;31m check complete\033[0m\n");
+//----------------------------------------------------------------
+static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+//----------------------------------------------------------------
+axi4_mem <64,64,4> mem(4096*1024*1024);
+axi4_ptr <64,64,4> mem_ptr;
+axi4<64,64,4> mem_sigs;
+axi4_ref<64,64,4> mem_sigs_ref(mem_sigs);
 
 //----------------------------------------------------------------
 
@@ -109,7 +140,7 @@ CPU_state cpu = {};
 static void restart() {
   cpu.pc = RESET_VECTOR;                                                           /* Set the initial program counter. */
   cpu.gpr[0] = 0;                                                                  /* The zero register is always 0. */
-  Log("restart npc:pc->%#lx", cpu.pc);
+  Log("restart npc:pc->%#x", cpu.pc);
 }
 
 static int parse_args(int argc, char *argv[]) {
@@ -203,9 +234,10 @@ static void iRingBuf( char irp[128]){
 static void exec_once (){
       cpu.val = pmem_read_npc(cpu.pc, 4);
 //      printf("---------------cpu.pc = %#x----------------------\n", cpu.pc);
-      top->io_pc   = cpu.pc;
+      top->io_pc_PC = cpu.pc;
 //      top->io_inst = cpu.val;
       single_cycle();
+      single_cycle_mem();
       g_nr_guest_inst ++;
 
 #ifdef CONFIG_ITRACE
@@ -244,14 +276,14 @@ void cpu_exec(uint64_t n) {
 
 //    checkregs(&ref_r, pc);                               // REF（nemu）中的值与DUT（npc）进行比较
 //    IFDEF(CONFIG_DIFFTEST, 
-    difftest_step(cpu.pc, top->io_NextPC);                  // nemu需要执行一次指令与NPC匹配
+    difftest_step(cpu.pc, top->io_pc_nextPC);                  // nemu需要执行一次指令与NPC匹配
     if (npc_state.state != NPC_RUNNING) break;
     /*
     printf("%d:\tnpc_state:%d\tpc:0x%08x\tinst:0x%08x\t->\tNextpc:0x%08lx\tNextinst:0x%08x\n",\
       i, npc_state.state, cpu.pc, pmem_read_npc(cpu.pc, 4), \
        top->io_NextPC, pmem_read_npc(top->io_NextPC, 4));
     */
-      cpu.pc = top->io_NextPC;
+      cpu.pc = top->io_pc_nextPC;
   }
 
   uint64_t timer_end = clock();
@@ -311,7 +343,6 @@ void difftest_skip_ref() {
   is_skip_ref = true;
   skip_dut_nr_inst = 0;
 }
-
 void difftest_skip_dut(int nr_ref, int nr_dut) {
   skip_dut_nr_inst += nr_dut;
   while (nr_ref -- > 0) {
@@ -330,12 +361,9 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
   assert(ref_difftest_regcpy);
   ref_difftest_exec = (void  (*)(uint64_t))dlsym(handle, "difftest_exec");
   assert(ref_difftest_exec);
-
   void (*ref_difftest_init)(int) = (void  (*)(int))dlsym(handle, "difftest_init");
   assert(ref_difftest_init);
-
   Log("Differential testing: %s", ANSI_FMT("ON", ANSI_FG_GREEN));
-
   Log("The result of every instruction will be compared with %s. "
       "This will help you a lot for debugging, but also significantly reduce the performance. "
       "If it is not necessary, you can turn it off in common.h.", ref_so_file); 
@@ -413,7 +441,6 @@ void step_and_dump_wave(){
 
 // Sequential circuit 
 void single_cycle() {
-
   top->clock = 1; top->eval();
   contextp->timeInc(1);
   tfp->dump(contextp->time());
@@ -423,11 +450,21 @@ void single_cycle() {
   tfp->dump(contextp->time());
 }
 
+void single_cycle_mem() {
+  axi4_ref<64,64,4> mem_ref(mem_ptr);
+  mem_sigs.update_input(mem_ref);   // -> master all axi_outputs to slave all inputs
+  top->eval();
+
+  mem.beat(mem_sigs_ref);           // deal all output signals of master, and Handshake signals return to master
+  mem_sigs.update_output(mem_ref);  // -> master all
+}
+
 void reset(int n) {
 //  printf("reset\n");
   top->reset = 1;
   while (n -- > 0)  single_cycle();
   top->reset = 0;
+  contextp->timeInc(1);
 }
 
 void sim_init(){
@@ -438,7 +475,14 @@ void sim_init(){
     contextp->traceEverOn(true);
     top->trace(tfp, 0);
     tfp->open("../npc/playground/sim/dump.vcd");
-    top->io_pc = 0x80000000;
+    top->io_pc_PC = 0x80000000;
+//    top->io_out_r_valid = 1;
+
+connect_wire(mem_ptr , top);                               // connect_wire m
+assert(mem_ptr.check());
+//axi4_ref<64,64,4> mem_ref(mem_ptr);
+printf("\033[1;31m check complete\033[0m\n");
+
 }
 
 void sim_exit(){
@@ -467,7 +511,7 @@ static long load_img() {
   fclose(fp);
   return size;
 
-  mem.load_binary(bin_file, 0x80000000);
+  mem.load_binary(img_file, 0x80000000);
   return 2048;
 }
 

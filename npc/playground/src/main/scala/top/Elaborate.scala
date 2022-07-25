@@ -29,12 +29,15 @@ object Elaborate extends App {
     (new ChiselStage).execute(args, Seq(
       ChiselGeneratorAnnotation(() => new ALU())))
   } else if(top == "riscv64Top") {
+    println("------------------- Generate riscv64Top.v ---------------- ")
     (new ChiselStage).execute(args, Seq(
       ChiselGeneratorAnnotation(() => new riscv64Top())))
   } else if(top == "Fetch") {
+    println("------------------- Fetch.v---------------- ")
     (new ChiselStage).execute(args, Seq(
       ChiselGeneratorAnnotation(() => new Fetch())))
   } else if(top == "Axi") {
+    println("--------Axi.v---------------- ")
     (new ChiselStage).execute(args, Seq(
       ChiselGeneratorAnnotation(() => new Axi())))
   }

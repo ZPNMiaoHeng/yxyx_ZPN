@@ -1,6 +1,6 @@
 #include "verilated.h"
-#include "VExampleRocketSystem.h"
-
+//#include "VExampleRocketSystem.h"
+#include "Vriscv64Top.h"
 #include "axi4.hpp"
 #include "axi4_mem.hpp"
 #include "axi4_xbar.hpp"
@@ -12,10 +12,11 @@
 #include <unistd.h>
 #include <thread>
 
-void connect_wire(axi4_ptr <31,64,4> &mmio_ptr, axi4_ptr <32,64,4> &mem_ptr, VExampleRocketSystem *top) {
+void connect_wire(/*axi4_ptr <31,64,4> &mmio_ptr,*/ axi4_ptr <32,64,4> &mem_ptr, VExampleRocketSystem *top) {
     // connect
     // mmio
-    // aw   
+    // aw 
+/**
     mmio_ptr.awaddr     = &(top->mmio_axi4_0_aw_bits_addr);
     mmio_ptr.awburst    = &(top->mmio_axi4_0_aw_bits_burst);
     mmio_ptr.awid       = &(top->mmio_axi4_0_aw_bits_id);
@@ -49,6 +50,7 @@ void connect_wire(axi4_ptr <31,64,4> &mmio_ptr, axi4_ptr <32,64,4> &mem_ptr, VEx
     mmio_ptr.rready     = &(top->mmio_axi4_0_r_ready);
     mmio_ptr.rresp      = &(top->mmio_axi4_0_r_bits_resp);
     mmio_ptr.rvalid     = &(top->mmio_axi4_0_r_valid);
+    */
     // mem
     // aw
     mem_ptr.awaddr  = &(top->mem_axi4_0_aw_bits_addr);
@@ -103,21 +105,21 @@ void uart_input(uartlite &uart) {
 int main(int argc, char** argv, char** env) {
     Verilated::commandArgs(argc, argv);
     VExampleRocketSystem *top = new VExampleRocketSystem;
-    axi4_ptr <31,64,4> mmio_ptr;
+//    axi4_ptr <31,64,4> mmio_ptr;
     axi4_ptr <32,64,4> mem_ptr;
 
-    connect_wire(mmio_ptr,mem_ptr,top);
-    assert(mmio_ptr.check());
+    connect_wire(/*mmio_ptr,*/mem_ptr,top);
+//    assert(mmio_ptr.check());
     assert(mem_ptr.check());
     
-    axi4_ref <31,64,4> mmio_ref(mmio_ptr);
-    axi4     <31,64,4> mmio_sigs;
-    axi4_ref <31,64,4> mmio_sigs_ref(mmio_sigs);
-    axi4_xbar<31,64,4> mmio;
+//    axi4_ref <31,64,4> mmio_ref(mmio_ptr);
+//    axi4     <31,64,4> mmio_sigs;
+//    axi4_ref <31,64,4> mmio_sigs_ref(mmio_sigs);
+//    axi4_xbar<31,64,4> mmio;
 
     uartlite           uart;
     std::thread        uart_input_thread(uart_input,std::ref(uart));
-    assert(mmio.add_dev(0x60100000,1024*1024,&uart));
+//    assert(mmio.add_dev(0x60100000,1024*1024,&uart));
 
     axi4_ref <32,64,4> mem_ref(mem_ptr);
     axi4     <32,64,4> mem_sigs;
@@ -134,13 +136,13 @@ int main(int argc, char** argv, char** env) {
         if (ticks == 9) top->reset = 0;
         top->clock = 1;
         // posedge
-        mmio_sigs.update_input(mmio_ref);
+//        mmio_sigs.update_input(mmio_ref);
         mem_sigs.update_input(mem_ref);
         top->eval();
         ticks ++;
         if (!top->reset) {
             mem.beat(mem_sigs_ref);
-            mmio.beat(mmio_sigs_ref);
+//            mmio.beat(mmio_sigs_ref);
             while (uart.exist_tx()) {
                 char c = uart.getc();
                 printf("%c",c);

@@ -2,25 +2,26 @@ import chisel3._
 import chisel3.util._
 
 import Constant._
-
 /* Inst */
-class INSTIO extends Bundle with AxiParameters {
+class INSTIO extends ZpnCoreBundle {
   val inst_valid  = Output(Bool())
   val inst_ready  = Input(Bool())
-//  val inst_req    = Output(Bool())                                     // request signals:1 -> true
   val inst_addr   = Output(UInt(AxiAddrWidth.W))   
   val inst_size   = Output(UInt(8.W))                                 // ???
 }
 
-class AxiInst extends INSTIO with AxiParameters {
+class AxiInst extends INSTIO {
   val inst_read   = Input(UInt(RW_DATA_WIDTH.W))
 }
-
-class CoreInst extends INSTIO with AxiParameters {
+/*
+class CoreInst extends INSTIO {
   val inst_read   = Input(UInt(32.W))
 }
+*/
+
 /* Data */
-class DATAIO extends Bundle with AxiParameters {
+
+class DATAIO extends ZpnCoreBundle {
   val data_valid  = Output(Bool())
   val data_ready  = Input(Bool())
 //  val data_req    = Output(Bool())
@@ -29,36 +30,35 @@ class DATAIO extends Bundle with AxiParameters {
 //  val data_strb   = Output(UInt(8.W)) 
 }
 
-class AxiData extends DATAIO with AxiParameters {
+class AxiData extends DATAIO {
   val data_read   = Input(UInt(RW_DATA_WIDTH.W))
   val data_write  = Output(UInt(RW_DATA_WIDTH.W)) 
 }
 
-class CoreData extends DATAIO with AxiParameters {
+class CoreData extends DATAIO {
   val data_read   = Input(UInt(AxiDataWidth.W))
   val data_write  = Output(UInt(AxiDataWidth.W)) 
 }
+
 /** ID */
-trait AxiIdUser extends Bundle with AxiParameters {
+/*
+trait AxiIdUser extends ZpnCoreBundle {
   val id = Output(UInt(AxiIdWidth.W))
   val user = Output(UInt(AxiUserWidth.W))
 }
+*/
 
-class AxiLiteA extends Bundle with AxiParameters {
+class AxiA extends ZpnCoreBundle {
   val addr = Output(UInt(AxiAddrWidth.W))
-  val prot = Output(UInt(3.W))
-}
-
-class AxiA extends AxiLiteA with AxiIdUser {
   val len = Output(UInt(8.W))
   val size = Output(UInt(3.W))
-  val burst = Output(UInt(2.W))
-  val lock = Output(Bool())
-  val cache = Output(UInt(4.W))
-  val qos = Output(UInt(4.W))                                        // ???
+//  val burst = Output(UInt(2.W))
+//  val lock = Output(Bool())
+//  val cache = Output(UInt(4.W))
+//  val qos = Output(UInt(4.W))                                        // ???
 }
-
-class AxiLiteW extends Bundle with AxiParameters {
+/*
+class AxiLiteW extends Bundle {
   val data = Output(UInt(AxiDataWidth.W))
   val strb = Output(UInt((AxiDataWidth / 8).W))
 }
@@ -71,23 +71,12 @@ class AxiLiteB extends Bundle {
   val resp = Output(UInt(2.W))
 }
 
-class AxiB extends AxiLiteB with AxiIdUser with AxiParameters { }
-
-class AxiLiteR extends Bundle with AxiParameters {
+class AxiB extends AxiLiteB with AxiIdUser { }
+*/
+class AxiR extends ZpnCoreBundle {// AxiLiteR with AxiIdUser {
+  val last = Output(Bool())
   val resp = Output(UInt(2.W))
   val data = Output(UInt(AxiDataWidth.W))
-}
-
-class AxiR extends AxiLiteR with AxiIdUser {
-  val last = Output(Bool())
-}
-
-class AxiLiteIO extends Bundle {
-  val aw = Decoupled(new AxiLiteA)
-  val w = Decoupled(new AxiLiteW)
-  val b = Flipped(Decoupled(new AxiLiteB))
-  val ar = Decoupled(new AxiLiteA)
-  val r = Flipped(Decoupled(new AxiLiteR))
 }
 
 class AxiIO extends Bundle {
@@ -99,9 +88,11 @@ class AxiIO extends Bundle {
 }
 
 class PcIO extends Bundle {
-  val PC = Input(UInt(32.W))
-  val nextPC = Output(UInt(32.W))
+  val PC = Input(UInt(PCWidth.W))
+  val nextPC = Output(UInt(PCWidth.W))
 }
+
+
 /*
 class TopIO extends Bundle {
   val out = new AxiIO

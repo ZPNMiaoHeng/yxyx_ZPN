@@ -1,36 +1,25 @@
+//package zpnCore
+
 import chisel3._
 import chisel3.util._
-
 /*
  * ??? :代表什么？
  */
 
 trait Constant {
-  val AluX     = "??????????"
-  val AluAdd   = "0000000001"
-  val AluSub   = "0000000010"
-  val AluSlt   = "0000000100"
-  val AluSltu  = "0000001000"
-  val AluXor   = "0000010000"
-  val AluOr    = "0000100000"
-  val AluAnd   = "0001000000"
-  val AluSll   = "0010000000"
-  val AluSrl   = "0100000000"
-  val AluSra   = "1000000000"
-
-  val RW_DATA_WIDTH = 128
+  val RW_DATA_WIDTH = 64
+  val PCWidth = 64
+  val InstWidth = 64
 }
 
 trait AxiParameters {
-
   val RwDataWidth = 64
   val RwAddrWidth = 32
   val AxiDataWidth = 64
-  val AxiAddrWidth = 32
+  val AxiAddrWidth = 64//32
   val AxiIdWidth = 4
   val AxiStrbWidth = AxiDataWidth / 8
   val AxiUserWidth = 1
-
 
 // Burst types
   val AXI_BURST_TYPE_FIXED                              =   "b00".U            //突发类型  FIFO
@@ -80,8 +69,7 @@ trait AxiParameters {
   val AXI_SIZE_BYTES_128                                =   "b111".U
 }
 
-
 object Constant extends Constant with AxiParameters {  }
 
-abstract class ZpnCoreModule extends Module with Constant with AxiParameters
-abstract class ZpnCoreBundle extends Bundle with Constant with AxiParameters
+abstract class ZpnCoreModule extends Module with Constant //with AxiParameters
+abstract class ZpnCoreBundle extends Bundle with Constant //with AxiParameters
