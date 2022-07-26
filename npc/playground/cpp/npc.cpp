@@ -45,6 +45,16 @@ void pmem_write_npc(paddr_t addr, int len, word_t data);
 static int parse_args(int argc, char *argv[]);
 void difftest_step(vaddr_t pc, vaddr_t npc);
 
+//----------------------------------------------------------------
+static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+//----------------------------------------------------------------
+axi4_mem <64,64,4> mem(4096l*1024*1024);
+axi4_ptr <64,64,4> mem_ptr;
+axi4<64,64,4> mem_sigs;
+axi4_ref<64,64,4> mem_sigs_ref(mem_sigs);
+
+//----------------------------------------------------------------
+
 void connect_wire(axi4_ptr <64,64,4> &mem_ptr, Vriscv64Top *top) {
 /* aw
 mem_ptr.awready = &(top->axi_aw_ready_i);
@@ -71,16 +81,6 @@ mem_ptr.rdata   = &(top->io_out_r_bits_data);
 mem_ptr.rresp   = &(top->io_out_r_bits_resp);
 mem_ptr.rlast   = &(top->io_out_r_bits_last);
 }
-
-//----------------------------------------------------------------
-static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
-//----------------------------------------------------------------
-axi4_mem <64,64,4> mem(4096*1024*1024);
-axi4_ptr <64,64,4> mem_ptr;
-axi4<64,64,4> mem_sigs;
-axi4_ref<64,64,4> mem_sigs_ref(mem_sigs);
-
-//----------------------------------------------------------------
 
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 //uint8_t* guest_to_host(paddr_t paddr) { return mem + paddr - CONFIG_MBASE; }

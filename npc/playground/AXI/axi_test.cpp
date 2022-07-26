@@ -23,7 +23,7 @@ void dump_axi_read(axi4_ref<64,64,4> &axi) {
     cout << "rvalid\t" << (unsigned long)axi.rvalid << endl;
     cout << "rready\t" << (unsigned long)axi.rready << endl;
 }
-/*
+
 int main() {
     axi4_mem<64,64,4> mem(8192);
     axi4<64,64,4> axi;
@@ -43,4 +43,3 @@ int main() {
     }
     return 0;
 }
-*/
