@@ -1,7 +1,7 @@
 _default:
 ######################################################################
-# DESCRIPTION: riscv64-npc rewrite + TopMain
-#------------ Vesion 4.1.1------------
+# DESCRIPTION: riscv64-npc sbttest
+#------------ Vesion 4.2.1------------
 #
 ######################################################################
 # Check for sanity to avoid later confusion
@@ -25,7 +25,8 @@ endif
 #######################################################################
 #DIFINE
 # Default test file name is riscv64Top
-TOP 				  =	riscv64Top
+TOP =	riscv64Top
+TEST = NBitsAdderChiselTest
 VERILOG_NAME  = $(TOP)
 #NVBOARD_DIR = $(NVBOARD_HOME)/example
 PLAYGROUND_DIR = $(NPC_HOME)/playground
@@ -39,7 +40,6 @@ VSRC += $(shell find ./playground/src/main/resources/vsrc/ -name *.v)
 CSRC += $(shell find $(CPP_DIR) -name *.cpp)
 CSRC += $(shell find $(CPP_DIR) -name *.c)
 CSRC += $(shell find $(CPP_DIR) -name *.cc)
-#CSRC += /home/zpn/ysyx-workbench/npc/playground/cpp_son_module/ALU.cpp
 ########################################################################
 VERILATOR_INPUT =  $(VSRC) $(CSRC)
 SO = /home/zpn/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so
@@ -47,6 +47,7 @@ SO = /home/zpn/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so
 GTK_DIR  = $(PLAYGROUND_DIR)/sim/dump.vcd
 BUILD_DIR = ./build
 OBJ_DIR = ./obj_dir
+TEST_DIR = ./test_run_dir
 #######################################################################
 # Verliater option-- Generate C++ in executable form and coverage analysis               
 VERILATOR_FLAGS += --cc --exe -Wall --trace --coverage \
@@ -59,19 +60,26 @@ VERILATOR_FLAGS += -LDFLAGS -ldl \
  -LDFLAGS $(shell llvm-config --libs)
 VERILATOR_FLAGS += -CFLAGS -I/usr/lib/llvm-12/include
 
-######################## chisel compile ###############################
-test:
-	mill -i __.test
+######################## sbt compile ###############################
 
+test:
+#	mill -i __.test
+	sbt "test:testOnly $(TEST) -- -DwriteVcd=1"
+testvcd:
+	$(call git_commit, "sim RTL")
+	@echo "-------------------------- Open TEST GTKwave ------------------------"
+	gtkwave -f $(shell find $(TEST_DIR)/ -name *.vcd)
+
+######################## mill compile ###############################
 verilog: 
 	$(call git_commit, "generate verilog")
 	mkdir -p $(BUILD_DIR)
-	mill -i __.test.runMain Elaborate TopModule=$(VERILOG_NAME) -td $(BUILD_DIR)
+	mill -j 4 -i __.test.runMain Elaborate TopModule=$(VERILOG_NAME) -td $(BUILD_DIR)
 
 verilogTrace: 
 	$(call git_commit, "generate verilog")
 	mkdir -p $(BUILD_DIR)
-	mill -i __.test.runMain Elaborate TopModule=$(VERILOG_NAME) -td $(BUILD_DIR) --full-stacktrace
+	mill -j 4 -i __.test.runMain Elaborate TopModule=$(VERILOG_NAME) -td $(BUILD_DIR) --full-stacktrace
 
 help:
 	mill -i __.test.runMain top.TopMain --help
@@ -99,18 +107,13 @@ run:
 # Modify run 
 	@echo "--------------------------- VERILATE COMPILE----------------"
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
-#	@echo $(SO)
-#	@echo $(IMG)
 	./obj_dir/V$(VERILOG_NAME) --diff=$(SO) --image=$(IMG)
-#	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-#	@echo "-------------------------- Open GTKwave ------------------------"
-#	gtkwave -f $(GTK_DIR)
 
 clean: cleanB cleanO
 cleanB:
 	@-rm -rf $(BUILD_DIR)
 cleanO: 
-	@-rm -rf $(OBJ_DIR) $(GTK_DIR)
+	@-rm -rf $(OBJ_DIR) $(GTK_DIR) $(TEST_DIR)
 ######################################################################
 # Other targets
 

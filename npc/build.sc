@@ -1,3 +1,4 @@
+
 // import Mill dependency
 import mill._
 import mill.scalalib._
@@ -8,7 +9,7 @@ import mill.bsp._
 
 //object chiselModule extends ScalaModule with ScalafmtModule { m =>
 object playground extends ScalaModule with ScalafmtModule { m =>
-  override def scalaVersion = "2.12.13"
+  override def scalaVersion = "2.13.8"
   override def scalacOptions = Seq(
     "-Xsource:2.11",
     "-language:reflectiveCalls",
@@ -28,7 +29,41 @@ object playground extends ScalaModule with ScalafmtModule { m =>
   object test extends Tests with Utest {
     override def ivyDeps = m.ivyDeps() ++ Agg(
       ivy"com.lihaoyi::utest:0.7.10",
-      ivy"edu.berkeley.cs::chiseltest:0.3.3",
+      ivy"edu.berkeley.cs::chiseltest:0.5.2",
+      ivy"edu.berkeley.cs::chisel-iotesters:1.5.2",
     )
   }
 }
+/*
+// import Mill dependency
+import mill._
+import mill.define.Sources
+import mill.modules.Util
+import mill.scalalib.TestModule.ScalaTest
+import scalalib._
+// support BSP
+import mill.bsp._
+
+object playground extends SbtModule { m =>
+  override def millSourcePath = os.pwd
+  override def scalaVersion = "2.13.8"
+  override def scalacOptions = Seq(
+    "-language:reflectiveCalls",
+    "-deprecation",
+    "-feature",
+    "-Xcheckinit",
+    "-P:chiselplugin:genBundleElements"
+  )
+  override def ivyDeps = Agg(
+    ivy"edu.berkeley.cs::chisel3:3.5.3",
+  )
+  override def scalacPluginIvyDeps = Agg(
+    ivy"edu.berkeley.cs:::chisel3-plugin:3.5.3",
+  )
+  object test extends Tests with ScalaTest {
+    override def ivyDeps = m.ivyDeps() ++ Agg(
+      ivy"edu.berkeley.cs::chiseltest:0.5.1"
+    )
+  }
+}
+*/

@@ -40,6 +40,10 @@ object Elaborate extends App {
     println("--------Axi.v---------------- ")
     (new ChiselStage).execute(args, Seq(
       ChiselGeneratorAnnotation(() => new Axi())))
+  } else if (top == "Div") {
+    println("--------Div---------------- ")
+    (new ChiselStage).execute(args, Seq(
+      ChiselGeneratorAnnotation(() => new Div())))
   }
 //  (new chisel3.stage.ChiselStage).execute(args, Seq(chisel3.stage.ChiselGeneratorAnnotation(() => new Adder())))
 }
