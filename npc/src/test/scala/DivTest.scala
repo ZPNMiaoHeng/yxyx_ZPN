@@ -21,7 +21,11 @@ class DivTest extends FlatSpec with ChiselScalatestTester with
           c.io.in.isW.poke(0.U)
 //          c.io.in.isW.poke(1.U)
           c.io.in.validD.poke(true.B)
-          c.clock.step(67)
+          c.clock.step(30)
+//          c.io.in.flush(true.B)
+          c.clock.step(1)
+//          c.io.in.flush(false.B)
+          c.clock.step(37)
 
 //        c.io.out.outValid.expect(true.B)
 //          c.io.out.resH.expect(((a/b) & 0xffffffff).U)

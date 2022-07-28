@@ -6,7 +6,7 @@
 
 import chisel3._
 import chisel3.util._
-import chisel3.experimental.FlatIO
+//import chisel3.experimental.FlatIO
 
 import utils._
 
@@ -19,8 +19,8 @@ class MDIIO extends Bundle with divConstant {
   val data1 = Output(UInt(XLEN.W))
   val data2 = Output(UInt(XLEN.W))
   val isW = Output(Bool())
-//  val sign = Output(Bool())
-//  val flush = Output(Bool())
+  val sign = Output(Bool())
+  val flush = Output(Bool())
 
   val validD = Output(Bool())
 }
@@ -38,7 +38,16 @@ class Div extends Module with divConstant {
     val out =new MDOIO
   }) 
   val isW = io.in.isW
-  val (cnt, isN) = Counter(io.in.validD, 66)
+  // val (cnt, isN) = Counter(Range(0, 66), io.in.validD/*true.B*/, io.in.flush)                    // counter 0 to 66
+  // Counter state and control signals
+  val counter = Counter(66) 
+  val cnt = counter.value
+  val isN = cnt === 65.U
+  when(io.in.flush) {
+    counter.reset()
+  } .otherwise {
+    counter.inc()
+  }
   val divSignEn = cnt === 0.U
   val divShiftEn = Mux(isW, (cnt > 0.U && cnt < 33.U), // 32 bits shift
       (cnt > 0.U && cnt < 65.U))                       // 64 bits shift
@@ -48,20 +57,27 @@ class Div extends Module with divConstant {
   val aTmp = Wire(UInt(EXLEN.W))
   val b = RegInit(0.U((XLEN+1).W))
   val s = RegInit(0.U(XLEN.W))
+  //
+//  val data2Sign = Mux(io.in.sign io.in.data2(64), (~(io.in.data2)+ 1), io.in.data2 )
 
-  val dataA = Mux(isW, ZeroExt(io.in.data1, XLEN)
-    ,ZeroExt(io.in.data1, EXLEN))
+  val data1Sign = Mux(io.in.sign,
+      Mux(isW ,Mux(io.in.data1(32), (~(io.in.data1)+ 1), io.in.data1), Mux(io.in.data2(64), (~(io.in.data1)+1), io.in.data1)
+      ) ,io.in.data1 )
+//  && io.in.data1(64), (~(io.in.data1)+ 1), io.in.data1 )
+//  val data1Sign = Mux(io.in.sign && io.in.data1(64), (~(io.in.data1)+ 1), io.in.data1 )
+//  val data2Sign = Mux(io.in.sign && io.in.data2(64), (~(io.in.data2)+ 1), io.in.data2 )
+  val dataA = Mux(isW, ZeroExt(data1Sign, XLEN)
+    ,ZeroExt(data1Sign, EXLEN))
 
   a := Mux(divSignEn, dataA, 
         Mux(divShiftEn, aTmp << 1,0.U))
 
   b := Mux(isW, 
-    ZeroExt(io.in.data2, (WLEN + 1)),
-      ZeroExt(io.in.data2, (XLEN + 1)))
+    ZeroExt(data2Sign, (WLEN + 1)),
+      ZeroExt(data2Sign, (XLEN + 1)))
 
   val op1 = Mux(isW, a(63, 31), a(127, 63))
-
-  val subResEn = (op1 >= b) && (op1 =/= 0.U)//Mux(isW, op1W >= b, op1NoW >= b)   // 1: +
+  val subResEn = (op1 >= b) && (op1 =/= 0.U) //Mux(isW, op1W >= b, op1NoW >= b)   // 1: +
   val subRes = Mux(subResEn, (op1 - b), 0.U) 
   aTmp :=Mux(isW
     ,Mux(subResEn, Cat(subRes, a(30, 0)), a)
