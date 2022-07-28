@@ -65,7 +65,7 @@ milltest:
 	mill -i __.test
 test:
 	sbt "test:testOnly $(TEST) -- -DwriteVcd=1"
-testvcd:
+vcd:
 	$(call git_commit, "sim RTL")
 	@echo "-------------------------- Open TEST GTKwave ------------------------"
 	gtkwave -f $(shell find $(TEST_DIR)/ -name *.vcd)
