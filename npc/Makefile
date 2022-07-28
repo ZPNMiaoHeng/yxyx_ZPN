@@ -61,9 +61,9 @@ VERILATOR_FLAGS += -LDFLAGS -ldl \
 VERILATOR_FLAGS += -CFLAGS -I/usr/lib/llvm-12/include
 
 ######################## sbt compile ###############################
-
+milltest:
+	mill -i __.test
 test:
-#	mill -i __.test
 	sbt "test:testOnly $(TEST) -- -DwriteVcd=1"
 testvcd:
 	$(call git_commit, "sim RTL")
