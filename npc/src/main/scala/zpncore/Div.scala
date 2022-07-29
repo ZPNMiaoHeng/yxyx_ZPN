@@ -51,7 +51,7 @@ class Div extends Module with divConstant {
       (cnt > 0.U && cnt < 65.U))                       // 64 bits shift -> div
   val divWDoneEn = cnt === 33.U
   val divDoneEn = cnt === 65.U
-
+// -------------------------- signed --------------------------------------
   val a = RegInit(0.U(EXLEN.W))
   val aTmp = Wire(UInt(EXLEN.W))
   val b = RegInit(0.U((XLEN+1).W))
@@ -70,7 +70,7 @@ class Div extends Module with divConstant {
   val data2Sign = Mux(data2NegEn, ~(io.in.data2)+ 1.U, io.in.data2)
   val dataA = Mux(isW, ZeroExt(data1Sign, XLEN)
     ,ZeroExt(data1Sign, EXLEN))
-
+// ----------------------------------------------------------------
   a := Mux(divSignEn, dataA, 
         Mux(divShiftEn, aTmp << 1,0.U))
   b := Mux(isW, 
@@ -91,7 +91,6 @@ class Div extends Module with divConstant {
     Mux(divDoneEn, a(127, 64), 0.U))
   
   io.out.resH := Mux((data1NegEn ^ data2NegEn), ~s+ 1.U, s) //s
-
   io.out.resL := Mux(data1NegEn, ~resL+1.U, resL)
 /*  Mux(isW, 
     Mux(divWDoneEn, Mux(data1NegEn, ~a(63, 32)+ 1.U, 
