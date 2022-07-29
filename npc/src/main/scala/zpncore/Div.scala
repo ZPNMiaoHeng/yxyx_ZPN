@@ -92,6 +92,7 @@ class Div extends Module with divConstant {
   
   io.out.resH := Mux((data1NegEn ^ data2NegEn), ~s+ 1.U, s) //s
   io.out.resL := Mux(data1NegEn, ~resL+1.U, resL)
+  // 
 /*  Mux(isW, 
     Mux(divWDoneEn, Mux(data1NegEn, ~a(63, 32)+ 1.U, 
       a(63, 32)), 0.U), 
