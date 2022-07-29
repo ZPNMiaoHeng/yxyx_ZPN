@@ -1,18 +1,18 @@
 /**
-  * V 1.1.1
-  * LEN is 32 Unsigned div
-  *
+  * V 2.1.1 div
+  * signed negative is error
   */
-/*
+
 import chisel3._
 import chisel3.util._
-import chisel3.experimental.FlatIO
+//import chisel3.experimental.FlatIO
 
 import utils._
 
 trait divConstant {
-  val XLEN = 32
-  val EXLEN = 64
+  val WLEN = 32
+  val XLEN = 64
+  val EXLEN = 128
 }
 class MDIIO extends Bundle with divConstant {
   val data1 = Output(UInt(XLEN.W))
@@ -31,132 +31,74 @@ class MDOIO extends Bundle with divConstant {
   val readyD = Output(Bool())
 }
 
-/*
-class MDIO extends Bundle {
-  val in = Flipped(new MDIIO)
-  val out = new MDOIO
-}
-*/
 class Div extends Module with divConstant {
-//  val io = FlatIO(Decoupled(new MDIO))
-  val in = FlatIO(Flipped(new MDIIO))
-  val out = FlatIO(new MDOIO)
-
-//  out.resH := in.data1 + in.data2
-
-  val sDivIdle :: sDivSign :: sDivShif :: sDivDone :: Nil = Enum(4)
-  val state = RegInit(sDivIdle)
-  val cnt = Counter(34)
-
-  switch (state) {
-    is(sDivIdle) {
-      when(in.validD) {
-        state := sDivSign
-        cnt.inc()
-      }
-    }
-    is(sDivSign) {
-      state := sDivShif
-      cnt.inc()
-    }
-    is(sDivShif) {
-      when(cnt.value === 33.U) {
-        state := sDivDone
-        cnt.inc()
-      }
-    }
-    is(sDivDone) {
-      when(out.outValid) {
-        state := sDivIdle
-        cnt.inc()
-      }
-    }
-  }
-
-  val a = ZeroExt(in.data1, EXLEN)
-  val b = ZeroExt(in.data2, (XLEN + 1))
-  val s = out.resH   // quotient
-  val r = out.resL   // remainder
-
-  val aShit = Mux((cnt.value > 1.U && cnt.value < 34.U), a << 1.U, a)
-  val res = aShit(63, 31) - b
-  val st = Mux((res > 0.U), 1.U ,0.U)
-  s := Mux((cnt.value > 1.U && cnt.value < 34.U), st << 1.U, a)
-  r := Mux(cnt.value === 33.U, aShit(63, 31), 0.U)
-
-  out.readyD := Mux(cnt.value === 34.U, 1.U, 0.U)
-  out.outValid := out.readyD
-
-
-}
-*/
-
-import chisel3._
-import chisel3.util._
-import chisel3.experimental.FlatIO
-
-import utils._
-
-trait divConstant {
-  val XLEN = 32
-  val EXLEN = 64
-}
-class MDIIO extends Bundle with divConstant {
-  val data1 = Output(UInt(XLEN.W))
-  val data2 = Output(UInt(XLEN.W))
-//  val isW = Output(Bool())
-//  val sign = Output(Bool())
-//  val flush = Output(Bool())
-
-  val validD = Output(Bool())
-}
-
-class MDOIO extends Bundle with divConstant {
-  val outValid = Output(Bool())
-  val resH = Output(UInt(XLEN.W))
-  val resL = Output(UInt(XLEN.W))
-  val readyD = Output(Bool())
-}
-
-/*
-class MDIO extends Bundle {
-  val in = Flipped(new MDIIO)
-  val out = new MDOIO
-}
-*/
-class Div extends Module with divConstant {
-//  val io = FlatIO(Decoupled(new MDIO))
-//  val in = FlatIO(Flipped(new MDIIO))
-//  val out = FlatIO(new MDOIO)
   val io = IO(new Bundle {
     val in = Flipped(new MDIIO)
     val out =new MDOIO
   }) 
+  val isW = io.in.isW
+// val (cnt, isN) = Counter(Range(0, 66), io.in.validD, io.in.flush)   //  This is easy Counter
+  val counter = Counter(66)                            // Counter state and control signals, counter 0 to 66
+  val cnt = counter.value
+  when(io.in.flush) {                                  // flush-> counter reset
+    counter.reset()
+  } .otherwise {
+    counter.inc()
+  }
+  val divSignEn = cnt === 0.U
+  val divShiftEn = Mux(isW, (cnt > 0.U && cnt < 33.U), // 32 bits shift -> divW
+      (cnt > 0.U && cnt < 65.U))                       // 64 bits shift -> div
+  val divWDoneEn = cnt === 33.U
+  val divDoneEn = cnt === 65.U
 
-  val (cnt, isN) = Counter(io.in.validD, 34)
-  val at = RegInit(0.U(32.W))
   val a = RegInit(0.U(EXLEN.W))
+  val aTmp = Wire(UInt(EXLEN.W))
   val b = RegInit(0.U((XLEN+1).W))
-  val aShit = RegInit(0.U(EXLEN.W))
-  val subRes = RegInit(0.U(33.W))
   val s = RegInit(0.U(XLEN.W))
 
-  a := Mux(cnt === 0.U, ZeroExt(io.in.data1, EXLEN), at)
-  b := ZeroExt(io.in.data2, (XLEN + 1))
-//  val s = io.out.resH   // quotient
+  val data1NegEn = Mux(io.in.sign, Mux(isW ,
+    Mux(io.in.data1(31), true.B, false.B ), 
+    Mux(io.in.data1(63), true.B, false.B )),
+      false.B )
+  val data2NegEn = Mux(io.in.sign,Mux(isW ,
+    Mux(io.in.data2(31), true.B, false.B ), 
+    Mux(io.in.data2(63), true.B, false.B )),
+      false.B )
+  
+  val data1Sign = Mux(data1NegEn, ~(io.in.data1)+ 1.U, io.in.data1)
+  val data2Sign = Mux(data2NegEn, ~(io.in.data2)+ 1.U, io.in.data2)
+  val dataA = Mux(isW, ZeroExt(data1Sign, XLEN)
+    ,ZeroExt(data1Sign, EXLEN))
 
-  val aShitEn = (cnt > 0.U && cnt < 33.U)                       // 32 bits shift
-  aShit := Mux(aShitEn, a << 1, a)
-  val subResEn = (aShit(63, 31) > b)   // 1: +
+  a := Mux(divSignEn, dataA, 
+        Mux(divShiftEn, aTmp << 1,0.U))
+  b := Mux(isW, 
+    ZeroExt(data2Sign, (WLEN + 1)),
+      ZeroExt(data2Sign, (XLEN + 1)))
+
+  val op1 = Mux(isW, a(63, 31), a(127, 63))
+  val subResEn = (op1 >= b) && (op1 =/= 0.U)   // 1: +
+  val subRes = Mux(subResEn, (op1 - b), 0.U)
+  aTmp :=Mux(isW
+    ,Mux(subResEn, Cat(subRes, a(30, 0)), a)
+      ,Mux(subResEn, Cat(subRes, a(62, 0)), a))
+  s := Mux(divSignEn, subResEn,(
+        Mux(divShiftEn, ((s << 1) + subResEn), s)
+  ))
+  val resL = Mux(isW, 
+    Mux(divWDoneEn, a(63, 32), 0.U),
+    Mux(divDoneEn, a(127, 64), 0.U))
   
-  subRes := Mux(subResEn, (aShit(63, 31) - b), 0.U) 
-  at := Mux(subResEn, subRes ## a(32, 0), a)
-  val sBits = Mux(aShitEn, 31.U - cnt, 0.U)
-//  s(sBits) := subResEn
-  
-  io.out.resH := s
-  io.out.resL := Mux(isN, aShit(63, 31), 0.U)
-  io.out.readyD := Mux(isN, 1.U, 0.U)
+  io.out.resH := Mux((data1NegEn ^ data2NegEn), ~s+ 1.U, s) //s
+
+  io.out.resL := Mux(data1NegEn, ~resL+1.U, resL)
+/*  Mux(isW, 
+    Mux(divWDoneEn, Mux(data1NegEn, ~a(63, 32)+ 1.U, 
+      a(63, 32)), 0.U), 
+    Mux(divDoneEn, Mux(data1NegEn, ~a(127, 64)+ 1.U, 
+      a(127, 64), 0.U))
+  )*/
+  io.out.readyD := Mux(isW, Mux(divWDoneEn, 1.U, 0.U),
+    Mux(divDoneEn, 1.U, 0.U))
   io.out.outValid := io.out.readyD
-
 }

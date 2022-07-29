@@ -16,8 +16,11 @@ class DivTest extends FlatSpec with ChiselScalatestTester with
           //val b = "hffff"
           val b = /*"h10"*/randNum.nextInt(56)
           println(p"a = $a , b = $b")
-          c.io.in.data1.poke(a.U)
-          c.io.in.data2.poke(b.U)
+//          c.io.in.data1.poke(a.U)
+//          c.io.in.data2.poke(b.U)
+          c.io.in.data1.poke(-2.S)
+          c.io.in.data2.poke(1.S)
+          c.io.in.sign.poke(1.U)
           c.io.in.isW.poke(0.U)
 //          c.io.in.isW.poke(1.U)
           c.io.in.validD.poke(true.B)
@@ -25,12 +28,13 @@ class DivTest extends FlatSpec with ChiselScalatestTester with
 //          c.io.in.flush(true.B)
           c.clock.step(1)
 //          c.io.in.flush(false.B)
-          c.clock.step(37)
+          c.clock.step(34)
 
-//        c.io.out.outValid.expect(true.B)
-//          c.io.out.resH.expect(((a/b) & 0xffffffff).U)
-//          c.io.out.resL.expect(((a%b) & 0xffffffff).U)
-//        c.io.out.readyD.expect(true.B)
+          c.io.out.outValid.expect(true.B)
+          c.io.out.resH.expect(((a/b) /*& 0xffffffff*/).U)
+          c.io.out.resL.expect(((a%b) /*& 0xffffffff*/).U)
+          c.io.out.readyD.expect(true.B)
+//          c.io.Reset(ture.B)
 //      }
     }
   }
