@@ -48,6 +48,10 @@ object Elaborate extends App {
     println("--------Booth---------------- ")
     (new ChiselStage).execute(args, Seq(
       ChiselGeneratorAnnotation(() => new Booth())))
+  } else if (top == "Walloc") {
+    println("--------Walloc---------------- ")
+    (new ChiselStage).execute(args, Seq(
+      ChiselGeneratorAnnotation(() => new Walloc())))
   }
 //  (new chisel3.stage.ChiselStage).execute(args, Seq(chisel3.stage.ChiselGeneratorAnnotation(() => new Adder())))
 }
