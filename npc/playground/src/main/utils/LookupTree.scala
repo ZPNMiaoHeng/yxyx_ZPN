@@ -25,3 +25,11 @@ object LookupTreeDefault {
   def apply[T <: Data](key: UInt, default: T, mapping: Iterable[(UInt, T)]): T =
     MuxLookup(key, default, mapping.toSeq)
 }
+
+/**
+  *val shsrc1 = LookupTreeDefault(func, src1(XLEN-1,0), List(
+  *  ALUOpType.srlw -> ZeroExt(src1(31,0), XLEN),
+  *  ALUOpType.sraw -> SignExt(src1(31,0), XLEN)
+  *))
+  *
+  */

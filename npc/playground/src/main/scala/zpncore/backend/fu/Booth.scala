@@ -23,13 +23,15 @@ class Booth extends Module with MulConstant {
   })
   val y = io.in.y
   val x = io.in.x
+  val p = io.out.p
+  val c = io.out.c
 
   val selN  =  y(2) & (y(1) ^  y(0));
   val selP  = ~y(2) & (y(1) ^  y(0));
   val selDN =  y(2) & ~y(1) & ~y(0);
   val selDP = ~y(2) &  y(1) &  y(0);
   val sel = selN ## selP ## selDN ## selDP
-  val res = LookupTreeDefault(sel, 0.U, List(
+    val res = LookupTreeDefault(sel, 0.U, List(
     "b1000".U -> (~x + 1.U),
     "b0100".U -> (x),
     "b0010".U -> (~(x << 1.U) + 1.U),
