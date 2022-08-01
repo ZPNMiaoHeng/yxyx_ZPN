@@ -51,7 +51,13 @@ object Elaborate extends App {
   } else if (top == "Walloc") {
     println("--------Walloc---------------- ")
     (new ChiselStage).execute(args, Seq(
-      ChiselGeneratorAnnotation(() => new Walloc())))
+      ChiselGeneratorAnnotation(() => new Wallace())))
+  } else if (top == "Mul") {
+    println("--------Mul---------------- ")
+    (new ChiselStage).execute(args, Seq(
+      ChiselGeneratorAnnotation(() => new Mul())))
   }
+
+
 //  (new chisel3.stage.ChiselStage).execute(args, Seq(chisel3.stage.ChiselGeneratorAnnotation(() => new Adder())))
 }

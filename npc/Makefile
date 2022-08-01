@@ -64,7 +64,8 @@ VERILATOR_FLAGS += -CFLAGS -I/usr/lib/llvm-12/include
 milltest:
 	mill -i __.test
 test:
-	sbt "test:testOnly $(TEST) -- -DwriteVcd=1"
+	sbt "test:testOnly $(TEST) -- -DwriteVcd=1 "
+# --full-stacktrace"
 vcd:
 	$(call git_commit, "sim RTL")
 	@echo "-------------------------- Open TEST GTKwave ------------------------"
