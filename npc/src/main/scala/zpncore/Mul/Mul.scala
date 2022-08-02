@@ -57,18 +57,18 @@ class Mul(len: Int = 64) extends Module with mulConstant {
     val wallceIn = Wire(Vec(132, UInt(33.W)))                       // 声明含有 132个32.W 值为 0 的 vec
     val boothOutC = Wire(UInt(33.W))
 
-    for(j <- 0 until 132) {
+    for(i <- 0 until 132) {
       /* 将每一个booth中第 i 位拼接起来  */
-      val i = 131 - j 
+/*
       wallceIn(i) := booth(31).out.p(i) ## booth(30).out.p(i) ## booth(29).out.p(i) ## booth(28).out.p(i) ## booth(27).out.p(i) ## booth(26).out.p(i) ## booth(25).out.p(i) ## booth(24).out.p(i) ## booth(23).out.p(i) ## booth(22).out.p(i) ##
                      booth(21).out.p(i) ## booth(20).out.p(i) ## booth(19).out.p(i) ## booth(18).out.p(i) ## booth(17).out.p(i) ## booth(16).out.p(i) ## booth(15).out.p(i) ## booth(14).out.p(i) ## booth(13).out.p(i) ## booth(12).out.p(i) ##
                      booth(11).out.p(i) ## booth(10).out.p(i) ## booth(9 ).out.p(i) ## booth(8 ).out.p(i) ## booth(7 ).out.p(i) ## booth(6 ).out.p(i) ## booth(5 ).out.p(i) ## booth(4 ).out.p(i) ## booth(3 ).out.p(i) ## booth(2 ).out.p(i) ##
                      booth(1 ).out.p(i) ## booth(0 ).out.p(i)
- /*
-      wallceIn(i) := Reverse(Cat(Seq.tabulate(33){ j =>
-        booth(i).out.p(j)
-      }))
 */
+      wallceIn(i) := Reverse(Cat(Seq.tabulate(33){ j =>
+        booth(j).out.p(i)
+      }))
+
     }
 
     boothOutC := Reverse(Cat(Seq.tabulate(32){ i =>
@@ -90,7 +90,7 @@ class Mul(len: Int = 64) extends Module with mulConstant {
     val adderCTmp = Cat(Seq.tabulate(131){ i => 
       wallace(i).out.cOut
     })
-    val adderResC = Reverse(Cat(adderCTmp, boothOutC(31)))
+    val adderResC = Reverse(Cat(adderCTmp, boothOutC(31))) ## 0.U(1.W)
     val adderResS = Reverse(Cat(Seq.tabulate(132){ i =>
       wallace(i).out.s
     }))
