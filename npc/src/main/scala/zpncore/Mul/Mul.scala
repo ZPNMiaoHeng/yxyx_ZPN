@@ -3,11 +3,8 @@ import chisel3.util._
 import utils._
 
 trait mulConstant {
-  val WLEN = 32
   val XLEN = 64
-  val EXLEN = 128
-  val MulASConstant = 132
-  val MulSConstant = 66
+//  val EXLEN = 128
 }
 
 class MulDivIO(val len: Int) extends Bundle {
@@ -20,11 +17,11 @@ class MulDivIO(val len: Int) extends Bundle {
 
   val in = Flipped(DecoupledIO(Vec(2, Output(UInt(len.W)))))
 
-//  val isW = Output(Bool())
-//  val sign = Output(UInt(2.W))       //(Bool())    2'b11 -> sign
-//  val flush = Output(Bool())
+  val isW = Input(Bool())
+  val sign = Input(UInt(2.W))       //(Bool())    2'b11 -> sign
+//  val flush = Input(Bool())
 
-  val out = DecoupledIO(Output(UInt((len * 2).W)))   // io.out.ready == DontCare
+  val out = DecoupledIO(Output(Vec(2, UInt(len.W))))   // io.out.ready == DontCare
 /** =>
   val outValid = Output(Bool())
   val resH = Output(UInt(XLEN.W))
@@ -43,41 +40,42 @@ class Mul(len: Int = 64) extends Module with mulConstant {
     when (io.out.valid) {busy := false.B }
     io.in.ready := (if (latency == 0) true.B else !busy)
 
-    val op1 = ZeroExt(io.in.bits(0), MulSConstant) ## 0.U(1.W)     // op1 is 67bits, op2 is 132bits 
-    val op2 = ZeroExt(io.in.bits(1), MulASConstant)
+    val multiplecand = Mux(io.sign(0),                            // 被乘数:1->sign;
+         Mux(io.isW,  SignExt(io.in.bits(0), len + 4), SignExt(io.in.bits(0), 2 * len +4)),
+         Mux(io.isW,  ZeroExt(io.in.bits(0), len + 4), ZeroExt(io.in.bits(0), 2 * len +4))
+    )
+    val multiplier = Mux(io.sign(1),                              // 乘数
+      Mux(io.isW, SignExt(io.in.bits(1), len / 2 + 2) ## 0.U(1.W) ,SignExt(io.in.bits(1), len + 2) ## 0.U(1.W)),
+      Mux(io.isW, ZeroExt(io.in.bits(1), len / 2 + 2) ## 0.U(1.W) ,ZeroExt(io.in.bits(1), len + 2) ## 0.U(1.W))
+    )
 
-    val booth = VecInit(Seq.fill(33) (Module(new Booth).io))       // 实例化: 33 * Booth
+    val booth = VecInit(Seq.fill(33) (Module(new Booth).io))       // 实例化: 33 * Booth; 32位乘法只使用其中17个模块
+    
     for(i <- 0 until 33) {
         for(j <- 0 until 3) {
-            booth(i).in.y(j) := op1(2*i + j)    
+            booth(i).in.y(j) := multiplier(2 * i + j)    
         }
-        booth(i).in.x := op2 << 2*i
+        booth(i).in.x := multiplecand << 2 * i
     }
+
 //--------------------------- Switch -------------------------------------
     val wallceIn = Wire(Vec(132, UInt(33.W)))                       // 声明含有 132个32.W 值为 0 的 vec
     val boothOutC = Wire(UInt(33.W))
 
     for(i <- 0 until 132) {
       /* 将每一个booth中第 i 位拼接起来  */
-/*
-      wallceIn(i) := booth(31).out.p(i) ## booth(30).out.p(i) ## booth(29).out.p(i) ## booth(28).out.p(i) ## booth(27).out.p(i) ## booth(26).out.p(i) ## booth(25).out.p(i) ## booth(24).out.p(i) ## booth(23).out.p(i) ## booth(22).out.p(i) ##
-                     booth(21).out.p(i) ## booth(20).out.p(i) ## booth(19).out.p(i) ## booth(18).out.p(i) ## booth(17).out.p(i) ## booth(16).out.p(i) ## booth(15).out.p(i) ## booth(14).out.p(i) ## booth(13).out.p(i) ## booth(12).out.p(i) ##
-                     booth(11).out.p(i) ## booth(10).out.p(i) ## booth(9 ).out.p(i) ## booth(8 ).out.p(i) ## booth(7 ).out.p(i) ## booth(6 ).out.p(i) ## booth(5 ).out.p(i) ## booth(4 ).out.p(i) ## booth(3 ).out.p(i) ## booth(2 ).out.p(i) ##
-                     booth(1 ).out.p(i) ## booth(0 ).out.p(i)
-*/
-      wallceIn(i) := Reverse(Cat(Seq.tabulate(33){ j =>
+      wallceIn(i) := Reverse(Cat(Seq.tabulate(33) { j =>
         booth(j).out.p(i)
       }))
-
     }
 
-    boothOutC := Reverse(Cat(Seq.tabulate(32){ i =>
+    boothOutC := Reverse(Cat(Seq.tabulate(32) { i =>
       booth(i).out.c
     }))
 
 // --------------------------- Wallace Trees -------------------------------------
     /* 实例化 132个华莱士树 */
-    val wallace = VecInit(Seq.fill(MulASConstant) (Module(new Wallace).io))
+    val wallace = VecInit(Seq.fill(2 * len +4) (Module(new Wallace).io))
     for(i <- 0 until 132) {
       wallace(i).in.srcIn := wallceIn(i)
        if(i == 0) {
@@ -96,10 +94,8 @@ class Mul(len: Int = 64) extends Module with mulConstant {
     }))
 
 //--------------------------   Adder --------------------------------------
-//    val resMul = ioAdderRes(0) + ioAdderRes(1) + boothOutC(32)
     val resMul = adderResC + adderResS + boothOutC(32)
-    io.out.bits := resMul(127, 0)  
-//    io.out.bits(0) := resMul(63, 0)
-//    io.out.bits(1) := resMul(128, 64) 
+    io.out.bits(0) := Mux(io.isW, resMul(31, 0 ), resMul(63 , 0))
+    io.out.bits(1) := Mux(io.isW, resMul(63, 32), resMul(127, 64))
     io.out.valid := true.B
 }
