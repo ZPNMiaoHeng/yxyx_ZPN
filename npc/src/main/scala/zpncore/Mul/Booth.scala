@@ -29,12 +29,13 @@ class Booth extends Module with MulConstant {
   val selDN =  y(2) & ~y(1) & ~y(0);
   val selDP = ~y(2) &  y(1) &  y(0);
   val sel = selN ## selP ## selDN ## selDP
+  
   val res = LookupTreeDefault(sel, 0.U, List(
-    "b1000".U -> (~x + 1.U),
+    "b1000".U -> (~x),                             //(~x + 1.U),
     "b0100".U -> (x),
-    "b0010".U -> (~(x << 1.U) + 1.U),
+    "b0010".U -> (~(x << 1.U)),                    //(~(x << 1.U) + 1.U),
     "b0001".U -> (x << 1.U)
   ))
   io.out.p := res(BoothWidth-1, 0)
-  io.out.c := res(BoothWidth)
+  io.out.c := Mux(sel === "b1000".U | sel === "b0010".U, 1.U, 0.U)
 }

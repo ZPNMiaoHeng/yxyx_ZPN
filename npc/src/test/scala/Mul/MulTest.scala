@@ -11,18 +11,15 @@ class MulTest extends FlatSpec with ChiselScalatestTester with
       // test body here
       val randNum = new Random
 //        for (i <- 0 until 10) {
-          //val a = "hffff_ffff"
 //          val a = /*"hdc"*/randNum.nextInt(256)
-          //val b = "hffff"
 //          val b = /*"h10"*/randNum.nextInt(56)
 //          println(p"a = $a , b = $b")
 //          c.io.in.data1.poke(a.U)
 //          c.io.in.data2.poke(b.U)
           c.io.in.valid.poke(true.B)
-          c.io.in.bits(0).poke(1.U)
-          c.io.in.bits(1).poke(1.U)
+          c.io.in.bits(0).poke(2.U)
+          c.io.in.bits(1).poke(3.U)
 //          c.io.in.sign.poke(1.U)
-//          c.io.in.isW.poke(0.U)
 //          c.io.in.isW.poke(1.U)
           c.clock.step(5)
 //          c.io.in.flush(false.B)
