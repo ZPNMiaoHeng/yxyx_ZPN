@@ -31,7 +31,6 @@ class Decode extends Module {
     val imm        = Module(new ImmGen)
     val con        = Module(new ContrGen)
     val nextpc     = Module(new NextPC)
-    val branchCond = Module(new BranchCond)
 
     regs.io.clk         := clock
     regs.io.reset       := reset
@@ -51,12 +50,10 @@ class Decode extends Module {
     nextpc.io.PC     := io.PC
     nextpc.io.Imm    := imm.io.Imm
     nextpc.io.Rs1    := regs.io.RData1
-    nextpc.io.PCAsrc := branchCond.io.PCAsrc
-    nextpc.io.PCBsrc := branchCond.io.PCBsrc
     
-    branchCond.io.Branch := con.io.Branch
-    branchCond.io.Less   := io.Less
-    branchCond.io.Zero   := io.Zero
+    nextpc.io.Branch := con.io.Branch
+    nextpc.io.Less   := io.Less
+    nextpc.io.Zero   := io.Zero
 
     val Asrc  = Mux(con.io.ALUAsrc === 0.U, regs.io.RData1, io.PC)                                                   //op1R
     val Bsrc  = MuxLookup(con.io.ALUBsrc, 0.U, Array(

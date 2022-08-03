@@ -1,5 +1,6 @@
 import chisel3._
 import chisel3.util._
+import utils._
 /**
   * Branch -> nextPC
   *
@@ -9,20 +10,28 @@ class NextPC extends Module {
     val PC     = Input(UInt(32.W))
     val Imm    = Input(UInt(64.W))
     val Rs1    = Input(UInt(64.W))
-    val PCAsrc = Input(UInt(1.W))
-    val PCBsrc = Input(UInt(1.W))
+
+    val Branch = Input(UInt(3.W))
+    val Less   = Input(UInt(1.W))
+    val Zero   = Input(UInt(1.W))
 
     val NextPC = Output(UInt(32.W))
   })
 
-//  val PCsrc  = Wire(UInt(2.W))
-  /* 通过译码得到Branch信号 -----> PCsrc信号（控制PC与 4/imm 操作） */
-/*
-  PCsrc := MuxCase("b00".U, Array(                                                      // 默认：PC + 4
-    (io.Branch === "b001".U) -> "b10".U,                                                // 无条件跳转PC目标: PC + imm
-    (io.Branch === "b010".U) -> "b11".U                                                 // 无条件跳转寄存器目标: rs1 + imm 
+  val less = Mux(io.Branch === "b111".U, ~io.Less, io.Less)
+
+  val PCsrc = MuxCase("b01".U, Array(
+    (io.Branch === "b000".U || (io.Branch ## io.Zero === "b1000".U) || (io.Branch ## io.Zero === "b1011".U) ||
+        (io.Branch ## less === "b1100".U) || (io.Branch ## less === "b1110".U)) -> "b00".U,                       // PC + 4
+    (io.Branch === "b001".U || (io.Branch ## io.Zero === "b1001".U) ||(io.Branch ## io.Zero === "b1010".U) ||
+        (io.Branch ## less === "b1101".U) || (io.Branch ## less === "b1111".U)) -> "b10".U,                       // PC  + imm
+    (io.Branch === "b010".U)                                                    -> "b11".U                        // rs1 + imm
   ))
-  */
-  io.NextPC := Mux(io.PCAsrc === 0.U, 4.U, io.Imm) + Mux(io.PCBsrc === 0.U, io.PC, io.Rs1)
+
+  io.NextPC := LookupTreeDefault(PCsrc, "h8000_0000".U, List(
+    "b00".U -> (io.PC +  4.U   ),
+    "b10".U -> (io.PC + io.Imm ),
+    "b11".U -> (io.Rs1 + io.Imm)
+  ))
   
 }
