@@ -36,11 +36,12 @@ object Elaborate extends App {
     println("------------------- Fetch.v---------------- ")
     (new ChiselStage).execute(args, Seq(
       ChiselGeneratorAnnotation(() => new Fetch())))
-  } else if(top == "Axi") {
+  } /*
+    else if(top == "Axi") {
     println("--------Axi.v---------------- ")
     (new ChiselStage).execute(args, Seq(
       ChiselGeneratorAnnotation(() => new Axi())))
-  } else if (top == "Div") {
+  }*/ else if (top == "Div") {
     println("--------Div---------------- ")
     (new ChiselStage).execute(args, Seq(
       ChiselGeneratorAnnotation(() => new Div())))

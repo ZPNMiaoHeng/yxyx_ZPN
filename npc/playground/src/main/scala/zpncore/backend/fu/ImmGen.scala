@@ -12,10 +12,7 @@ class ImmGen extends Module {
 
     val Imm   = Output(UInt(64.W))
   })
-  /*
-  switch(io.ExtOp) {
-    is(0.U) {io.imm := Fill(52, io.inst(31)) ## io.inst(31,20)}
-  }*/
+
   val immType = Wire(Vec(5, UInt(64.W)))
 
   immType(0.U) := Fill(52, io.Inst(31)) ## io.Inst(31,20)                                                                     // I

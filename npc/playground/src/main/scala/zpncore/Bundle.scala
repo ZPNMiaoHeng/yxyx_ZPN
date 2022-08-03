@@ -2,22 +2,32 @@ import chisel3._
 import chisel3.util._
 
 import Constant._
-/* Inst */
-class INSTIO extends ZpnCoreBundle {
-  val inst_valid  = Output(Bool())
-  val inst_ready  = Input(Bool())
-  val inst_addr   = Output(UInt(AxiAddrWidth.W))   
-  val inst_size   = Output(UInt(8.W))                                 // ???
+/* 可以采用DecoupledIO 添加握手信号  */
+
+class DataDA extends Bundle {
+  val ALUAsrc = Output(UInt(1.W))
+  val ALUBsrc = Output(UInt(2.W))
+  val RData1 = Output(UInt(64.W))
+  val RData2 = Output(UInt(64.W))
+  val imm = Output(UInt(64.W))
+//  val PC = Output(UInt(64.W))
 }
 
-class AxiInst extends INSTIO {
-  val inst_read   = Input(UInt(RW_DATA_WIDTH.W))
+class InstIO extends ZpnCoreBundle {
+//  val inst_valid  = Output(Bool())
+//  val inst_ready  = Input(Bool())
+  val instAddr   = Output(UInt(AxiAddrWidth.W))   
+  val instSize   = Output(UInt(2.W))                                 // ???
 }
-/*
-class CoreInst extends INSTIO {
-  val inst_read   = Input(UInt(32.W))
+
+class AxiInst extends InstIO {
+  val instRead   = Input(UInt(RW_DATA_WIDTH.W))
 }
-*/
+
+class CoreInst extends InstIO {
+  val instRead   = Input(UInt(32.W))
+}
+
 
 /* Data */
 

@@ -16,6 +16,7 @@ class riscv64Top extends Module {
     val decode  = Module(new Decode)
     val alu     = Module(new ALU)
     val dataMem = Module(new DataMem)
+    val nextpc  = Module(new NextPC)
 /**    
 *!  val axi     = Module(new Axi)
 *!  io.out.r <> axi.out.r
@@ -39,12 +40,10 @@ class riscv64Top extends Module {
     decode.io.Inst  := fetch.io.Inst
     decode.io.PC    := pc
     decode.io.WData := WData
-    decode.io.Less  := alu.io.Less
-    decode.io.Zero  := alu.io.Zero
+    decode.io.dataDA <> alu.io.dataAD
 
+    alu.io.PC := pc
     alu.io.ALUCtr := decode.io.ALUCtr
-    alu.io.Asrc   := decode.io.Asrc
-    alu.io.Bsrc   := decode.io.Bsrc
     alu.io.MemtoReg := decode.io.MemtoReg
 
     dataMem.io.Addr   := alu.io.Result
@@ -53,5 +52,13 @@ class riscv64Top extends Module {
     dataMem.io.MemWr  := decode.io.MemWr
     dataMem.io.MemtoReg := decode.io.MemtoReg
 
-    nextPC := decode.io.NextPC
+    nextpc.io.PC     := pc
+    nextpc.io.Imm    := decode.io.dataDA.imm
+    nextpc.io.Rs1    := decode.io.dataDA.RData1
+    
+    nextpc.io.Branch := decode.io.Branch
+    nextpc.io.Less   := alu.io.Less
+    nextpc.io.Zero   := alu.io.Zero
+
+    nextPC := nextpc.io.NextPC
 }

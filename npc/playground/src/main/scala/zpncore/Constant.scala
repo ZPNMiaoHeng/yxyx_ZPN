@@ -10,13 +10,18 @@ trait Constant {
   val RW_DATA_WIDTH = 64
   val PCWidth = 64
   val InstWidth = 64
+
+  val SIZE_B  = "b00".U
+  val SIZE_H  = "b01".U
+  val SIZE_W  = "b10".U
+  val SIZE_D  = "b11".U
 }
 
 trait AxiParameters {
   val RwDataWidth = 64
   val RwAddrWidth = 32
   val AxiDataWidth = 64
-  val AxiAddrWidth = 64//32
+  val AxiAddrWidth = 64
   val AxiIdWidth = 4
   val AxiStrbWidth = AxiDataWidth / 8
   val AxiUserWidth = 1

@@ -35,14 +35,14 @@ class ContrGen extends Module {
   val typeU       = instLui || instAuipc
 // I type inst 21
   val instAddi    = inst === ADDI
-  val instAndi    = inst === ANDI                   // 0.B // Mux("b111_00100".U === instOF, true.B, false.B)
-  val instXori    = inst === XORI                   // 0.B // Mux("b100_00100".U === instOF, true.B, false.B)
-  val instOri     = inst === ORI                    // 0.B // Mux("b110_00100".U === instOF, true.B, false.B)
-  val instSlli    = inst === SLLI                   // 0.B // Mux("b001_00100".U === instOF && 0.U === io.inst(30), true.B, false.B)
-  val instSrli    = inst === SRLI                   // 0.B // Mux("b101_00100".U === instOF && 0.U === io.inst(30), true.B, false.B)
-  val instSrai    = inst === SRAI                   // 0.B // Mux("b101_00100".U === instOF && 1.U === io.inst(30), true.B, false.B)
-  val instSlti    = inst === SLTI                   // 0.B // Mux("b010_00100".U === instOF, true.B, false.B)
-  val instSltiu   = inst === SLTIU                  // 0.B // Mux("b011_00100".U === instOF, true.B, false.B)
+  val instAndi    = inst === ANDI 
+  val instXori    = inst === XORI 
+  val instOri     = inst === ORI  
+  val instSlli    = inst === SLLI
+  val instSrli    = inst === SRLI
+  val instSrai    = inst === SRAI
+  val instSlti    = inst === SLTI 
+  val instSltiu   = inst === SLTIU
   val instAddiw   = inst === ADDIW           
   val instSlliw   = inst === SLLIW                   // 0.B //Mux("b001_00110".U === instOF && 0.U === io.inst(30), true.B, false.B)
   val instSrliw   = inst === SRLIW                   // 0.B // Mux("b101_00110".U === instOF && 0.U === io.inst(30), true.B, false.B)
