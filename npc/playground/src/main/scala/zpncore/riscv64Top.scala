@@ -23,10 +23,10 @@ class riscv64Top extends Module {
 *!  io.out.ar <> axi.out.ar
 *!  axi.in1 <> fetch.axi
 */
-    val MemtoReg = decode.io.MemtoReg
+    val MemtoReg = decode.memCtr.MemtoReg
     val InstResW = (Fill(32,alu.io.Result(31)) ## alu.io.Result(31, 0))
     
-    val WData = MuxCase(0.U, Array(
+    val WData = MuxCase(0.U, List(
         (MemtoReg === "b00".U) -> alu.io.Result,
         (MemtoReg === "b01".U) -> dataMem.io.DataOut,
         (MemtoReg === "b10".U) -> InstResW
@@ -40,21 +40,22 @@ class riscv64Top extends Module {
     decode.io.Inst  := fetch.io.Inst
     decode.io.PC    := pc
     decode.io.WData := WData
-    decode.io.dataDA <> alu.io.dataAD
 
     alu.io.PC := pc
-    alu.io.ALUCtr := decode.io.ALUCtr
-    alu.io.MemtoReg := decode.io.MemtoReg
+    alu.aluIO <> decode.aluIO
+    alu.io.MemtoReg := decode.memCtr.MemtoReg
 
     dataMem.io.Addr   := alu.io.Result
-    dataMem.io.MemOP  := decode.io.MemOP
-    dataMem.io.DataIn := decode.io.DataIn
-    dataMem.io.MemWr  := decode.io.MemWr
-    dataMem.io.MemtoReg := decode.io.MemtoReg
+    dataMem.io.DataIn := decode.aluIO.data.rData2
+    
+    dataMem.io.MemOP  := decode.memCtr.MemOP
+    dataMem.io.MemWr  := decode.memCtr.MemWr
+    dataMem.io.MemtoReg := decode.memCtr.MemtoReg
+//    dataMem.io.memCtr <> decode.memCtr
 
     nextpc.io.PC     := pc
-    nextpc.io.Imm    := decode.io.dataDA.imm
-    nextpc.io.Rs1    := decode.io.dataDA.RData1
+    nextpc.io.Imm    := decode.aluIO.data.imm
+    nextpc.io.Rs1    := decode.aluIO.data.rData1
     
     nextpc.io.Branch := decode.io.Branch
     nextpc.io.Less   := alu.io.Less

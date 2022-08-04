@@ -4,13 +4,27 @@ import chisel3.util._
 import Constant._
 /* 可以采用DecoupledIO 添加握手信号  */
 
-class DataDA extends Bundle {
-  val ALUAsrc = Output(UInt(1.W))
-  val ALUBsrc = Output(UInt(2.W))
-  val RData1 = Output(UInt(64.W))
-  val RData2 = Output(UInt(64.W))
+class AluCtr extends Bundle {
+  val aluA = Output(UInt(1.W))
+  val aluB = Output(UInt(2.W))
+  val aluOp = Output(UInt(4.W))
+}
+
+class MemCtr extends Bundle {
+  val MemtoReg = Output(UInt(2.W))
+  val MemWr = Output(UInt(1.W))
+  val MemOP = Output(UInt(3.W))
+}
+
+class DataSrcIO extends Bundle {
+  val rData1 = Output(UInt(64.W))
+  val rData2 = Output(UInt(64.W))
   val imm = Output(UInt(64.W))
-//  val PC = Output(UInt(64.W))
+}
+
+class AluIO extends Bundle {
+  val ctrl = new AluCtr
+  val data = new DataSrcIO
 }
 
 class InstIO extends ZpnCoreBundle {

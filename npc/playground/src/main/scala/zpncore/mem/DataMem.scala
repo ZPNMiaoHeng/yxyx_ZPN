@@ -5,11 +5,13 @@ import chisel3.util.HasBlackBoxInline
 class DataMem extends BlackBox with HasBlackBoxInline {
   val io = IO(new Bundle {
     val Addr    = Input(UInt(64.W))
-    val MemOP   = Input(UInt(3.W))
     val DataIn  = Input(UInt(64.W))
+    
+    val MemOP   = Input(UInt(3.W))
     val MemWr   = Input(UInt(1.W))
     val MemtoReg= Input(UInt(2.W))
-
+  
+//    val memCtr = Flipped(new MemCtr)
     val DataOut = Output(UInt(64.W))
   })
 //  io.DataOut := io.DataIn

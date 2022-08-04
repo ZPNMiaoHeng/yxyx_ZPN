@@ -1,40 +1,34 @@
 import chisel3._ 
 import chisel3.util._
+import chisel3.experimental.FlatIO
 /**
  * Execute operate include add/sub/Slt/Sltu/Xor/Or/And/Sll/Srl/Sra
  * Improve: 1. Add module improve;  2. Shifter Module
  * Module improve: Sub->Add module
  */
 
-    class ALU extends Module {
-        val io = IO(new Bundle {
-            val ALUCtr = Input(UInt(4.W))
+ class ALU extends Module {
+     val io = IO(new Bundle {
+         val MemtoReg = Input(UInt(2.W))
+         val PC = Input(UInt(64.W))
 
-            val MemtoReg = Input(UInt(2.W))
+         val Result = Output(UInt(64.W))
+         val Less   = Output(UInt(1.W))
+         val Zero   = Output(UInt(1.W))
+     })
+    val aluIO = FlatIO(Flipped(new AluIO))
 
-            val dataAD = Flipped(new DataDA)
-            val PC = Input(UInt(64.W))
-
-            val Result = Output(UInt(64.W))
-            val Less   = Output(UInt(1.W))
-            val Zero   = Output(UInt(1.W))
-        })
-
-    val Asrc  = Mux(io.dataAD.ALUAsrc === 0.U, io.dataAD.RData1, io.PC)                                                   //op1R
-    val Bsrc  = MuxLookup(io.dataAD.ALUBsrc, 0.U, List(
-      "b00".U -> io.dataAD.RData2,
-      "b01".U -> io.dataAD.imm,
+    val Asrc  = Mux(aluIO.ctrl.aluA === 0.U, aluIO.data.rData1, io.PC)                           //op1R
+    val in1 = Mux(io.MemtoReg(1), (Mux(aluIO.ctrl.aluOp === "b1101".U, 
+      Cat(Fill(32, Asrc(31)), Asrc(31, 0)), Cat(Fill(32, 0.U), Asrc(31, 0)))),
+        Asrc)
+    val in2  = MuxLookup(aluIO.ctrl.aluB, 0.U, List(
+      "b00".U -> aluIO.data.rData2,
+      "b01".U -> aluIO.data.imm,
       "b10".U -> 4.U,
       "b11".U -> 0.U))                                                                                              //op2R
 
-    val aSrcT = Mux(io.MemtoReg(1), (Mux(io.ALUCtr === "b1101".U, 
-      Cat(Fill(32, Asrc(31)), Asrc(31, 0)), Cat(Fill(32, 0.U), Asrc(31, 0)))),
-        Asrc)
-
-    val in1 = aSrcT
-    val in2 = Bsrc
-
-    val shamt = Mux(io.MemtoReg(1), Bsrc(4, 0).asUInt(), Bsrc(5, 0))
+    val shamt = Mux(io.MemtoReg(1), in2(4, 0).asUInt(), in2(5, 0))
   
       val addRes = (in1 + in2).asUInt()
       val subRes = (in1 - in2).asUInt()
@@ -52,7 +46,7 @@ import chisel3.util._
       val divRes   = (in1 / in2).asUInt
       val mulRes   = (in1 * in2).asUInt
 
-      val aluResult = MuxLookup(io.ALUCtr, 0.U, 
+      val aluResult = MuxLookup(aluIO.ctrl.aluOp, 0.U, 
        List(
        ("b0000".U) -> addRes,
        ("b1000".U) -> subRes,
@@ -76,7 +70,7 @@ import chisel3.util._
        
        ("b0111".U) -> andRes))
 
-    val less = Mux(io.ALUCtr(3) === 1.U, sLTURes, sLTRes)
+    val less = Mux(aluIO.ctrl.aluOp(3) === 1.U, sLTURes, sLTRes)
     io.Less := less
     io.Zero := (aluResult === 0.U)
     io.Result := Mux(io.MemtoReg(1) === 1.U, Cat(Fill(32, aluResult(31)), aluResult(31, 0)), aluResult)
