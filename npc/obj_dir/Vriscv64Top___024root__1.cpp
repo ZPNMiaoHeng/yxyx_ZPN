@@ -1413,7 +1413,7 @@ VL_INLINE_OPT void Vriscv64Top___024root___combo__TOP__6(Vriscv64Top___024root* 
     riscv64Top__DOT__alu__DOT___in2_T_3 = ((2U == (IData)(vlSelf->riscv64Top__DOT__decode__DOT__con_io_aluCtr_aluB))
                                             ? 4ULL : 
                                            ((1U == (IData)(vlSelf->riscv64Top__DOT__decode__DOT__con_io_aluCtr_aluB))
-                                             ? vlSelf->riscv64Top__DOT__decode__DOT__imm_io_Imm
+                                             ? vlSelf->riscv64Top__DOT__decode__DOT__imm_io_imm
                                              : vlSelf->riscv64Top__DOT__decode__DOT__regs_RData2));
     if ((1U & ((IData)(vlSelf->riscv64Top__DOT__alu__DOT__Asrc) 
                ^ (IData)(vlSelf->riscv64Top__DOT__alu__DOT____Vtogcov__Asrc)))) {
@@ -13236,10 +13236,10 @@ VL_INLINE_OPT void Vriscv64Top___024root___combo__TOP__6(Vriscv64Top___024root* 
     vlSelf->riscv64Top__DOT__nextpc__DOT___io_NextPC_T_11 
         = ((3U == (IData)(vlSelf->riscv64Top__DOT__nextpc__DOT__PCsrc))
             ? (vlSelf->riscv64Top__DOT__decode__DOT__regs_RData1 
-               + vlSelf->riscv64Top__DOT__decode__DOT__imm_io_Imm)
+               + vlSelf->riscv64Top__DOT__decode__DOT__imm_io_imm)
             : ((2U == (IData)(vlSelf->riscv64Top__DOT__nextpc__DOT__PCsrc))
                 ? ((QData)((IData)(vlSelf->io_pc_PC)) 
-                   + vlSelf->riscv64Top__DOT__decode__DOT__imm_io_Imm)
+                   + vlSelf->riscv64Top__DOT__decode__DOT__imm_io_imm)
                 : (QData)((IData)(((0U == (IData)(vlSelf->riscv64Top__DOT__nextpc__DOT__PCsrc))
                                     ? ((IData)(4U) 
                                        + (IData)(vlSelf->io_pc_PC))

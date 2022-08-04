@@ -36,9 +36,8 @@ class Decode extends Module {
     regs.io.RegWr    := con.io.RegWr
     regs.io.WData    := io.WData
 
-    imm.io.Inst    := io.Inst
-    imm.io.ExtOp   := con.io.ExtOp
-    
+    imm.io.inst    := io.Inst
+    imm.io.immOp   := con.io.immOp
     con.io.inst    := io.Inst
 
     io.Branch   := con.io.Branch
@@ -47,5 +46,5 @@ class Decode extends Module {
     aluIO.ctrl <> con.io.aluCtr
     aluIO.data.rData1 := regs.io.RData1
     aluIO.data.rData2 := regs.io.RData2
-    aluIO.data.imm := imm.io.Imm
+    aluIO.data.imm := imm.io.imm
 }

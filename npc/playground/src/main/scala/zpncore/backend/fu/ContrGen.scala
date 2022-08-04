@@ -21,7 +21,7 @@ class ContrGen extends Module {
     val RegWr    = Output(UInt(1.W))
     val wAddr    = Output(UInt(5.W))
 
-    val ExtOp    = Output(UInt(3.W))
+    val immOp    = Output(UInt(3.W))
     val memCtr = new MemCtr
   })
 
@@ -171,7 +171,7 @@ class ContrGen extends Module {
   io.RegWr    := wRegEn
   io.wAddr    := Mux(wRegEn, inst(11, 7), 0.U)
 
-  io.ExtOp := MuxCase("b111".U, List(
+  io.immOp := MuxCase("b111".U, List(
           (instAddi || instAddiw  || instSlti || instSltiu || instXori || instOri || instAndi || instSlli || instSlliw ||
               instSrli || instSrliw || instSrai || instSraiw || instJalr || instLb || instLh || instLw || instLd || instLbu || instLhu ) -> "b000".U,                        // I Type
           (instAuipc || instLui)  -> "b001".U,                             // U Type

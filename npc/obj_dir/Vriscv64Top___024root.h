@@ -39,7 +39,7 @@ VL_MODULE(Vriscv64Top___024root) {
         CData/*4:0*/ riscv64Top__DOT__decode__DOT__con_io_rAddr1;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT__con_io_RegWr;
         CData/*4:0*/ riscv64Top__DOT__decode__DOT__con_io_wAddr;
-        CData/*2:0*/ riscv64Top__DOT__decode__DOT__con_io_ExtOp;
+        CData/*2:0*/ riscv64Top__DOT__decode__DOT__con_io_immOp;
         CData/*1:0*/ riscv64Top__DOT__decode__DOT__con_io_memCtr_MemtoReg;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT__con_io_memCtr_MemWr;
         CData/*2:0*/ riscv64Top__DOT__decode__DOT__con_io_memCtr_MemOP;
@@ -82,7 +82,7 @@ VL_MODULE(Vriscv64Top___024root) {
         QData/*63:0*/ riscv64Top__DOT__fetch__DOT__sInst__DOT__pcIn;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs_RData1;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__regs_RData2;
-        QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm_io_Imm;
+        QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm_io_imm;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT__immType_0;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT__immType_1;
         QData/*63:0*/ riscv64Top__DOT__decode__DOT__imm__DOT__immType_2;
@@ -126,7 +126,7 @@ VL_MODULE(Vriscv64Top___024root) {
         CData/*0:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__regs_rAddr2En;
         CData/*4:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__regs_WAddr;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__regs_RegWr;
-        CData/*2:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__imm_io_ExtOp;
+        CData/*2:0*/ riscv64Top__DOT__decode__DOT____Vtogcov__imm_io_immOp;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instLui;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__instAuipc;
         CData/*0:0*/ riscv64Top__DOT__decode__DOT__con__DOT____Vtogcov__typeU;

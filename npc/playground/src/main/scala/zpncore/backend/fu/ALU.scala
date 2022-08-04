@@ -2,9 +2,9 @@ import chisel3._
 import chisel3.util._
 import chisel3.experimental.FlatIO
 /**
- * Execute operate include add/sub/Slt/Sltu/Xor/Or/And/Sll/Srl/Sra
- * Improve: 1. Add module improve;  2. Shifter Module
- * Module improve: Sub->Add module
+ ** Execute operate include add/sub/Slt/Sltu/Xor/Or/And/Sll/Srl/Sra
+ ** Improve: 1. Add module improve;  2. Shifter Module; 3.MUL and div
+ ** Module improve: Sub->Add module
  */
 
  class ALU extends Module {

@@ -109,9 +109,9 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declQuad(c+4,"riscv64Top decode regs_WData", false,-1, 63,0);
         tracep->declQuad(c+10,"riscv64Top decode regs_RData1", false,-1, 63,0);
         tracep->declQuad(c+12,"riscv64Top decode regs_RData2", false,-1, 63,0);
-        tracep->declQuad(c+1,"riscv64Top decode imm_io_Inst", false,-1, 63,0);
-        tracep->declBus(c+39,"riscv64Top decode imm_io_ExtOp", false,-1, 2,0);
-        tracep->declQuad(c+14,"riscv64Top decode imm_io_Imm", false,-1, 63,0);
+        tracep->declQuad(c+1,"riscv64Top decode imm_io_inst", false,-1, 63,0);
+        tracep->declBus(c+39,"riscv64Top decode imm_io_immOp", false,-1, 2,0);
+        tracep->declQuad(c+14,"riscv64Top decode imm_io_imm", false,-1, 63,0);
         tracep->declBus(c+3,"riscv64Top decode con_io_inst", false,-1, 31,0);
         tracep->declBit(c+7,"riscv64Top decode con_io_aluCtr_aluA", false,-1);
         tracep->declBus(c+8,"riscv64Top decode con_io_aluCtr_aluB", false,-1, 1,0);
@@ -123,7 +123,7 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declBus(c+35,"riscv64Top decode con_io_rAddr2", false,-1, 4,0);
         tracep->declBit(c+38,"riscv64Top decode con_io_RegWr", false,-1);
         tracep->declBus(c+37,"riscv64Top decode con_io_wAddr", false,-1, 4,0);
-        tracep->declBus(c+39,"riscv64Top decode con_io_ExtOp", false,-1, 2,0);
+        tracep->declBus(c+39,"riscv64Top decode con_io_immOp", false,-1, 2,0);
         tracep->declBus(c+16,"riscv64Top decode con_io_memCtr_MemtoReg", false,-1, 1,0);
         tracep->declBit(c+17,"riscv64Top decode con_io_memCtr_MemWr", false,-1);
         tracep->declBus(c+18,"riscv64Top decode con_io_memCtr_MemOP", false,-1, 2,0);
@@ -143,9 +143,9 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         {int i; for (i=0; i<32; i++) {
                 tracep->declQuad(c+167+i*2,"riscv64Top decode regs rf", true,(i+0), 63,0);}}
         tracep->declBus(c+231,"riscv64Top decode regs i", false,-1, 31,0);
-        tracep->declQuad(c+1,"riscv64Top decode imm io_Inst", false,-1, 63,0);
-        tracep->declBus(c+39,"riscv64Top decode imm io_ExtOp", false,-1, 2,0);
-        tracep->declQuad(c+14,"riscv64Top decode imm io_Imm", false,-1, 63,0);
+        tracep->declQuad(c+1,"riscv64Top decode imm io_inst", false,-1, 63,0);
+        tracep->declBus(c+39,"riscv64Top decode imm io_immOp", false,-1, 2,0);
+        tracep->declQuad(c+14,"riscv64Top decode imm io_imm", false,-1, 63,0);
         tracep->declQuad(c+40,"riscv64Top decode imm immType_0", false,-1, 63,0);
         tracep->declQuad(c+42,"riscv64Top decode imm immType_1", false,-1, 63,0);
         tracep->declQuad(c+44,"riscv64Top decode imm immType_2", false,-1, 63,0);
@@ -162,7 +162,7 @@ void Vriscv64Top___024root__traceInitSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->declBus(c+35,"riscv64Top decode con io_rAddr2", false,-1, 4,0);
         tracep->declBit(c+38,"riscv64Top decode con io_RegWr", false,-1);
         tracep->declBus(c+37,"riscv64Top decode con io_wAddr", false,-1, 4,0);
-        tracep->declBus(c+39,"riscv64Top decode con io_ExtOp", false,-1, 2,0);
+        tracep->declBus(c+39,"riscv64Top decode con io_immOp", false,-1, 2,0);
         tracep->declBus(c+16,"riscv64Top decode con io_memCtr_MemtoReg", false,-1, 1,0);
         tracep->declBit(c+17,"riscv64Top decode con io_memCtr_MemWr", false,-1);
         tracep->declBus(c+18,"riscv64Top decode con io_memCtr_MemOP", false,-1, 2,0);
@@ -333,7 +333,7 @@ void Vriscv64Top___024root__traceFullSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->fullCData(oldp+9,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_aluCtr_aluOp),4);
         tracep->fullQData(oldp+10,(vlSelf->riscv64Top__DOT__decode__DOT__regs_RData1),64);
         tracep->fullQData(oldp+12,(vlSelf->riscv64Top__DOT__decode__DOT__regs_RData2),64);
-        tracep->fullQData(oldp+14,(vlSelf->riscv64Top__DOT__decode__DOT__imm_io_Imm),64);
+        tracep->fullQData(oldp+14,(vlSelf->riscv64Top__DOT__decode__DOT__imm_io_imm),64);
         tracep->fullCData(oldp+16,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_memCtr_MemtoReg),2);
         tracep->fullBit(oldp+17,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_memCtr_MemWr));
         tracep->fullCData(oldp+18,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_memCtr_MemOP),3);
@@ -360,7 +360,7 @@ void Vriscv64Top___024root__traceFullSub0(Vriscv64Top___024root* vlSelf, Verilat
         tracep->fullBit(oldp+36,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_rAddr2En));
         tracep->fullCData(oldp+37,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_wAddr),5);
         tracep->fullBit(oldp+38,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_RegWr));
-        tracep->fullCData(oldp+39,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_ExtOp),3);
+        tracep->fullCData(oldp+39,(vlSelf->riscv64Top__DOT__decode__DOT__con_io_immOp),3);
         tracep->fullQData(oldp+40,(vlSelf->riscv64Top__DOT__decode__DOT__imm__DOT__immType_0),64);
         tracep->fullQData(oldp+42,(vlSelf->riscv64Top__DOT__decode__DOT__imm__DOT__immType_1),64);
         tracep->fullQData(oldp+44,(vlSelf->riscv64Top__DOT__decode__DOT__imm__DOT__immType_2),64);
