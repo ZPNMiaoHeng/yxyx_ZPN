@@ -3,6 +3,7 @@
 
 void init_rand();
 void init_log(const char *log_file);
+void init_ftrace(const char *ftrace_file);
 void init_mem();
 void init_difftest(char *ref_so_file, long img_size, int port);
 void init_device();
@@ -25,6 +26,8 @@ static void welcome() {
 void sdb_set_batch_mode();
 
 static char *log_file = NULL;
+static char *ftrace_file = NULL;
+
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static int difftest_port = 1234;
@@ -58,21 +61,35 @@ static int parse_args(int argc, char *argv[]) {
     {"log"      , required_argument, NULL, 'l'},
     {"diff"     , required_argument, NULL, 'd'},
     {"port"     , required_argument, NULL, 'p'},
+    {"ftrace"   , required_argument, NULL, 'f'},
     {"help"     , no_argument      , NULL, 'h'},
     {0          , 0                , NULL,  0 },
   };
+<<<<<<< HEAD
   int o;                                                                     // 只要编译选项产生o=b，就会调用sdb_set_batch_mode();
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {   // 依次执行命令选项 ？？？       -b  h l/d/p 可以指定参数  参数执行完后会返回-1
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;     //optarg??将字符串optarg以整形输入到difftest_port
       case 'l': log_file = optarg; break;                        // 指定log_file
+=======
+  int o;
+  while ( (o = getopt_long(argc, argv, "-bhl:f:d:p:", table, NULL)) != -1) {
+    switch (o) {
+      case 'b': sdb_set_batch_mode(); break;
+      case 'p': sscanf(optarg, "%d", &difftest_port); break;
+      case 'l': //printf("-----------log_file-------------\n");
+        log_file = optarg; break;
+      case 'f': printf("-----------ftrace_file-------------\n");
+        ftrace_file = optarg; break;
+>>>>>>> pa2
       case 'd': diff_so_file = optarg; break;
       case 1: img_file = optarg; return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
         printf("\t-b,--batch              run with batch mode\n");
         printf("\t-l,--log=FILE           output log to FILE\n");
+        printf("\t-f,--ftrace=FILE        input ELF file to nemu\n");
         printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
         printf("\t-p,--port=PORT          run DiffTest with port PORT\n");
         printf("\n");
@@ -94,6 +111,9 @@ void init_monitor(int argc, char *argv[]) {
   /* Open the log file. */
   init_log(log_file);
 
+  /* Lead the ELF file */
+  init_ftrace(ftrace_file);
+  
   /* Initialize memory. */
   init_mem();
 
@@ -133,6 +153,7 @@ static long load_img() {
 }
 
 void am_init_monitor() {
+//  Log("------ init monitor ----------------");
   init_rand();
   init_mem();
   init_isa();

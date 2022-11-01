@@ -2,8 +2,9 @@
 #define __DEVICE_MAP_H__
 
 #include <cpu/difftest.h>
+/** function pointers: it is a pointer*/
+typedef void(*io_callback_t)(uint32_t, int, bool);                               // ?????why
 
-typedef void(*io_callback_t)(uint32_t, int, bool);
 uint8_t* new_space(int size);
 
 typedef struct {

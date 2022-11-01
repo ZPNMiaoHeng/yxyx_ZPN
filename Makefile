@@ -10,7 +10,6 @@ YSYX_HOME = $(NEMU_HOME)/..
 WORK_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
 WORK_INDEX = $(YSYX_HOME)/.git/index.$(WORK_BRANCH)
 TRACER_BRANCH = $(TRACER)
-
 LOCK_DIR = $(YSYX_HOME)/.git/
 
 # prototype: git_soft_checkout(branch)

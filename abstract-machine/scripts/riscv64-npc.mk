@@ -17,6 +17,15 @@ CFLAGS += -DMAINARGS=\"$(mainargs)\"
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
 
 image: $(IMAGE).elf
+#	@echo $(ARCH).mk
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
+#	@echo  IMAGE=$(IMAGE).bin
+
+run: image
+#	@echo ------ riscv64-npc.mk run-------
+	@$(MAKE) -C $(NPC_HOME) ISA=$(ISA) run IMG=$(IMAGE).bin
+#	@echo ------end run-------
+
+#	@echo $(LINKAGE)

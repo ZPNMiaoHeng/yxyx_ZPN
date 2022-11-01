@@ -1,21 +1,13 @@
+_default:
 ######################################################################
-#
-# DESCRIPTION: Verilator Example: Small Makefile
-#
-# This calls the object directory makefile.  That allows the objects to
-# be placed in the "current directory" which simplifies the Makefile.
-#
-# This file ONLY is placed under the Creative Commons Public Domain, for
-# any use, without warranty, 2020 by Wilson Snyder.
-# SPDX-License-Identifier: CC0-1.0
+# DESCRIPTION: riscv64-npc sbttest
+#------------ Vesion 4.2.1------------
 #
 ######################################################################
 # Check for sanity to avoid later confusion
-
 ifneq ($(words $(CURDIR)),1)
  $(error Unsupported: GNU Make cannot build in directories containing spaces, build elsewhere: '$(CURDIR)')
 endif
-
 ######################################################################
 # Set up variables
 
@@ -30,85 +22,111 @@ export VERILATOR_ROOT
 VERILATOR = $(VERILATOR_ROOT)/bin/verilator
 VERILATOR_COVERAGE = $(VERILATOR_ROOT)/bin/verilator_coverage
 endif
+#######################################################################
+#DIFINE
+# Default test file name is riscv64Top
+TOP =	riscv64Top
+TEST = NBitsAdderChiselTest
+VERILOG_NAME  = $(TOP)
+#NVBOARD_DIR = $(NVBOARD_HOME)/example
+PLAYGROUND_DIR = $(NPC_HOME)/playground
+CPP_DIR = $(PLAYGROUND_DIR)/cpp/
+#CPP_DIR = $(PLAYGROUND_DIR)/cpp_son_mondule/
+#######################################################################
+#---------------------- File ------------------------------------------
+VSRC += $(shell find ./build/ -name *.v)
+VSRC += $(shell find ./playground/src/main/resources/vsrc/ -name *.v)
+#---------------------- CSRC ------------------------------------------
+CSRC += $(shell find $(CPP_DIR) -name *.cpp)
+CSRC += $(shell find $(CPP_DIR) -name *.c)
+CSRC += $(shell find $(CPP_DIR) -name *.cc)
+########################################################################
+VERILATOR_INPUT =  $(VSRC) $(CSRC)
+SO = /home/zpn/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so
 
-# Generate C++ in executable form
-VERILATOR_FLAGS += -cc --exe
-# Generate makefile dependencies (not shown as complicates the Makefile)
-#VERILATOR_FLAGS += -MMD
-# Optimize
+GTK_DIR  = $(PLAYGROUND_DIR)/sim/dump.vcd
+BUILD_DIR = ./build
+OBJ_DIR = ./obj_dir
+TEST_DIR = ./test_run_dir
+#######################################################################
+# Verliater option-- Generate C++ in executable form and coverage analysis               
+VERILATOR_FLAGS += --cc --exe -Wall --trace --coverage \
+	--build --top-module $(VERILOG_NAME)
+# Optimize                                 
 VERILATOR_FLAGS += -Os -x-assign 0
-# Warn abount lint issues; may not want this on less solid designs
-VERILATOR_FLAGS += -Wall
-# Make waveforms
-VERILATOR_FLAGS += --trace
-# Check SystemVerilog assertions
-VERILATOR_FLAGS += --assert
-# Generate coverage analysis
-VERILATOR_FLAGS += --coverage
-# Run Verilator in debug mode
-#VERILATOR_FLAGS += --debug
-# Add this trace to get a backtrace in gdb
-#VERILATOR_FLAGS += --gdbbt
+# LDFLAGS 编译时选项
+VERILATOR_FLAGS += -LDFLAGS -ldl \
+ -LDFLAGS -lreadline \
+ -LDFLAGS $(shell llvm-config --libs)
+VERILATOR_FLAGS += -CFLAGS -I/usr/lib/llvm-12/include
 
-# Input files for Verilator
+######################## sbt compile ###############################
+milltest:
+	mill -i __.test
+test:
+	sbt "test:testOnly $(TEST) -- -DwriteVcd=1 "
+# --full-stacktrace"
+vcd:
+	$(call git_commit, "sim RTL")
+	@echo "-------------------------- Open TEST GTKwave ------------------------"
+	gtkwave -f $(shell find $(TEST_DIR)/ -name *.vcd)
 
-VERILATOR_INPUT = -f input.vc vsrc/top.v csrc/sim_main.cpp
-######################################################################
-default: run
+######################## mill compile ###############################
+verilog: 
+	$(call git_commit, "generate verilog")
+	mkdir -p $(BUILD_DIR)
+	mill -j 4 -i __.test.runMain Elaborate TopModule=$(VERILOG_NAME) -td $(BUILD_DIR)
+
+verilogTrace: 
+	$(call git_commit, "generate verilog")
+	mkdir -p $(BUILD_DIR)
+	mill -j 4 -i __.test.runMain Elaborate TopModule=$(VERILOG_NAME) -td $(BUILD_DIR) --full-stacktrace
+
+help:
+	mill -i __.test.runMain top.TopMain --help
+
+compile:
+	mill -i __.compile
+
+bsp:
+	mill -i mill.bsp.BSP/install
+
+reformat:
+	mill -i __.reformat
+
+checkformat:
+	mill -i __.checkFormat
+
+####################### npc compile ##################################
+# Table
+sim:
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	@echo "-------------------------- Open GTKwave ------------------------"
+	gtkwave -f $(GTK_DIR)
 
 run:
-	@echo
-	@echo "-- Verilator tracing example"
-
-	@echo
-	@echo "-- VERILATE ----------------"
+# Modify run 
+	@echo "--------------------------- VERILATE COMPILE----------------"
 	$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT)
+	./obj_dir/V$(VERILOG_NAME) --diff=$(SO) --image=$(IMG)
 
-	@echo
-	@echo "-- BUILD -------------------"
-# To compile, we can either
-# 1. Pass --build to Verilator by editing VERILATOR_FLAGS above.
-# 2. Or, run the make rules Verilator does:
-#	$(MAKE) -j -C obj_dir -f Vtop.mk
-# 3. Or, call a submakefile where we can override the rules ourselves:
-	$(MAKE) -j -C obj_dir -f ../Makefile_obj
-
-	@echo
-	@echo "-- RUN ---------------------"
-	@rm -rf logs
-	@mkdir -p logs
-	obj_dir/Vtop +trace
-
-	@echo
-	@echo "-- COVERAGE ----------------"
-	@rm -rf logs/annotated
-	$(VERILATOR_COVERAGE) --annotate logs/annotated logs/coverage.dat
-
-	@echo
-	@echo "-- DONE --------------------"
-	@echo "To see waveforms, open vlt_dump.vcd in a waveform viewer"
-	@echo
-	@echo "-- GTKwave   ---------------"
-	GTKwave ./logs/vlt_dump.vcd
+clean: cleanB cleanO
+cleanB:
+	@-rm -rf $(BUILD_DIR)
+cleanO: 
+	@-rm -rf $(OBJ_DIR) $(GTK_DIR) $(TEST_DIR)
 ######################################################################
 # Other targets
 
 show-config:
 	$(VERILATOR) -V
 
-maintainer-copy::
-clean mostlyclean distclean maintainer-clean::
-	-rm -rf obj_dir logs *.log *.dmp *.vpd coverage.dat core
+#maintainer-copy::
+#clean mostlyclean distclean maintainer-clean::
+#	-rm -rf obj_dir sim *.log *.dmp *.vpd coverage.dat core
 
-
-
-
-
-all:
-	@echo "Write this Makefile by your self."
-
-sim:
-	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@echo "Write this Makefile by your self."
-
-include ../Makefile
+#######################################################################
+# Table
+.PHONY : run test verilog help compile bsp reformat checkformat clean sim verilogTrace
+#######################################################################
+include $(NPC_HOME)/../Makefile

@@ -11,7 +11,7 @@
 #elif defined(__ISA_MIPS32__)
 # define nemu_trap(code) asm volatile ("move $v0, %0; sdbbp" : :"r"(code))
 #elif defined(__ISA_RISCV32__) || defined(__ISA_RISCV64__)
-# define nemu_trap(code) asm volatile("mv a0, %0; ebreak" : :"r"(code))
+# define nemu_trap(code) asm volatile("mv a0, %0; ebreak" : :"r"(code))  // "r"(code)??
 #elif
 # error unsupported ISA __ISA__
 #endif
@@ -21,7 +21,7 @@
 #else
 # define DEVICE_BASE 0xa0000000
 #endif
-
+// I/O pmem site
 #define MMIO_BASE 0xa0000000
 
 #define SERIAL_PORT     (DEVICE_BASE + 0x00003f8)

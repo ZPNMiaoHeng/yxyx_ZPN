@@ -173,6 +173,7 @@ static void init_platform() {
 
 void __am_exit_platform(int code) {
   // let Linux clean up other resource
+//  code = 0;
   extern int __am_mpe_init;
   if (__am_mpe_init && cpu_count() > 1) kill(0, SIGKILL);
   exit(code);

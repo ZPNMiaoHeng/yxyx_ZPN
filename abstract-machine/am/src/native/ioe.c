@@ -48,6 +48,7 @@ static void *lut[128] = {
   [AM_NET_CONFIG  ] = __am_net_config,
 };
 
+/**进行IOE相关的初始化 */
 bool ioe_init() {
   panic_on(cpu_current() != 0, "call ioe_init() in other CPUs");
   panic_on(ioe_init_done, "double-initialization");
@@ -74,6 +75,9 @@ static void do_io(int reg, void *buf) {
   }
   ((handler_t)lut[reg])(buf);
 }
-
+/** 
+ *reg-read-> buf; buf -write-> reg 
+ * reg is abstract reg 
+ */
 void ioe_read (int reg, void *buf) { do_io(reg, buf); }
 void ioe_write(int reg, void *buf) { do_io(reg, buf); }
